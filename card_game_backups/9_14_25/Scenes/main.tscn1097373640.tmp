@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://cghkxgbgp63bk"]
+
+[ext_resource type="Script" uid="uid://b4hgpxw38k73o" path="res://Scripts/card_manager.gd" id="1_0xm2m"]
+[ext_resource type="Script" uid="uid://cfr6qyn5qtva1" path="res://Scripts/battle_manager.gd" id="2_bo1nx"]
+[ext_resource type="Script" uid="uid://bd2o6y7pm6ld1" path="res://Scripts/job_manager.gd" id="3_8gbba"]
+
+[node name="Main" type="Node2D"]
+
+[node name="CardManager" type="Node2D" parent="."]
+script = ExtResource("1_0xm2m")
+
+[node name="BattleManager" type="Node2D" parent="."]
+script = ExtResource("2_bo1nx")
+
+[node name="JobManager" type="Node2D" parent="."]
+script = ExtResource("3_8gbba")
