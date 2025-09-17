@@ -64,14 +64,15 @@ func spawn_initial_cards() -> void:
 	spawn_card("forest", Vector2(0, 100))
 
 func spawn_card(subtype: String, position: Vector2) -> Card:
-	var card_instance: Card = card_scene.instantiate() as Card
-	add_child(card_instance)
-	card_instance.position = position
-	card_instance.setup(subtype)
-	card_instance.is_being_dragged = false
-	card_instance.target_position = position  # NEW
-	all_stacks.append([card_instance])
-	return card_instance
+	var card: Card = card_scene.instantiate() as Card
+	add_child(card)
+	card.position = position
+	card.setup(subtype)
+	card.is_being_dragged = false
+	card.target_position = position
+	card.connect("inventory_open_requested", Callable(self, "_on_card_inventory_open_requested"))
+	all_stacks.append([card])
+	return card
 
 # ==============================
 #  DRAG & STACK MANAGEMENT
@@ -380,6 +381,12 @@ func debug_print_stacks() -> void:
 				names.append("<invalid>")
 		print("Stack %d: %s" % [i, names])
 	print("--------------------")
+
+# ==============================
+#  INVENTORY FUNCTIONS
+# ==============================
+func _on_card_inventory_open_requested(card: Card) -> void:
+	$InventoryPanel.open_inventory(card)
 
 # ==============================
 #  ENEMY MOVEMENT

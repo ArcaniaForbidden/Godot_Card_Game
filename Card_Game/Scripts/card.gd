@@ -3,6 +3,7 @@ class_name Card
 
 signal hovered
 signal hovered_off
+signal inventory_open_requested(card: Card)
 
 const LABEL_COLOR := Color.BLACK
 
@@ -21,9 +22,9 @@ var enemy_min_jump_time: float = 0.8
 var enemy_max_jump_time: float = 1.5
 var enemy_jump_distance: float = 150.0
 var in_battle: bool = false
-var inventory: Array = []  # Holds equipment cards
-var equipment_slots: Array = []  # list of slot names
-var equipment: Dictionary = {}  # slot_name -> equipment card
+var inventory: Array = []
+var equipment_slots: Array = []
+var equipment: Dictionary = {}
 
 # UI references
 @onready var display_name_label: Label = get_node_or_null("CardLabel")
@@ -31,6 +32,17 @@ var equipment: Dictionary = {}  # slot_name -> equipment card
 @onready var sprite_image: Sprite2D = get_node_or_null("SpriteImage")
 @onready var health_icon: Node2D = get_node_or_null("HealthIcon")
 @onready var health_label: Label = get_node_or_null("HealthLabel")
+@onready var area: Area2D = $Area2D
+
+func _ready() -> void:
+	# Connect input_event signal of Area2D to this card
+	area.connect("input_event", Callable(self, "_on_area_input_event"))
+
+func _on_area_input_event(viewport, event, shape_idx) -> void:
+	print("Card right clicked")
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+		if card_type == "unit":
+			emit_signal("inventory_open_requested", self)
 
 # --- Helper for health ---
 func set_health(value: int) -> void:
@@ -56,6 +68,10 @@ func setup(subtype_name: String) -> void:
 		display_name_label.vertical_alignment = 1
 		display_name_label.text = data.get("display_name", subtype)
 		display_name_label.self_modulate = LABEL_COLOR
+	if card_type == "unit" and data.has("equipment_slots"):
+		equipment_slots = data["equipment_slots"]
+		for slot_name in equipment_slots:
+			equipment[slot_name] = null
 	# Health setup
 	if data.has("health"):
 		max_health = int(data["health"])
@@ -70,19 +86,6 @@ func setup(subtype_name: String) -> void:
 	attack = int(data.get("attack", 0))
 	armor = int(data.get("armor", 0))
 	attack_speed = float(data.get("attack_speed", 1.0))
-	# --- Inventory & Equipment Setup ---
-	inventory = []  # empty inventory initially
-	equipment_slots = []
-	equipment = {}
-	if card_type == "unit" and data.has("equipment_slots"):
-		equipment_slots = data["equipment_slots"]
-		for slot_name in equipment_slots:
-			equipment[slot_name] = null  # initialize empty slot
-
-func heal(amount: int) -> void:
-	if card_type != "unit":
-		return
-	set_health(min(health + amount, max_health))
 
 # --- Hover signals ---
 func _on_area_2d_mouse_entered() -> void:
