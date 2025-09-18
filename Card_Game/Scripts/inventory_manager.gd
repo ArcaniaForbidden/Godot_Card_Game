@@ -2,9 +2,11 @@ extends CanvasLayer
 class_name InventoryManager
 
 # --- UI References ---
+@onready var card_zoom_panel: Panel = $CardZoomPanel
 @onready var card_zoom: TextureRect = $CardZoomPanel/CardZoomContainer/CardZoom
 @onready var sprite_zoom: TextureRect = $CardZoomPanel/CardZoomContainer/SpriteZoom
 @onready var card_zoom_label: Label = $CardZoomPanel/CardZoomContainer/CardZoomLabel
+@onready var stats_panel_panel: Panel = $StatsPanelPanel
 @onready var stats_panel: VBoxContainer = $StatsPanelPanel/StatsPanel
 
 # Equipped slots
@@ -30,53 +32,57 @@ var current_card: Node = null
 func _ready() -> void:
 	equipped_slots_panel.hide()
 	inventory_panel.hide()
+	card_zoom_panel.hide()
+	stats_panel_panel.hide()
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-			var card = get_node("/root/Main/CardManager").raycast_check_for_card()
-			if card:
-				open_card_ui(card)
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+		var card_manager = get_node("/root/Main/CardManager")
+		var card = card_manager.raycast_check_for_card()
+		if card:
+			open_card_ui(card)
 
-func open_card_ui(card: Node2D) -> void:
+func open_card_ui(card: Node) -> void:
 	if not is_instance_valid(card):
 		print("Card is invalid!")
 		return
-	print("Right-clicked card:", card.subtype)
-	var card_data = CardDatabase.card_database.get(card.subtype, null)
-	if card_data == null:
-		print("Card data not found in CardDatabase for subtype:", card.subtype)
-		return
-	print("Found card data:", card_data)
-	# Show zoom and label
-	card_zoom.visible = true
-	sprite_zoom.visible = true
-	card_zoom_label.visible = true
-	# Set textures and label
-	card_zoom.texture = card_data.get("card", null)
-	sprite_zoom.texture = card_data.get("sprite", null)
-	card_zoom_label.text = card_data.get("display_name", "Unknown")
+	# Show the panels
+	card_zoom_panel.show()
+	stats_panel_panel.show()
+	card_zoom.show()
+	sprite_zoom.show()
+	card_zoom_label.show()
+	# Set the textures
+	card_zoom.texture = card.card_image.texture
+	sprite_zoom.texture = card.sprite_image.texture
+	card_zoom_label.text = card.display_name
+	# --- Clear previous stats ---
 	for child in stats_panel.get_children():
 		child.queue_free()
-	# Always show card type
 	var type_label = Label.new()
-	type_label.text = "Type: %s" % card_data.get("type", "Unknown")
+	type_label.text = "Type: %s" % card.card_type.capitalize()
 	stats_panel.add_child(type_label)
-	var stats_dict: Dictionary = card_data.get("stats", {})
-	print("Stats for this card:", stats_dict)
-	if card_data.get("type") != "equipment":
-		# For units/characters: display health, attack, armor if present
-		for stat_name in ["health", "attack", "armor"]:
-			if stats_dict.has(stat_name):
+	# --- Display stats ---
+	for stat_name in card.stats.keys():
+		var stat_value = card.stats[stat_name]
+		if typeof(stat_value) == TYPE_DICTIONARY:
+			# For equipment stats like "add" and "mul"
+			for sub_stat in stat_value.keys():
 				var label = Label.new()
-				label.text = "%s: %s" % [stat_name.capitalize(), str(stats_dict[stat_name])]
+				label.text = "%s %s%s" % [
+					sub_stat.capitalize(),
+					"+" if stat_name == "add" else "x",
+					str(stat_value[sub_stat])
+				]
 				stats_panel.add_child(label)
-	else:
-		# For equipment: display all stat changes
-		for stat_name in stats_dict.keys():
+		else:
+			# Normal stats like health, attack, armor
 			var label = Label.new()
-			var value = stats_dict[stat_name]
-			var sign = "+" if value >= 0 else ""
-			label.text = "%s: %s%s" % [stat_name.capitalize(), sign, str(value)]
+			label.text = "%s: %s" % [stat_name.capitalize(), str(stat_value)]
 			stats_panel.add_child(label)
-	print("UI updated successfully")
+	if card.card_type == "unit":
+		inventory_panel.show()
+		equipped_slots_panel.show()
+	else:
+		inventory_panel.hide()
+		equipped_slots_panel.hide()

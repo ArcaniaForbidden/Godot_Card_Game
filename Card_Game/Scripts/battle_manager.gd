@@ -1,8 +1,8 @@
 extends Node2D
 
 # --- Constants ---
-const SIDE_PADDING := 500          # distance from center line for each side
-const LINE_SPACING := 550          # vertical spacing between cards in the line
+const SIDE_PADDING := 100          # distance from center line for each side
+const LINE_SPACING := 150          # vertical spacing between cards in the line
 const ATTACK_TWEEN_TIME := 0.1
 
 # --- Member Variables ---

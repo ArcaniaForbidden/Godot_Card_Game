@@ -13,6 +13,7 @@ var stack_target_position: Vector2 = Vector2.ZERO
 var card_type: String = ""
 var subtype: String = ""
 var display_name: String = ""
+var stats: Dictionary = {}
 var health: int = 0
 var max_health: int = 0
 var attack: int = 0
@@ -82,18 +83,11 @@ func setup(subtype_name: String) -> void:
 		for slot_name in equipment_slots:
 			equipment[slot_name] = null
 	# --- Stats setup ---
-	var stats: Dictionary = data.get("stats", {})
+	stats = data.get("stats", {})  # store all stats in a single dictionary
 	# Health
-	if stats.has("health"):
-		max_health = int(stats["health"])
-		set_health(max_health)
-	else:
-		if health_icon:
-			health_icon.visible = false
-		if health_label:
-			health_label.text = ""
-			health_label.visible = false
-	# Store internal stats for logic (not shown in UI)
+	max_health = int(stats.get("health", 0))
+	set_health(max_health)
+	# Store other internal stats for logic
 	attack = int(stats.get("attack", 0))
 	armor = int(stats.get("armor", 0))
 	attack_speed = float(stats.get("attack_speed", 1.0))
