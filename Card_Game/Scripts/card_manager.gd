@@ -51,6 +51,7 @@ func spawn_initial_cards() -> void:
 	spawn_card("peasant", Vector2(400, 300))
 	spawn_card("peasant", Vector2(400, 200))
 	spawn_card("quarry", Vector2(400,400))
+	spawn_card("wooden_spear", Vector2(400,600))
 	spawn_card("lumber_camp", Vector2(400,500))
 	spawn_card("tree", Vector2(500, 300))
 	spawn_card("rock", Vector2(600, 300))
@@ -70,7 +71,7 @@ func spawn_card(subtype: String, position: Vector2) -> Card:
 	card.setup(subtype)
 	card.is_being_dragged = false
 	card.target_position = position
-	card.connect("inventory_open_requested", Callable(self, "_on_card_inventory_open_requested"))
+	card.connect("inventory_open_requested", Callable($InventoryPanel, "open_inventory"))
 	all_stacks.append([card])
 	return card
 
@@ -158,7 +159,6 @@ func start_drag(card: Card) -> void:
 func finish_drag() -> void:
 	if dragged_substack.size() == 0:
 		return
-	# Play drop sound
 	if SoundManager:
 		SoundManager.play("card_drop", -6.0)
 	for c in dragged_substack:
@@ -385,8 +385,7 @@ func debug_print_stacks() -> void:
 # ==============================
 #  INVENTORY FUNCTIONS
 # ==============================
-func _on_card_inventory_open_requested(card: Card) -> void:
-	$InventoryPanel.open_inventory(card)
+
 
 # ==============================
 #  ENEMY MOVEMENT

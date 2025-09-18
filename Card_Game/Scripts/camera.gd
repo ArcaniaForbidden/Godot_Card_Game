@@ -1,14 +1,9 @@
 extends Camera2D
 
-# Pan speed (world units per second)
 var pan_speed: float = 1500.0
-# Zoom limits
 var min_zoom: float = 0.5
 var max_zoom: float = 3.0
-# Zoom step per scroll
 var zoom_speed: float = 0.05
-
-# Internal drag tracking
 var dragging: bool = false
 var drag_start: Vector2
 var camera_start: Vector2
@@ -16,7 +11,7 @@ var camera_start: Vector2
 func _input(event):
 	# Mouse drag to pan
 	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_RIGHT:
+		if event.button_index == MOUSE_BUTTON_MIDDLE:
 			if event.pressed:
 				dragging = true
 				drag_start = event.position

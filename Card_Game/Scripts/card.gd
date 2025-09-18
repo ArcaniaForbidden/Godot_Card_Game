@@ -12,6 +12,7 @@ var is_being_dragged: bool = false
 var stack_target_position: Vector2 = Vector2.ZERO
 var card_type: String = ""
 var subtype: String = ""
+var display_name: String = ""
 var health: int = 0
 var max_health: int = 0
 var attack: int = 0
@@ -38,11 +39,16 @@ func _ready() -> void:
 	# Connect input_event signal of Area2D to this card
 	area.connect("input_event", Callable(self, "_on_area_input_event"))
 
-func _on_area_input_event(viewport, event, shape_idx) -> void:
-	print("Card right clicked")
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-		if card_type == "unit":
-			emit_signal("inventory_open_requested", self)
+# --- Add an item to this card's inventory ---
+func add_to_inventory(item_card: Card) -> void:
+	if item_card in inventory:
+		return
+	inventory.append(item_card)
+
+# --- Remove an item from this card's inventory ---
+func remove_from_inventory(item_card: Card) -> void:
+	if item_card in inventory:
+		inventory.erase(item_card)
 
 # --- Helper for health ---
 func set_health(value: int) -> void:
@@ -59,6 +65,7 @@ func setup(subtype_name: String) -> void:
 	target_position = position 
 	var data = CardDatabase.card_database[subtype]
 	card_type = data.get("card_type", "")
+	display_name = data.get("display_name", subtype)
 	if card_image and data.has("card"):
 		card_image.texture = data["card"]
 	if sprite_image and data.has("sprite"):
@@ -66,7 +73,7 @@ func setup(subtype_name: String) -> void:
 	if display_name_label:
 		display_name_label.horizontal_alignment = 1
 		display_name_label.vertical_alignment = 1
-		display_name_label.text = data.get("display_name", subtype)
+		display_name_label.text = display_name
 		display_name_label.self_modulate = LABEL_COLOR
 	if card_type == "unit" and data.has("equipment_slots"):
 		equipment_slots = data["equipment_slots"]
@@ -93,3 +100,7 @@ func _on_area_2d_mouse_entered() -> void:
 
 func _on_area_2d_mouse_exited() -> void:
 	emit_signal("hovered_off", self)
+
+func _on_area_input_event(viewport, event, shape_idx) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+		emit_signal("inventory_open_requested", self)

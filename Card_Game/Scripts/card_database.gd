@@ -11,7 +11,7 @@ static var card_database = {
 		"attack": 1,
 		"armor": 0,
 		"attack_speed": 0.8,
-		"equipment_slots": ["helmet", "chestplate", "mainhand", "offhand", "accessory1", "accessory2"]
+		"equipment_slots": ["helmet", "chestplate", "leggings", "boots", "weapon", "shield", "accessory1", "accessory2", "accessory3", "accessory4"]
 	},
 	"rock": {
 		"card": preload("res://Images/basic_card.png"),
@@ -84,13 +84,12 @@ static var card_database = {
 		"attack_speed": 0
 	},
 	"wooden_spear": {
-		"card": preload("res://Images/basic_card.png"),
-		"sprite": preload("res://Images/quarry.png"),
+		"card": preload("res://Images/unit_card.png"),
+		"sprite": preload("res://Images/wooden_spear.png"),
 		"card_type": "equipment",
-		"slot": "mainhand",
+		"slot": "weapon",
 		"display_name": "Wooden Spear",
 		"description": "A crude spear carved from wood. Increases attack slightly, but attacks slower.",
-		"rarity": "common",
 		"stats": {
 			"add": {
 				"attack": 1

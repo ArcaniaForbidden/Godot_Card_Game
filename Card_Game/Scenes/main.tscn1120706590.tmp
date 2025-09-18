@@ -13,6 +13,9 @@
 [node name="CardManager" type="Node2D" parent="."]
 script = ExtResource("1_0xm2m")
 
+[node name="InventoryCanvas" parent="CardManager" instance=ExtResource("6_6bp64")]
+script = ExtResource("3_6bp64")
+
 [node name="BattleManager" type="Node2D" parent="."]
 script = ExtResource("2_bo1nx")
 
@@ -25,6 +28,3 @@ rotation_smoothing_enabled = true
 script = ExtResource("4_jjvhh")
 
 [node name="SoundManager" parent="." instance=ExtResource("5_kry3j")]
-
-[node name="InventoryCanvas" parent="." instance=ExtResource("6_6bp64")]
-script = ExtResource("3_6bp64")
