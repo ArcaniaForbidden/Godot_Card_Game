@@ -85,8 +85,17 @@ func setup(subtype_name: String) -> void:
 	# --- Stats setup ---
 	stats = data.get("stats", {})  # store all stats in a single dictionary
 	# Health
-	max_health = int(stats.get("health", 0))
-	set_health(max_health)
+	if stats.has("health") and stats["health"] > 0:
+		max_health = int(stats["health"])
+		set_health(max_health)
+	else:
+		max_health = 0
+		health = 0
+		if health_icon:
+			health_icon.visible = false
+		if health_label:
+			health_label.text = ""
+			health_label.visible = false
 	# Store other internal stats for logic
 	attack = int(stats.get("attack", 0))
 	armor = int(stats.get("armor", 0))
