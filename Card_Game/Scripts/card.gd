@@ -66,6 +66,7 @@ func setup(subtype_name: String) -> void:
 	var data = CardDatabase.card_database[subtype]
 	card_type = data.get("card_type", "")
 	display_name = data.get("display_name", subtype)
+	# Set textures
 	if card_image and data.has("card"):
 		card_image.texture = data["card"]
 	if sprite_image and data.has("sprite"):
@@ -75,13 +76,16 @@ func setup(subtype_name: String) -> void:
 		display_name_label.vertical_alignment = 1
 		display_name_label.text = display_name
 		display_name_label.self_modulate = LABEL_COLOR
+	# Equipment setup
 	if card_type == "unit" and data.has("equipment_slots"):
 		equipment_slots = data["equipment_slots"]
 		for slot_name in equipment_slots:
 			equipment[slot_name] = null
-	# Health setup
-	if data.has("health"):
-		max_health = int(data["health"])
+	# --- Stats setup ---
+	var stats: Dictionary = data.get("stats", {})
+	# Health
+	if stats.has("health"):
+		max_health = int(stats["health"])
 		set_health(max_health)
 	else:
 		if health_icon:
@@ -90,9 +94,9 @@ func setup(subtype_name: String) -> void:
 			health_label.text = ""
 			health_label.visible = false
 	# Store internal stats for logic (not shown in UI)
-	attack = int(data.get("attack", 0))
-	armor = int(data.get("armor", 0))
-	attack_speed = float(data.get("attack_speed", 1.0))
+	attack = int(stats.get("attack", 0))
+	armor = int(stats.get("armor", 0))
+	attack_speed = float(stats.get("attack_speed", 1.0))
 
 # --- Hover signals ---
 func _on_area_2d_mouse_entered() -> void:

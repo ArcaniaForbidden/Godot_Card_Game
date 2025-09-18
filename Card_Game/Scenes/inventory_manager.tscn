@@ -191,6 +191,7 @@ offset_bottom = 129.0
 texture = ExtResource("11_nutug")
 
 [node name="CardLabel" type="Label" parent="InventoryPanel/InventoryGrid/InventorySlotTemplate"]
+layout_mode = 0
 offset_left = 9.0
 offset_top = 8.0
 offset_right = 93.0
