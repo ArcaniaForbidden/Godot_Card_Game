@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://cghkxgbgp63bk"]
+[gd_scene load_steps=7 format=3 uid="uid://cghkxgbgp63bk"]
 
 [ext_resource type="Script" uid="uid://b4hgpxw38k73o" path="res://Scripts/card_manager.gd" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://cfr6qyn5qtva1" path="res://Scripts/battle_manager.gd" id="2_bo1nx"]
@@ -6,7 +6,6 @@
 [ext_resource type="Script" uid="uid://c6hfgigyf8pby" path="res://Scripts/camera.gd" id="4_jjvhh"]
 [ext_resource type="PackedScene" uid="uid://dl6721ymk2skv" path="res://Scenes/sound_manager.tscn" id="5_kry3j"]
 [ext_resource type="PackedScene" uid="uid://e8ajh2rt8q5g" path="res://Scenes/ui.tscn" id="6_6bp64"]
-[ext_resource type="Script" uid="uid://cjetr83a3quom" path="res://Scripts/ui_manager.gd" id="7_6bp64"]
 
 [node name="Main" type="Node2D"]
 
@@ -27,4 +26,3 @@ script = ExtResource("4_jjvhh")
 [node name="SoundManager" parent="." instance=ExtResource("5_kry3j")]
 
 [node name="UICanvasLayer" parent="." instance=ExtResource("6_6bp64")]
-script = ExtResource("7_6bp64")

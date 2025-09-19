@@ -1,0 +1,84 @@
+[gd_scene load_steps=9 format=3 uid="uid://cjkaiysweyg1c"]
+
+[ext_resource type="Texture2D" uid="uid://cbodk60bpvy7j" path="res://Images/slot_helmet.png" id="1_0cgg5"]
+[ext_resource type="Script" uid="uid://b3eb3ps6liifu" path="res://Scripts/unit_inventory.gd" id="1_psewe"]
+[ext_resource type="Texture2D" uid="uid://da5cfkgdutycr" path="res://Images/slot_chestplate.png" id="2_psewe"]
+[ext_resource type="Texture2D" uid="uid://bv42uohqcydlj" path="res://Images/slot_leggings.png" id="3_5uqdw"]
+[ext_resource type="Texture2D" uid="uid://e0plg5pn1ibd" path="res://Images/slot_boots.png" id="4_j0t17"]
+[ext_resource type="Texture2D" uid="uid://hujo67otpil6" path="res://Images/slot_weapon.png" id="5_k0xsc"]
+[ext_resource type="Texture2D" uid="uid://2nvkqaeh223" path="res://Images/slot_shield.png" id="6_bbq6u"]
+[ext_resource type="Texture2D" uid="uid://ccspb3uib4kaj" path="res://Images/slot_accessory.png" id="7_dp3re"]
+
+[node name="UnitInventory" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_psewe")
+
+[node name="SlotHelmet" type="TextureButton" parent="."]
+offset_left = -120.0
+offset_top = -349.0
+offset_right = -20.0
+offset_bottom = -209.0
+scale = Vector2(1.004, 1)
+texture_normal = ExtResource("1_0cgg5")
+metadata/_edit_use_anchors_ = true
+
+[node name="SlotChestplate" type="TextureButton" parent="."]
+offset_left = -240.0
+offset_top = -249.0
+offset_right = -140.0
+offset_bottom = -109.0
+texture_normal = ExtResource("2_psewe")
+metadata/_edit_use_anchors_ = true
+
+[node name="SlotLeggings" type="TextureButton" parent="."]
+offset_left = -240.0
+offset_top = -69.0
+offset_right = -140.0
+offset_bottom = 71.0
+texture_normal = ExtResource("3_5uqdw")
+metadata/_edit_use_anchors_ = true
+
+[node name="SlotBoots" type="TextureButton" parent="."]
+offset_left = -120.0
+offset_top = 31.0
+offset_right = -20.0
+offset_bottom = 171.0
+scale = Vector2(1, 0.999)
+texture_normal = ExtResource("4_j0t17")
+metadata/_edit_use_anchors_ = true
+
+[node name="SlotWeapon" type="TextureButton" parent="."]
+offset_left = 20.0
+offset_top = -349.0
+offset_right = 120.0
+offset_bottom = -209.0
+scale = Vector2(1, 0.997525)
+texture_normal = ExtResource("5_k0xsc")
+metadata/_edit_use_anchors_ = true
+
+[node name="SlotShield" type="TextureButton" parent="."]
+offset_left = 140.0
+offset_top = -249.0
+offset_right = 240.0
+offset_bottom = -109.0
+scale = Vector2(1, 1.0021)
+texture_normal = ExtResource("6_bbq6u")
+metadata/_edit_use_anchors_ = true
+
+[node name="SlotAccessory1" type="TextureButton" parent="."]
+offset_left = 140.0
+offset_top = -69.0
+offset_right = 240.0
+offset_bottom = 71.0
+texture_normal = ExtResource("7_dp3re")
+metadata/_edit_use_anchors_ = true
+
+[node name="SlotAccessory2" type="TextureButton" parent="."]
+offset_left = 20.0
+offset_top = 31.0
+offset_right = 120.0
+offset_bottom = 171.0
+scale = Vector2(1.015, 1)
+texture_normal = ExtResource("7_dp3re")
+metadata/_edit_use_anchors_ = true

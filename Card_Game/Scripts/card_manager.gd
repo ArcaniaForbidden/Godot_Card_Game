@@ -175,7 +175,7 @@ func finish_drag() -> void:
 		var target_pos = base_pos + Vector2(0, i * STACK_Y_OFFSET)
 		cards_moving[card] = target_pos
 	card_being_dragged = null
-	# After releasing, recheck all stacks for jobs**
+	# After releasing, recheck all stacks for jobs
 	if job_manager:
 		job_manager.check_all_stacks()
 	dragged_substack.clear()

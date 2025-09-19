@@ -3,7 +3,7 @@ class_name Card
 
 signal hovered
 signal hovered_off
-signal inventory_open_requested(card: Card)
+signal ui_zoom_update(card: Card)
 
 const LABEL_COLOR := Color.BLACK
 
@@ -24,8 +24,6 @@ var enemy_min_jump_time: float = 0.8
 var enemy_max_jump_time: float = 1.5
 var enemy_jump_distance: float = 150.0
 var in_battle: bool = false
-var inventory: Array = []
-var equipment_slots: Array = []
 var equipment: Dictionary = {}
 
 # UI references
@@ -37,19 +35,7 @@ var equipment: Dictionary = {}
 @onready var area: Area2D = $Area2D
 
 func _ready() -> void:
-	# Connect input_event signal of Area2D to this card
 	area.connect("input_event", Callable(self, "_on_area_input_event"))
-
-# --- Add an item to this card's inventory ---
-func add_to_inventory(item_card: Card) -> void:
-	if item_card in inventory:
-		return
-	inventory.append(item_card)
-
-# --- Remove an item from this card's inventory ---
-func remove_from_inventory(item_card: Card) -> void:
-	if item_card in inventory:
-		inventory.erase(item_card)
 
 # --- Helper for health ---
 func set_health(value: int) -> void:
@@ -77,14 +63,10 @@ func setup(subtype_name: String) -> void:
 		display_name_label.vertical_alignment = 1
 		display_name_label.text = display_name
 		display_name_label.self_modulate = LABEL_COLOR
-	# Equipment setup
-	if card_type == "unit" and data.has("equipment_slots"):
-		equipment_slots = data["equipment_slots"]
-		for slot_name in equipment_slots:
-			equipment[slot_name] = null
+	if $InventoryButton:
+		$InventoryButton.visible = (card_type == "unit")
 	# --- Stats setup ---
 	stats = data.get("stats", {})  # store all stats in a single dictionary
-	# Health
 	if stats.has("health") and stats["health"] > 0:
 		max_health = int(stats["health"])
 		set_health(max_health)
@@ -100,6 +82,9 @@ func setup(subtype_name: String) -> void:
 	attack = int(stats.get("attack", 0))
 	armor = int(stats.get("armor", 0))
 	attack_speed = float(stats.get("attack_speed", 1.0))
+	if card_type == "unit":
+		for slot_name in ["helmet", "chestplate", "leggings", "boots", "weapon", "shield", "accessory1", "accessory2"]:
+			equipment[slot_name] = null
 
 # --- Hover signals ---
 func _on_area_2d_mouse_entered() -> void:
@@ -110,4 +95,4 @@ func _on_area_2d_mouse_exited() -> void:
 
 func _on_area_input_event(viewport, event, shape_idx) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-		emit_signal("inventory_open_requested", self)
+		emit_signal("ui_zoom_update", self)
