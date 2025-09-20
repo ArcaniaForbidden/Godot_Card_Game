@@ -13,6 +13,7 @@ var stack_target_position: Vector2 = Vector2.ZERO
 var card_type: String = ""
 var subtype: String = ""
 var display_name: String = ""
+var slot: String = ""
 var stats: Dictionary = {}
 var health: int = 0
 var max_health: int = 0
@@ -24,15 +25,14 @@ var enemy_min_jump_time: float = 0.8
 var enemy_max_jump_time: float = 1.5
 var enemy_jump_distance: float = 150.0
 var in_battle: bool = false
-var equipment: Dictionary = {}
 
-# UI references
+# --- UI references ---
 @onready var display_name_label: Label = get_node_or_null("CardLabel")
 @onready var card_image: Sprite2D = get_node_or_null("CardImage")
 @onready var sprite_image: Sprite2D = get_node_or_null("SpriteImage")
 @onready var health_icon: Node2D = get_node_or_null("HealthIcon")
 @onready var health_label: Label = get_node_or_null("HealthLabel")
-@onready var area: Area2D = $Area2D
+@onready var area: Area2D = get_node_or_null("Area2D")
 
 func _ready() -> void:
 	area.connect("input_event", Callable(self, "_on_area_input_event"))
@@ -63,10 +63,12 @@ func setup(subtype_name: String) -> void:
 		display_name_label.vertical_alignment = 1
 		display_name_label.text = display_name
 		display_name_label.self_modulate = LABEL_COLOR
-	if $InventoryButton:
-		$InventoryButton.visible = (card_type == "unit")
+	if card_type == "equipment":
+		slot = data.get("slot", "")
+	else:
+		slot = ""
 	# --- Stats setup ---
-	stats = data.get("stats", {})  # store all stats in a single dictionary
+	stats = data.get("stats", {})
 	if stats.has("health") and stats["health"] > 0:
 		max_health = int(stats["health"])
 		set_health(max_health)
@@ -78,14 +80,15 @@ func setup(subtype_name: String) -> void:
 		if health_label:
 			health_label.text = ""
 			health_label.visible = false
-	# Store other internal stats for logic
 	attack = int(stats.get("attack", 0))
 	armor = int(stats.get("armor", 0))
 	attack_speed = float(stats.get("attack_speed", 1.0))
-	if card_type == "unit":
-		for slot_name in ["helmet", "chestplate", "leggings", "boots", "weapon", "shield", "accessory1", "accessory2"]:
-			equipment[slot_name] = null
-
+	if subtype == "peasant":
+		var equipment_scene = preload("res://Scenes/PeasantEquipment.tscn")
+		var equipment_panel = equipment_scene.instantiate()
+		add_child(equipment_panel)
+		equipment_panel.position = Vector2(0, 79)  # adjust as needed
+		equipment_panel.equipment_slots.visible = false
 # --- Hover signals ---
 func _on_area_2d_mouse_entered() -> void:
 	emit_signal("hovered", self)
@@ -93,6 +96,6 @@ func _on_area_2d_mouse_entered() -> void:
 func _on_area_2d_mouse_exited() -> void:
 	emit_signal("hovered_off", self)
 
-func _on_area_input_event(viewport, event, shape_idx) -> void:
+func _on_area_input_event(viewport: Object, event: InputEvent, shape_idx: int) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		emit_signal("ui_zoom_update", self)

@@ -6,7 +6,7 @@ const STACK_Y_OFFSET := 25.0            # Vertical spacing between cards in a st
 const DRAG_Z_INDEX := 100               # Z-index while dragging
 const OVERLAP_THRESHOLD := 30.0         # Percent overlap for merging stacks
 const ENEMY_STEP_DISTANCE := 150.0      # How far enemies move per step
-const ENEMY_IDLE_MIN := 0.8             # Min wait time before next step
+const ENEMY_IDLE_MIN := 0.8            	 # Min wait time before next step
 const ENEMY_IDLE_MAX := 1.5             # Max wait time before next step
 const ENEMY_TWEEN_DURATION := 0.3       # Tween duration for enemy movement
 const STACK_TWEEN_DURATION := 0.1       # Tween duration for stack visuals
@@ -52,6 +52,7 @@ func spawn_initial_cards() -> void:
 	spawn_card("peasant", Vector2(400, 200))
 	spawn_card("quarry", Vector2(400,400))
 	spawn_card("wooden_spear", Vector2(400,600))
+	spawn_card("wooden_spear", Vector2(400,700))
 	spawn_card("lumber_camp", Vector2(400,500))
 	spawn_card("tree", Vector2(500, 300))
 	spawn_card("rock", Vector2(600, 300))
@@ -71,7 +72,6 @@ func spawn_card(subtype: String, position: Vector2) -> Card:
 	card.setup(subtype)
 	card.is_being_dragged = false
 	card.target_position = position
-	card.connect("inventory_open_requested", Callable($InventoryPanel, "open_inventory"))
 	all_stacks.append([card])
 	return card
 
@@ -81,6 +81,8 @@ func spawn_card(subtype: String, position: Vector2) -> Card:
 func handle_mouse_press() -> void:
 	var card = raycast_check_for_card()
 	if not card:
+		return
+	if not card is Card:
 		return
 	if card.in_battle:
 		print("Cannot drag card in battle:", card.subtype)
@@ -129,6 +131,10 @@ func handle_dragging() -> void:
 		card.z_index = DRAG_Z_INDEX + i
 
 func start_drag(card: Card) -> void:
+	if card.get_parent() and card.get_parent() is EquipmentSlot:
+		var slot = card.get_parent() as EquipmentSlot
+		slot.unequip()
+		print("Unequipped card:", card.subtype)
 	var stack = find_stack(card)
 	var index = get_card_index_in_stack(card)
 	if index == -1:
@@ -163,6 +169,17 @@ func finish_drag() -> void:
 		SoundManager.play("card_drop", -6.0)
 	for c in dragged_substack:
 		c.is_being_dragged = false
+	# --- SLOT CHECK (only if single card and equipment) ---
+	if dragged_substack.size() == 1:
+		var card = dragged_substack[0]
+		if card.card_type == "equipment":
+			for slot in get_tree().get_nodes_in_group("equipment_slots"):
+				if slot.get_global_rect().has_point(card.global_position):
+					if slot.can_accept(card):
+						slot.equip(card)
+						dragged_substack.clear()
+						card_being_dragged = null
+						return  # <-- STOP HERE so we don't move it afterwards!
 	# Merge stacks only for non-battle cards
 	if dragged_substack[0].in_battle == false:
 		merge_overlapping_stacks(dragged_substack[0])
@@ -202,10 +219,17 @@ func merge_overlapping_stacks(card: Node2D) -> void:
 	var overlapping = get_overlapping_cards(card, OVERLAP_THRESHOLD)
 	if overlapping.size() == 0:
 		return
-	# Filter out any top cards that are in battle
-	overlapping = overlapping.filter(func(entry):
-		return not entry["card"].in_battle
-	)
+	# --- Filter by stackable types ---
+	if card.card_type == "equipment":
+		# Only merge with other equipment cards
+		overlapping = overlapping.filter(func(entry):
+			return entry["card"].card_type == "equipment" and not entry["card"].in_battle
+		)
+	else:
+		# Non-equipment cards never merge with equipment, skip any in battle
+		overlapping = overlapping.filter(func(entry):
+			return entry["card"].card_type != "equipment" and not entry["card"].in_battle
+		)
 	if overlapping.size() == 0:
 		return
 	# Find the stack with the maximum overlap
@@ -385,7 +409,16 @@ func debug_print_stacks() -> void:
 # ==============================
 #  INVENTORY FUNCTIONS
 # ==============================
-
+func register_unequipped_card(card: Card) -> void:
+	# Remove from any previous stack
+	for stack in all_stacks:
+		if card in stack:
+			stack.erase(card)
+	# Add as a new stack
+	all_stacks.append([card])
+	cards_moving[card] = card.position
+	cached_rects[card] = get_card_global_rect(card)
+	card.is_being_dragged = false
 
 # ==============================
 #  ENEMY MOVEMENT

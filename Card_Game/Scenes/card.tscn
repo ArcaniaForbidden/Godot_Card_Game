@@ -1,33 +1,32 @@
-[gd_scene load_steps=9 format=3 uid="uid://b16dp41rjjkpr"]
+[gd_scene load_steps=8 format=3 uid="uid://b16dp41rjjkpr"]
 
-[ext_resource type="Script" uid="uid://dgcfaf2fk8x65" path="res://Scripts/card.gd" id="1_rjlel"]
-[ext_resource type="Texture2D" uid="uid://dq1v6edrcxkv4" path="res://Images/basic_card.png" id="2_eumee"]
-[ext_resource type="Texture2D" uid="uid://c5bca3is75rpx" path="res://Images/peasant.png" id="3_bnspj"]
-[ext_resource type="FontFile" uid="uid://q6k4rvj4di0k" path="res://Fonts/MedodicaRegular.otf" id="4_e6po8"]
-[ext_resource type="Texture2D" uid="uid://codod5tgigybh" path="res://Images/heart_icon.png" id="4_eumee"]
-[ext_resource type="FontFile" uid="uid://0mmcd4660a7h" path="res://Fonts/BoldPixels.otf" id="6_bnspj"]
-[ext_resource type="Texture2D" uid="uid://cbfxqhsoyeyym" path="res://Images/unit_card_button.png" id="7_xnv4g"]
+[ext_resource type="Script" uid="uid://dgcfaf2fk8x65" path="res://Scripts/Card.gd" id="1_wejov"]
+[ext_resource type="Texture2D" uid="uid://dq1v6edrcxkv4" path="res://Images/basic_card.png" id="2_c6tr3"]
+[ext_resource type="Texture2D" uid="uid://c5bca3is75rpx" path="res://Images/peasant.png" id="3_1geux"]
+[ext_resource type="FontFile" uid="uid://q6k4rvj4di0k" path="res://Fonts/MedodicaRegular.otf" id="4_13sua"]
+[ext_resource type="Texture2D" uid="uid://codod5tgigybh" path="res://Images/heart_icon.png" id="5_pbuqb"]
+[ext_resource type="FontFile" uid="uid://0mmcd4660a7h" path="res://Fonts/BoldPixels.otf" id="6_f3ywt"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ig7tw"]
 size = Vector2(100, 140)
 
 [node name="Card" type="Node2D"]
-script = ExtResource("1_rjlel")
+script = ExtResource("1_wejov")
 
 [node name="CardImage" type="Sprite2D" parent="."]
-texture = ExtResource("2_eumee")
+texture = ExtResource("2_c6tr3")
 
 [node name="SpriteImage" type="Sprite2D" parent="."]
 position = Vector2(-1.90735e-06, 11)
 scale = Vector2(1.56, 1.57377)
-texture = ExtResource("3_bnspj")
+texture = ExtResource("3_1geux")
 
 [node name="CardLabel" type="Label" parent="."]
 offset_left = -42.0
 offset_top = -62.0
 offset_right = 42.0
 offset_bottom = -46.0
-theme_override_fonts/font = ExtResource("4_e6po8")
+theme_override_fonts/font = ExtResource("4_13sua")
 theme_override_font_sizes/font_size = 16
 text = "Miner"
 metadata/_edit_use_anchors_ = true
@@ -35,14 +34,14 @@ metadata/_edit_use_anchors_ = true
 [node name="HealthIcon" type="Sprite2D" parent="."]
 position = Vector2(28, -26)
 scale = Vector2(0.6875, 0.6875)
-texture = ExtResource("4_eumee")
+texture = ExtResource("5_pbuqb")
 
 [node name="HealthLabel" type="Label" parent="."]
 offset_left = 19.0
 offset_top = -37.0
 offset_right = 41.0
 offset_bottom = -15.0
-theme_override_fonts/font = ExtResource("6_bnspj")
+theme_override_fonts/font = ExtResource("6_f3ywt")
 theme_override_font_sizes/font_size = 16
 text = "1"
 horizontal_alignment = 1
@@ -53,14 +52,6 @@ metadata/_edit_use_anchors_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("RectangleShape2D_ig7tw")
-
-[node name="InventoryButton" type="TextureButton" parent="."]
-offset_left = -10.0
-offset_top = 59.0
-offset_right = 10.0
-offset_bottom = 79.0
-texture_normal = ExtResource("7_xnv4g")
-metadata/_edit_use_anchors_ = true
 
 [connection signal="mouse_entered" from="Area2D" to="." method="_on_area_2d_mouse_entered"]
 [connection signal="mouse_exited" from="Area2D" to="." method="_on_area_2d_mouse_exited"]

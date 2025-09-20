@@ -1,0 +1,63 @@
+[gd_scene load_steps=9 format=3 uid="uid://ccr8s4gxbxtpi"]
+
+[ext_resource type="Script" uid="uid://5pyhvmdqfmt3" path="res://Scripts/PeasantEquipment.gd" id="1_3p2di"]
+[ext_resource type="Texture2D" uid="uid://cbfxqhsoyeyym" path="res://Images/unit_card_button.png" id="2_4y8sc"]
+[ext_resource type="PackedScene" uid="uid://brr8fxy7pjwi3" path="res://Scenes/EquipmentSlot.tscn" id="3_a3o2m"]
+[ext_resource type="Texture2D" uid="uid://cbodk60bpvy7j" path="res://Images/slot_helmet.png" id="4_rtvxq"]
+[ext_resource type="Texture2D" uid="uid://da5cfkgdutycr" path="res://Images/slot_chestplate.png" id="5_2u4mr"]
+[ext_resource type="Texture2D" uid="uid://bv42uohqcydlj" path="res://Images/slot_leggings.png" id="6_18x2d"]
+[ext_resource type="Texture2D" uid="uid://e0plg5pn1ibd" path="res://Images/slot_boots.png" id="7_ipt63"]
+[ext_resource type="Texture2D" uid="uid://hujo67otpil6" path="res://Images/slot_weapon.png" id="8_djb5b"]
+
+[node name="PeasantEquipment" type="Node2D"]
+script = ExtResource("1_3p2di")
+
+[node name="EquipmentButton" type="TextureButton" parent="."]
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 10.0
+texture_normal = ExtResource("2_4y8sc")
+
+[node name="EquipmentSlots" type="Node2D" parent="."]
+
+[node name="HelmetSlot" parent="EquipmentSlots" instance=ExtResource("3_a3o2m")]
+position = Vector2(-240, 20)
+allowed_type = "helmet"
+
+[node name="Sprite2D" parent="EquipmentSlots/HelmetSlot" index="0"]
+texture = ExtResource("4_rtvxq")
+
+[node name="ChestplateSlot" parent="EquipmentSlots" instance=ExtResource("3_a3o2m")]
+position = Vector2(-120, 60)
+allowed_type = "chestplate"
+
+[node name="Sprite2D" parent="EquipmentSlots/ChestplateSlot" index="0"]
+texture = ExtResource("5_2u4mr")
+
+[node name="LeggingsSlot" parent="EquipmentSlots" instance=ExtResource("3_a3o2m")]
+position = Vector2(0, 100)
+allowed_type = "leggings"
+
+[node name="Sprite2D" parent="EquipmentSlots/LeggingsSlot" index="0"]
+texture = ExtResource("6_18x2d")
+
+[node name="BootsSlot" parent="EquipmentSlots" instance=ExtResource("3_a3o2m")]
+position = Vector2(120, 60)
+allowed_type = "boots"
+
+[node name="Sprite2D" parent="EquipmentSlots/BootsSlot" index="0"]
+texture = ExtResource("7_ipt63")
+
+[node name="WeaponSlot" parent="EquipmentSlots" instance=ExtResource("3_a3o2m")]
+position = Vector2(240, 20)
+allowed_type = "weapon"
+
+[node name="Sprite2D" parent="EquipmentSlots/WeaponSlot" index="0"]
+texture = ExtResource("8_djb5b")
+
+[editable path="EquipmentSlots/HelmetSlot"]
+[editable path="EquipmentSlots/ChestplateSlot"]
+[editable path="EquipmentSlots/LeggingsSlot"]
+[editable path="EquipmentSlots/BootsSlot"]
+[editable path="EquipmentSlots/WeaponSlot"]

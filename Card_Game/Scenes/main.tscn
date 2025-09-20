@@ -1,30 +1,28 @@
-[gd_scene load_steps=8 format=3 uid="uid://cghkxgbgp63bk"]
+[gd_scene load_steps=7 format=3 uid="uid://cghkxgbgp63bk"]
 
-[ext_resource type="Script" uid="uid://b4hgpxw38k73o" path="res://Scripts/card_manager.gd" id="1_0xm2m"]
-[ext_resource type="Script" uid="uid://cfr6qyn5qtva1" path="res://Scripts/battle_manager.gd" id="2_bo1nx"]
-[ext_resource type="Script" uid="uid://bd2o6y7pm6ld1" path="res://Scripts/job_manager.gd" id="3_8gbba"]
-[ext_resource type="Script" uid="uid://c6hfgigyf8pby" path="res://Scripts/camera.gd" id="4_jjvhh"]
-[ext_resource type="PackedScene" uid="uid://dl6721ymk2skv" path="res://Scenes/sound_manager.tscn" id="5_kry3j"]
-[ext_resource type="PackedScene" uid="uid://e8ajh2rt8q5g" path="res://Scenes/ui.tscn" id="6_6bp64"]
-[ext_resource type="Script" uid="uid://cjetr83a3quom" path="res://Scripts/ui_manager.gd" id="7_6bp64"]
+[ext_resource type="Script" uid="uid://b4hgpxw38k73o" path="res://Scripts/CardManager.gd" id="1_v1gob"]
+[ext_resource type="Script" uid="uid://cfr6qyn5qtva1" path="res://Scripts/BattleManager.gd" id="2_jw32o"]
+[ext_resource type="Script" uid="uid://bd2o6y7pm6ld1" path="res://Scripts/JobManager.gd" id="3_50glp"]
+[ext_resource type="Script" uid="uid://c6hfgigyf8pby" path="res://Scripts/Camera.gd" id="4_vy5pj"]
+[ext_resource type="PackedScene" uid="uid://dl6721ymk2skv" path="res://Scenes/SoundManager.tscn" id="5_bmxlf"]
+[ext_resource type="PackedScene" uid="uid://e8ajh2rt8q5g" path="res://Scenes/UIManager.tscn" id="6_4kpch"]
 
 [node name="Main" type="Node2D"]
 
 [node name="CardManager" type="Node2D" parent="."]
-script = ExtResource("1_0xm2m")
+script = ExtResource("1_v1gob")
 
 [node name="BattleManager" type="Node2D" parent="."]
-script = ExtResource("2_bo1nx")
+script = ExtResource("2_jw32o")
 
 [node name="JobManager" type="Node2D" parent="."]
-script = ExtResource("3_8gbba")
+script = ExtResource("3_50glp")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position_smoothing_enabled = true
 rotation_smoothing_enabled = true
-script = ExtResource("4_jjvhh")
+script = ExtResource("4_vy5pj")
 
-[node name="SoundManager" parent="." instance=ExtResource("5_kry3j")]
+[node name="SoundManager" parent="." instance=ExtResource("5_bmxlf")]
 
-[node name="UICanvasLayer" parent="." instance=ExtResource("6_6bp64")]
-script = ExtResource("7_6bp64")
+[node name="UIManager" parent="." instance=ExtResource("6_4kpch")]

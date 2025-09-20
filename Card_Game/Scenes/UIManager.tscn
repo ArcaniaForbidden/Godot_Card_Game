@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://e8ajh2rt8q5g"]
+[gd_scene load_steps=7 format=3 uid="uid://e8ajh2rt8q5g"]
 
 [ext_resource type="Texture2D" uid="uid://dq1v6edrcxkv4" path="res://Images/basic_card.png" id="1_as1yr"]
+[ext_resource type="Script" uid="uid://bsj7a0hun52jo" path="res://Scripts/UIManager.gd" id="1_felxf"]
 [ext_resource type="Texture2D" uid="uid://bdy54yb3tq71" path="res://Images/stone.png" id="2_sjxgx"]
 [ext_resource type="Texture2D" uid="uid://cuw86jqyoy45n" path="res://Images/card_zoom_background.png" id="3_a33nh"]
 [ext_resource type="FontFile" uid="uid://q6k4rvj4di0k" path="res://Fonts/MedodicaRegular.otf" id="11_vfi26"]
@@ -9,6 +10,7 @@
 texture = ExtResource("3_a33nh")
 
 [node name="UICanvasLayer" type="CanvasLayer"]
+script = ExtResource("1_felxf")
 
 [node name="CardZoomPanel" type="Panel" parent="."]
 offset_top = 800.0
@@ -35,6 +37,7 @@ offset_bottom = 258.0
 texture = ExtResource("2_sjxgx")
 
 [node name="CardZoomLabel" type="Label" parent="CardZoomPanel/CardZoomContainer"]
+layout_mode = 0
 offset_left = 16.0
 offset_top = 16.0
 offset_right = 184.0
@@ -46,19 +49,17 @@ text = "Miner"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="StatsPanelPanel" type="Panel" parent="."]
+[node name="StatsPanel" type="Panel" parent="."]
 anchors_preset = -1
-anchor_right = 0.07
-anchor_bottom = 0.037
 offset_left = 200.0
 offset_top = 800.0
-offset_right = 261.6
-offset_bottom = 1040.04
+offset_right = 396.0
+offset_bottom = 1080.0
 theme_override_styles/panel = SubResource("StyleBoxTexture_y1w80")
 
-[node name="StatsPanel" type="VBoxContainer" parent="StatsPanelPanel"]
+[node name="StatsVBoxContainer" type="VBoxContainer" parent="StatsPanel"]
 layout_mode = 0
 offset_left = 15.0
 offset_top = 17.0
-offset_right = 181.0
-offset_bottom = 264.0
+offset_right = 180.0
+offset_bottom = 263.0

@@ -4,7 +4,7 @@ class_name JobManager
 # --- References ---
 var card_manager: Node = null
 var battle_manager: Node = null
-var RecipeDatabase = preload("res://Scripts/recipe_database.gd")
+var RecipeDatabase = preload("res://Scripts/RecipeDatabase.gd")
 
 const PROGRESS_BAR_OFFSET := Vector2(-50, -100)  # above the bottom card
 const PROGRESS_BAR_SIZE := Vector2(100, 20)

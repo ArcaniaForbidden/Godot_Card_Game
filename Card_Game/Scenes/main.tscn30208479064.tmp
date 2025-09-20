@@ -1,4 +1,14 @@
-extends CanvasLayer
+[gd_scene load_steps=8 format=3 uid="uid://cghkxgbgp63bk"]
+
+[ext_resource type="Script" uid="uid://b4hgpxw38k73o" path="res://Scripts/card_manager.gd" id="1_0xm2m"]
+[ext_resource type="Script" uid="uid://cfr6qyn5qtva1" path="res://Scripts/battle_manager.gd" id="2_bo1nx"]
+[ext_resource type="Script" uid="uid://bd2o6y7pm6ld1" path="res://Scripts/job_manager.gd" id="3_8gbba"]
+[ext_resource type="Script" uid="uid://c6hfgigyf8pby" path="res://Scripts/camera.gd" id="4_jjvhh"]
+[ext_resource type="PackedScene" uid="uid://dl6721ymk2skv" path="res://Scenes/sound_manager.tscn" id="5_kry3j"]
+[ext_resource type="PackedScene" uid="uid://e8ajh2rt8q5g" path="res://Scenes/ui.tscn" id="6_6bp64"]
+
+[sub_resource type="GDScript" id="GDScript_21xkr"]
+script/source = "extends CanvasLayer
 class_name UIManager
 
 # --- UI References ---
@@ -17,14 +27,14 @@ func _ready() -> void:
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-		var card_manager = get_node("/root/Main/CardManager")
+		var card_manager = get_node(\"/root/Main/CardManager\")
 		var card = card_manager.raycast_check_for_card()
 		if card:
 			open_card_ui(card)
 		
 func open_card_ui(card: Node) -> void:
 	if not is_instance_valid(card):
-		print("Card is invalid!")
+		print(\"Card is invalid!\")
 		return
 	# Show the panels
 	card_zoom_panel.show()
@@ -40,23 +50,45 @@ func open_card_ui(card: Node) -> void:
 	for child in stats_panel.get_children():
 		child.queue_free()
 	var type_label = Label.new()
-	type_label.text = "Type: %s" % card.card_type.capitalize()
+	type_label.text = \"Type: %s\" % card.card_type.capitalize()
 	stats_panel.add_child(type_label)
 	# --- Display stats ---
 	for stat_name in card.stats.keys():
 		var stat_value = card.stats[stat_name]
 		if typeof(stat_value) == TYPE_DICTIONARY:
-			# For equipment stats like "add" and "mul"
+			# For equipment stats like \"add\" and \"mul\"
 			for sub_stat in stat_value.keys():
 				var label = Label.new()
-				label.text = "%s %s%s" % [
+				label.text = \"%s %s%s\" % [
 					sub_stat.capitalize(),
-					"+" if stat_name == "add" else "x",
+					\"+\" if stat_name == \"add\" else \"x\",
 					str(stat_value[sub_stat])
 				]
 				stats_panel.add_child(label)
 		else:
 			# Normal stats like health, attack, armor
 			var label = Label.new()
-			label.text = "%s: %s" % [stat_name.capitalize(), str(stat_value)]
+			label.text = \"%s: %s\" % [stat_name.capitalize(), str(stat_value)]
 			stats_panel.add_child(label)
+"
+
+[node name="Main" type="Node2D"]
+
+[node name="CardManager" type="Node2D" parent="."]
+script = ExtResource("1_0xm2m")
+
+[node name="BattleManager" type="Node2D" parent="."]
+script = ExtResource("2_bo1nx")
+
+[node name="JobManager" type="Node2D" parent="."]
+script = ExtResource("3_8gbba")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position_smoothing_enabled = true
+rotation_smoothing_enabled = true
+script = ExtResource("4_jjvhh")
+
+[node name="SoundManager" parent="." instance=ExtResource("5_kry3j")]
+
+[node name="UICanvasLayer" parent="." instance=ExtResource("6_6bp64")]
+script = SubResource("GDScript_21xkr")

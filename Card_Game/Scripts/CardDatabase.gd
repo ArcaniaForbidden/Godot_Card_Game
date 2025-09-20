@@ -13,7 +13,6 @@ static var card_database = {
 			"armor": 0,
 			"attack_speed": 0.8
 		},
-		"equipment_slots": ["helmet", "chestplate", "leggings", "boots", "weapon", "shield", "accessory1", "accessory2"]
 	},
 	"rock": {
 		"card": preload("res://Images/basic_card.png"),
