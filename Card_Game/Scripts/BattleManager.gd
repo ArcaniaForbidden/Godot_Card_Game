@@ -50,13 +50,13 @@ func update_battle_detection() -> void:
 				var enemy_card = enemy_stack[-1]
 				if enemy_card.card_type != "enemy":
 					continue
-				if card_manager.get_card_global_rect(unit_card).intersects(card_manager.get_card_global_rect(enemy_card)):
+				if card_manager.get_node_global_rect(unit_card).intersects(card_manager.get_node_global_rect(enemy_card)):
 					overlaps = true
 					break
 			if overlaps:
 				break
 			for battle in active_battles:
-				if card_manager.get_card_global_rect(unit_card).intersects(battle.rect):
+				if card_manager.get_node_global_rect(unit_card).intersects(battle.rect):
 					overlaps = true
 					break
 			if overlaps:
@@ -90,7 +90,7 @@ func start_battle(unit_cards: Array) -> void:
 			var top_card = stack[-1]
 			if top_card.card_type != "enemy":
 				continue
-			if card_manager.get_card_global_rect(unit_card).intersects(card_manager.get_card_global_rect(top_card)):
+			if card_manager.get_node_global_rect(unit_card).intersects(card_manager.get_node_global_rect(top_card)):
 				enemy_card = top_card
 				break
 		if enemy_card == null:
@@ -204,13 +204,13 @@ func check_and_add_cards(battle: BattleZone) -> void:
 		if unit_cards.size() == 0 and enemy_cards.size() == 0:
 			continue
 		for unit_card in unit_cards:
-			if card_manager.get_card_global_rect(unit_card).intersects(zone_rect):
+			if card_manager.get_node_global_rect(unit_card).intersects(zone_rect):
 				if unit_card not in battle.units:
 					battle.units.append(unit_card)
 				mark_card_in_battle(unit_card)
 				battle.attack_timers[unit_card] = 0.0
 		for enemy_card in enemy_cards:
-			if card_manager.get_card_global_rect(enemy_card).intersects(zone_rect):
+			if card_manager.get_node_global_rect(enemy_card).intersects(zone_rect):
 				if enemy_card not in battle.enemies:
 					battle.enemies.append(enemy_card)
 				mark_card_in_battle(enemy_card)
@@ -342,9 +342,9 @@ func calculate_battle_zone_rect(battle: BattleZone) -> Rect2:
 	var all_cards = battle.units + battle.enemies
 	if all_cards.is_empty():
 		return Rect2()
-	var rect = card_manager.get_card_global_rect(all_cards[0])
+	var rect = card_manager.get_node_global_rect(all_cards[0])
 	for i in range(1, all_cards.size()):
-		rect = rect.merge(card_manager.get_card_global_rect(all_cards[i]))
+		rect = rect.merge(card_manager.get_node_global_rect(all_cards[i]))
 	return rect
 
 func animate_attack(attacker: Card, target: Card) -> void:

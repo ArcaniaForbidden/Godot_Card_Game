@@ -26,36 +26,50 @@ func open_card_ui(card: Node) -> void:
 	if not is_instance_valid(card):
 		print("Card is invalid!")
 		return
-	# Show the panels
+	# Show panels
 	card_zoom_panel.show()
 	stats_panel.show()
 	card_zoom.show()
 	sprite_zoom.show()
 	card_zoom_label.show()
-	# Set the textures
+	# Set textures
 	card_zoom.texture = card.card_image.texture
 	sprite_zoom.texture = card.sprite_image.texture
 	card_zoom_label.text = card.display_name
-	# --- Clear previous stats ---
+	# Clear previous stats
+	# Clear previous stats
 	for child in stats_vbox_container.get_children():
 		child.queue_free()
 	# Type label
 	var type_label = Label.new()
 	type_label.text = "Type: %s" % card.card_type.capitalize()
 	stats_vbox_container.add_child(type_label)
-	# Display stats
-	for stat_name in card.stats.keys():
-		var stat_value = card.stats[stat_name]
-		if typeof(stat_value) == TYPE_DICTIONARY:
-			for sub_stat in stat_value.keys():
+	# Check if this card is equipment
+	if card.card_type == "equipment" and card.stats:
+		if card.stats.has("add"):
+			for stat_name in card.stats["add"].keys():
 				var label = Label.new()
-				label.text = "%s %s%s" % [
-					sub_stat.capitalize(),
-					"+" if stat_name == "add" else "x",
-					str(stat_value[sub_stat])
-				]
+				label.text = "%s: +%s" % [stat_name.capitalize(), str(card.stats["add"][stat_name])]
 				stats_vbox_container.add_child(label)
-		else:
-			var label = Label.new()
-			label.text = "%s: %s" % [stat_name.capitalize(), str(stat_value)]
-			stats_vbox_container.add_child(label)
+		if card.stats.has("mul"):
+			for stat_name in card.stats["mul"].keys():
+				var label = Label.new()
+				label.text = "%s: x%s" % [stat_name.capitalize(), str(card.stats["mul"][stat_name])]
+				stats_vbox_container.add_child(label)
+	else:
+		# Normal unit or building stats
+		for stat_name in card.stats.keys():
+			var stat_value = card.stats[stat_name]
+			if typeof(stat_value) == TYPE_DICTIONARY:
+				for sub_stat in stat_value.keys():
+					var label = Label.new()
+					label.text = "%s %s%s" % [
+						sub_stat.capitalize(),
+						"+" if stat_name == "add" else "x",
+						str(stat_value[sub_stat])
+					]
+					stats_vbox_container.add_child(label)
+			else:
+				var label = Label.new()
+				label.text = "%s: %s" % [stat_name.capitalize(), str(stat_value)]
+				stats_vbox_container.add_child(label)

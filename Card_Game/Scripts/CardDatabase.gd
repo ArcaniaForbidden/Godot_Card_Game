@@ -107,5 +107,21 @@ static var card_database = {
 				"attack_speed": 0.9  # 10% slower attacks
 			}
 		}
+	},
+	"iron_spear": {
+		"card": preload("res://Images/unit_card.png"),
+		"sprite": preload("res://Images/wolf.png"),
+		"card_type": "equipment",
+		"slot": "weapon",
+		"display_name": "Iron Spear",
+		"description": "A bigger spear",
+		"stats": {
+			"add": {
+				"attack": 2
+			},
+			"mul": {
+				"attack_speed": 1.0  # 10% slower attacks
+			}
+		}
 	}
 }

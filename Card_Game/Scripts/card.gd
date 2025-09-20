@@ -68,7 +68,7 @@ func setup(subtype_name: String) -> void:
 	else:
 		slot = ""
 	# --- Stats setup ---
-	stats = data.get("stats", {})
+	stats = data.get("stats", {}).duplicate(true)
 	if stats.has("health") and stats["health"] > 0:
 		max_health = int(stats["health"])
 		set_health(max_health)
@@ -89,6 +89,7 @@ func setup(subtype_name: String) -> void:
 		add_child(equipment_panel)
 		equipment_panel.position = Vector2(0, 79)  # adjust as needed
 		equipment_panel.equipment_slots.visible = false
+
 # --- Hover signals ---
 func _on_area_2d_mouse_entered() -> void:
 	emit_signal("hovered", self)

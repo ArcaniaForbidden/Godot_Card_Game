@@ -1,4 +1,5 @@
 extends Node2D
+class_name CardManager
 
 # --- Constants ---
 const COLLISION_MASK_CARD := 1
@@ -11,6 +12,9 @@ const ENEMY_IDLE_MAX := 1.5             # Max wait time before next step
 const ENEMY_TWEEN_DURATION := 0.3       # Tween duration for enemy movement
 const STACK_TWEEN_DURATION := 0.1       # Tween duration for stack visuals
 const PLAY_AREA := Rect2(Vector2(-2000, -1000), Vector2(4000, 2000))
+const OUTPUT_MIN_DIST := 100.0
+const OUTPUT_MAX_DIST := 150.0
+const OUTPUT_TWEEN_TIME := 0.3
 
 # --- Member variables ---
 var card_being_dragged: Node2D = null
@@ -53,6 +57,7 @@ func spawn_initial_cards() -> void:
 	spawn_card("quarry", Vector2(400,400))
 	spawn_card("wooden_spear", Vector2(400,600))
 	spawn_card("wooden_spear", Vector2(400,700))
+	spawn_card("iron_spear", Vector2(400,800))
 	spawn_card("lumber_camp", Vector2(400,500))
 	spawn_card("tree", Vector2(500, 300))
 	spawn_card("rock", Vector2(600, 300))
@@ -133,6 +138,9 @@ func handle_dragging() -> void:
 func start_drag(card: Card) -> void:
 	if card.get_parent() and card.get_parent() is EquipmentSlot:
 		var slot = card.get_parent() as EquipmentSlot
+		if not slot.active:
+			print("⛔ Tried to drag from", slot.name, "but it is inactive. Ignoring.")
+			return
 		slot.unequip()
 		print("Unequipped card:", card.subtype)
 	var stack = find_stack(card)
@@ -174,12 +182,23 @@ func finish_drag() -> void:
 		var card = dragged_substack[0]
 		if card.card_type == "equipment":
 			for slot in get_tree().get_nodes_in_group("equipment_slots"):
+				# Ignore hidden/inactive slots
+				if not slot.active:
+					continue
 				if slot.get_global_rect().has_point(card.global_position):
 					if slot.can_accept(card):
+						# Slot empty → equip normally
 						slot.equip(card)
-						dragged_substack.clear()
-						card_being_dragged = null
-						return  # <-- STOP HERE so we don't move it afterwards!
+					else:
+						# Slot occupied → swap
+						if slot.equipped_card:
+							var old_card = slot.equipped_card
+							slot.unequip()
+							register_unequipped_card(old_card, true)
+							slot.equip(card)
+					dragged_substack.clear()
+					card_being_dragged = null
+					return  # stop further processing
 	# Merge stacks only for non-battle cards
 	if dragged_substack[0].in_battle == false:
 		merge_overlapping_stacks(dragged_substack[0])
@@ -219,16 +238,25 @@ func merge_overlapping_stacks(card: Node2D) -> void:
 	var overlapping = get_overlapping_cards(card, OVERLAP_THRESHOLD)
 	if overlapping.size() == 0:
 		return
-	# --- Filter by stackable types ---
+	# Filter by stackable types AND equipment slot visibility
 	if card.card_type == "equipment":
-		# Only merge with other equipment cards
 		overlapping = overlapping.filter(func(entry):
-			return entry["card"].card_type == "equipment" and not entry["card"].in_battle
+			var other_card = entry["card"]
+			if other_card.card_type != "equipment" or other_card.in_battle:
+				return false
+			# Check if the card is in an EquipmentSlot
+			if other_card.get_parent() and other_card.get_parent() is EquipmentSlot:
+				var slot = other_card.get_parent() as EquipmentSlot
+				# Ignore inactive slots
+				if not slot.active:
+					return false
+			return true
 		)
 	else:
-		# Non-equipment cards never merge with equipment, skip any in battle
+		# Non-equipment cards never merge with equipment or in-battle cards
 		overlapping = overlapping.filter(func(entry):
-			return entry["card"].card_type != "equipment" and not entry["card"].in_battle
+			var other_card = entry["card"]
+			return other_card.card_type != "equipment" and not other_card.in_battle
 		)
 	if overlapping.size() == 0:
 		return
@@ -319,16 +347,33 @@ func raycast_check_for_card() -> Node2D:
 	parameters.position = get_global_mouse_position()
 	parameters.collide_with_areas = true
 	parameters.collision_mask = COLLISION_MASK_CARD
-	var result = space_state.intersect_point(parameters)
-	if result.size() > 0:
-		return get_card_with_highest_z_index(result)
-	return null
+	var results = space_state.intersect_point(parameters)
+	if results.size() == 0:
+		return null
+	var valid_cards: Array = []
+	for r in results:
+		if not r.has("collider"):
+			continue
+		var card = r.collider.get_parent()
+		if not card is Card:
+			continue
+		# If card is in a slot, skip it only if the slot is inactive or invisible
+		if card.get_parent() is EquipmentSlot:
+			var slot = card.get_parent() as EquipmentSlot
+			if not slot.active or not slot.visible:
+				continue
+		valid_cards.append(card)
+	if valid_cards.size() == 0:
+		return null
+	return get_card_with_highest_z_index(valid_cards)
 
 func get_card_with_highest_z_index(cards: Array) -> Node2D:
-	var highest_z_card = cards[0].collider.get_parent()
+	if cards.size() == 0:
+		return null
+	var highest_z_card = cards[0]
 	var highest_z_index = highest_z_card.z_index
 	for i in range(1, cards.size()):
-		var current_card = cards[i].collider.get_parent()
+		var current_card = cards[i]
 		if current_card.z_index > highest_z_index:
 			highest_z_card = current_card
 			highest_z_index = current_card.z_index
@@ -336,7 +381,7 @@ func get_card_with_highest_z_index(cards: Array) -> Node2D:
 
 func get_overlapping_cards(card: Node2D, min_overlap_percent := OVERLAP_THRESHOLD) -> Array:
 	var overlapping: Array = []
-	var rect_a = get_card_global_rect(card)
+	var rect_a = get_node_global_rect(card)
 	if rect_a.size == Vector2.ZERO:
 		return overlapping
 	for stack in all_stacks:
@@ -345,7 +390,7 @@ func get_overlapping_cards(card: Node2D, min_overlap_percent := OVERLAP_THRESHOL
 		var top_card = stack[-1]
 		if not is_instance_valid(top_card) or top_card.card_type == "enemy":
 			continue
-		var rect_b = get_card_global_rect(top_card)
+		var rect_b = get_node_global_rect(top_card)
 		var intersection = rect_a.intersection(rect_b)
 		if intersection.size.x > 0 and intersection.size.y > 0:
 			var overlap_percent = (intersection.size.x * intersection.size.y) / (rect_a.size.x * rect_a.size.y) * 100.0
@@ -353,36 +398,27 @@ func get_overlapping_cards(card: Node2D, min_overlap_percent := OVERLAP_THRESHOL
 				overlapping.append({"card": top_card, "overlap": overlap_percent})
 	return overlapping
 
-func get_card_global_rect(card: Node2D) -> Rect2:
-	if not is_instance_valid(card):
-		return Rect2()
-	if cached_rects.has(card):
-		return cached_rects[card]
-	var rect = calculate_card_global_rect(card)
-	cached_rects[card] = rect
-	return rect
+static func get_node_global_rect(node: Node2D) -> Rect2:
+	var area = node.get_node_or_null("Area2D")
+	if not area:
+		return Rect2(node.global_position, Vector2.ZERO)
+	var shape_node = area.get_node_or_null("CollisionShape2D")
+	if not shape_node or not shape_node.shape:
+		return Rect2(area.global_position, Vector2.ZERO)
+	var shape = shape_node.shape
+	var pos = shape_node.get_global_position()
+	if shape is RectangleShape2D:
+		return Rect2(pos - shape.extents, shape.extents * 2)
+	var aabb = shape.get_rect()
+	aabb.position += pos
+	return aabb
 
 func calculate_card_global_rect(card: Node2D) -> Rect2:
 	if not is_instance_valid(card):
 		return Rect2(Vector2.ZERO, Vector2.ZERO)
 	if cached_rects.has(card):
 		return cached_rects[card]
-	var area = card.get_node_or_null("Area2D")
-	if not area:
-		return Rect2(Vector2.ZERO, Vector2.ZERO)
-	var collision_shape = area.get_node_or_null("CollisionShape2D")
-	if not collision_shape or not collision_shape.shape:
-		return Rect2(Vector2.ZERO, Vector2.ZERO)
-	var shape = collision_shape.shape
-	var pos = collision_shape.get_global_position()
-	var rect = Rect2()
-	if shape is RectangleShape2D:
-		var size = shape.extents * 2
-		rect = Rect2(pos - shape.extents, size)
-	else:
-		var aabb = shape.get_rect()
-		aabb.position += pos
-		rect = aabb
+	var rect = CardManager.get_node_global_rect(card)
 	cached_rects[card] = rect
 	return rect
 
@@ -409,16 +445,30 @@ func debug_print_stacks() -> void:
 # ==============================
 #  INVENTORY FUNCTIONS
 # ==============================
-func register_unequipped_card(card: Card) -> void:
+func register_unequipped_card(card: Card, popout: bool = false) -> void:
 	# Remove from any previous stack
 	for stack in all_stacks:
 		if card in stack:
 			stack.erase(card)
 	# Add as a new stack
 	all_stacks.append([card])
-	cards_moving[card] = card.position
-	cached_rects[card] = get_card_global_rect(card)
 	card.is_being_dragged = false
+	# Keep the card at its current global position
+	card.global_position = card.global_position
+	# Optional popout animation
+	if popout:
+		var origin = card.global_position
+		var angle = randf() * TAU
+		var distance = randf_range(OUTPUT_MIN_DIST, OUTPUT_MAX_DIST)
+		var target_pos = origin + Vector2(cos(angle), sin(angle)) * distance
+		var tween = get_tree().create_tween()
+		tween.tween_property(card, "position", target_pos, OUTPUT_TWEEN_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		if card_tweens != null:
+			card_tweens[card] = tween
+	else:
+		# Just keep its position
+		cards_moving[card] = card.position
+		cached_rects[card] = get_node_global_rect(card)
 
 # ==============================
 #  ENEMY MOVEMENT

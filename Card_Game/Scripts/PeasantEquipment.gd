@@ -16,13 +16,19 @@ func _ready() -> void:
 	inventory_button.connect("pressed", Callable(self, "_on_equipment_button_pressed"))
 
 func _process(delta: float) -> void:
-	# Automatically close inventory if the card enters battle
 	if parent_card and parent_card.in_battle and equipment_slots.visible:
 		equipment_slots.visible = false
 
 func _on_equipment_button_pressed() -> void:
-	if not parent_card:
+	if not parent_card or parent_card.in_battle:
 		return
-	if parent_card.in_battle:
-		return
-	equipment_slots.visible = not equipment_slots.visible
+	_toggle_equipment_slots(not equipment_slots.visible)
+
+func _toggle_equipment_slots(state: bool) -> void:
+	equipment_slots.visible = state
+	var state_text := "OPEN" if state else "CLOSED"
+	for slot in equipment_slots.get_children():
+		if slot is EquipmentSlot:
+			slot.active = state
+			if slot.has_node("Area2D"):
+				slot.get_node("Area2D").monitoring = state
