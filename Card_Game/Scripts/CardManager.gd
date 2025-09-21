@@ -5,7 +5,7 @@ class_name CardManager
 const COLLISION_MASK_CARD := 1
 const STACK_Y_OFFSET := 25.0            # Vertical spacing between cards in a stack
 const DRAG_Z_INDEX := 100               # Z-index while dragging
-const OVERLAP_THRESHOLD := 30.0         # Percent overlap for merging stacks
+const OVERLAP_THRESHOLD := 10.0         # Percent overlap for merging stacks
 const ENEMY_STEP_DISTANCE := 150.0      # How far enemies move per step
 const ENEMY_IDLE_MIN := 0.8            	 # Min wait time before next step
 const ENEMY_IDLE_MAX := 1.5             # Max wait time before next step
@@ -15,6 +15,8 @@ const PLAY_AREA := Rect2(Vector2(-2000, -1000), Vector2(4000, 2000))
 const OUTPUT_MIN_DIST := 100.0
 const OUTPUT_MAX_DIST := 150.0
 const OUTPUT_TWEEN_TIME := 0.3
+const PUSH_STRENGTH := 0.3
+const PUSH_ITERATIONS := 10
 
 # --- Member variables ---
 var card_being_dragged: Node2D = null
@@ -213,48 +215,48 @@ func merge_overlapping_stacks(card: Node2D) -> void:
 	var dragged_stack = find_stack(card)
 	if dragged_stack.is_empty():
 		return
-	# Bottom card of dragged stack
 	var dragged_bottom_card = dragged_stack[0]
-	# Iterate over overlapping stacks
+	# --- Find the overlapping stack with the maximum overlap ---
+	var max_overlap_entry = null
 	for entry in overlapping:
 		var target_stack = find_stack(entry["card"])
 		if target_stack.is_empty():
 			continue
-		# Top card of target stack
 		var target_top_card = target_stack[-1]
 		var dragged_type = dragged_bottom_card.card_type
 		var target_type = target_top_card.card_type
-		# Check allowed stacking rules
 		if not allowed_stack_types.has(dragged_type):
 			continue
 		if not target_type in allowed_stack_types[dragged_type]:
 			continue
-		# --- Type allowed: merge stacks ---
-		# Kill any existing tweens
-		for c in dragged_stack:
+		if max_overlap_entry == null or entry["overlap"] > max_overlap_entry["overlap"]:
+			max_overlap_entry = entry
+	if max_overlap_entry == null:
+		return
+	# --- Merge with the stack that has the maximum overlap ---
+	var target_stack = find_stack(max_overlap_entry["card"])
+	# Kill tweens for smooth merge
+	for c in dragged_stack:
+		if is_instance_valid(c):
+			kill_card_tween(c)
+	for c in target_stack:
+		if is_instance_valid(c):
+			kill_card_tween(c)
+	# Append dragged stack to target stack
+	for c in dragged_stack:
+		if is_instance_valid(c):
+			target_stack.append(c)
+	if all_stacks.has(dragged_stack):
+		all_stacks.erase(dragged_stack)
+	# Snap positions and recalc z-index
+	if target_stack.size() > 0 and is_instance_valid(target_stack[0]):
+		var base_pos = target_stack[0].position
+		for i in range(target_stack.size()):
+			var c = target_stack[i]
 			if is_instance_valid(c):
-				kill_card_tween(c)
-		for c in target_stack:
-			if is_instance_valid(c):
-				kill_card_tween(c)
-		# Append dragged stack to target stack
-		for c in dragged_stack:
-			if is_instance_valid(c):
-				target_stack.append(c)
-		# Remove old reference
-		if all_stacks.has(dragged_stack):
-			all_stacks.erase(dragged_stack)
-		# Snap positions and recalc z-index
-		if target_stack.size() > 0 and is_instance_valid(target_stack[0]):
-			var base_pos = target_stack[0].position
-			for i in range(target_stack.size()):
-				var c = target_stack[i]
-				if is_instance_valid(c):
-					c.position = base_pos + Vector2(0, i * STACK_Y_OFFSET)
-					c.z_index = i + 1
-		# Tween visuals for smooth merge
-		update_stack_visuals(target_stack, target_stack[0].position)
-		return  # Only merge with one stack
+				c.position = base_pos + Vector2(0, i * STACK_Y_OFFSET)
+				c.z_index = i + 1
+	update_stack_visuals(target_stack, target_stack[0].position)
 
 func update_stack_visuals(stack: Array, base_position: Vector2, y_offset: float = STACK_Y_OFFSET) -> void:
 	for i in range(stack.size()):
