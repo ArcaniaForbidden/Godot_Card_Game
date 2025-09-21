@@ -1,122 +1,82 @@
 extends Node2D
 class_name EquipmentSlot
 
-@export var allowed_type: String = "" 
-@export var active: bool = true
+@export var allowed_type: String = ""        # e.g., "weapon", "helmet"
+var equipped_card: Card = null               # The card currently in this slot
 
-var equipped_card: Card = null
+# Reference to the owning Peasant card
+var owner_card: Card = null
 
-# --- Called when the game starts ---
-func _ready() -> void:
-	add_to_group("equipment_slots")
+func setup(owner: Card) -> void:
+	owner_card = owner
 
-# --- Utility to get the Peasant card this slot belongs to ---
-func get_owner_card() -> Card:
-	var panel = get_parent() # EquipmentSlots
-	if not panel:
-		return null
-	var equipment_node = panel.get_parent() # PeasantEquipment
-	if not equipment_node:
-		return null
-	var peasant_card = equipment_node.get_parent() # Actual Peasant card
-	if peasant_card and peasant_card is Card:
-		return peasant_card
-	return null
-
-func get_global_rect() -> Rect2:
-	var card_manager = get_tree().get_root().get_node("Main/CardManager")
-	return card_manager.get_node_global_rect(self)
-
-# --- Check if a card can be equipped in this slot ---
+# Check if a card can be equipped here
 func can_accept(card: Card) -> bool:
-	if not active:
-		print("⛔", name, "is inactive, rejecting equip.")
+	if equipped_card != null:
 		return false
-	return equipped_card == null and card.card_type == "equipment" and card.slot == allowed_type
+	return card.card_type == "equipment" and card.slot == allowed_type
 
-# --- Equip a card ---
+# Equip a card into this slot
 func equip(card: Card) -> void:
 	if not can_accept(card):
 		return
+	# Reparent card to this slot
 	if card.get_parent():
 		card.get_parent().remove_child(card)
 	add_child(card)
 	card.position = Vector2.ZERO
 	card.is_being_dragged = false
 	equipped_card = card
-	print("✅ Equipping card:", card.subtype, "to slot:", name)
+	# Apply equipment stats
+	_apply_equipment_stats(card)
 
-	# Update the stats of the owner Peasant card
-	var owner = get_owner_card()
-	if owner:
-		_apply_equipment_stats(owner, card)
-
-# --- Unequip the currently equipped card ---
+# Unequip the card from this slot
 func unequip() -> void:
-	if not active:
-		print("⛔", name, "is inactive, skipping unequip.")
+	if equipped_card == null:
 		return
-	if not equipped_card:
-		print("Nothing to unequip")
-		return
-	
 	var card_to_return = equipped_card
 	equipped_card = null
-	
-	# Remove equipment stats from owner card
-	var owner = get_owner_card()
-	if owner and card_to_return:
-		_remove_equipment_stats(owner, card_to_return)
-	
-	# Remove the equipment node from this slot and return to CardManager
+	# Remove stats
+	_remove_equipment_stats(card_to_return)
+	# Return card to CardManager
 	remove_child(card_to_return)
 	var card_manager = get_tree().get_root().get_node("Main/CardManager")
 	card_manager.add_child(card_to_return)
 	card_to_return.global_position = global_position
 	card_to_return.is_being_dragged = false
-	
-	if card_manager.has_method("register_unequipped_card"):
-		card_manager.register_unequipped_card(card_to_return)
-	print("🛠 Unequipped card:", card_to_return.subtype)
 
-# --- Apply equipment stats to a Peasant card ---
-func _apply_equipment_stats(owner: Card, equipment: Card) -> void:
-	if not equipment.stats:
+# Apply stats to owner card
+func _apply_equipment_stats(equipment: Card) -> void:
+	if not owner_card or not equipment.stats:
 		return
 	if equipment.stats.has("add"):
 		for stat in equipment.stats["add"].keys():
-			if owner.stats.has(stat):
-				owner.stats[stat] += equipment.stats["add"][stat]
-			else:
-				owner.stats[stat] = equipment.stats["add"][stat]
+			owner_card.stats[stat] = owner_card.stats.get(stat, 0) + equipment.stats["add"][stat]
 	if equipment.stats.has("mul"):
 		for stat in equipment.stats["mul"].keys():
-			if owner.stats.has(stat):
-				owner.stats[stat] *= equipment.stats["mul"][stat]
-			else:
-				owner.stats[stat] = equipment.stats["mul"][stat]
-	_update_owner_properties(owner)
+			owner_card.stats[stat] = owner_card.stats.get(stat, 1) * equipment.stats["mul"][stat]
+	_update_owner_properties()
 
-# --- Remove equipment stats from a Peasant card ---
-func _remove_equipment_stats(owner: Card, equipment: Card) -> void:
-	if not equipment.stats:
+# Remove stats from owner card
+func _remove_equipment_stats(equipment: Card) -> void:
+	if not owner_card or not equipment.stats:
 		return
 	if equipment.stats.has("add"):
 		for stat in equipment.stats["add"].keys():
-			if owner.stats.has(stat):
-				owner.stats[stat] -= equipment.stats["add"][stat]
+			owner_card.stats[stat] -= equipment.stats["add"][stat]
 	if equipment.stats.has("mul"):
 		for stat in equipment.stats["mul"].keys():
-			if owner.stats.has(stat):
-				owner.stats[stat] /= equipment.stats["mul"][stat]
-	_update_owner_properties(owner)
+			owner_card.stats[stat] /= equipment.stats["mul"][stat]
+	_update_owner_properties()
 
-# --- Update the Card properties for easier access ---
-func _update_owner_properties(owner: Card) -> void:
-	owner.attack = int(owner.stats.get("attack", 0))
-	owner.armor = int(owner.stats.get("armor", 0))
-	owner.attack_speed = float(owner.stats.get("attack_speed", 1.0))
-	if owner.stats.has("health"):
-		owner.max_health = int(owner.stats["health"])
-		if owner.health > owner.max_health:
-			owner.set_health(owner.max_health)
+# Update Card properties for easy access
+func _update_owner_properties() -> void:
+	if not owner_card:
+		return
+	owner_card.attack = int(owner_card.stats.get("attack", 0))
+	owner_card.armor = int(owner_card.stats.get("armor", 0))
+	owner_card.attack_speed = float(owner_card.stats.get("attack_speed", 1.0))
+	if owner_card.stats.has("health"):
+		owner_card.max_health = int(owner_card.stats["health"])
+		if owner_card.health > owner_card.max_health:
+			owner_card.set_health(owner_card.max_health)

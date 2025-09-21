@@ -17,7 +17,6 @@ class BattleZone:
 	var visual: ColorRect = null   # optional visible rectangle
 	var center_position: Vector2 = Vector2.ZERO  # central point of the battle
 	var attack_timers: Dictionary = {}  # tracks attack timers per card
-	var healing_sources = []  # Array of dictionaries
 
 func _ready() -> void:
 	card_manager = get_parent().get_node("CardManager")

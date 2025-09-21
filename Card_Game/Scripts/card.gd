@@ -83,14 +83,15 @@ func setup(subtype_name: String) -> void:
 	attack = int(stats.get("attack", 0))
 	armor = int(stats.get("armor", 0))
 	attack_speed = float(stats.get("attack_speed", 1.0))
+	if subtype == "peasant" and not has_node("PeasantEquipment"):
+		var peasant_equipment_scene = preload("res://Scenes/PeasantEquipment.tscn")
+		var equipment_instance = peasant_equipment_scene.instantiate()
+		add_child(equipment_instance)
+		equipment_instance.parent_card = self
+		equipment_instance.position = Vector2(0, 80)
+		equipment_instance.get_node("EquipmentButton").visible = true
 
 # --- Hover signals ---
-func _on_area_2d_mouse_entered() -> void:
-	emit_signal("hovered", self)
-
-func _on_area_2d_mouse_exited() -> void:
-	emit_signal("hovered_off", self)
-
 func _on_area_input_event(viewport: Object, event: InputEvent, shape_idx: int) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		emit_signal("ui_zoom_update", self)

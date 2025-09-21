@@ -21,7 +21,7 @@ var card_being_dragged: Node2D = null
 var dragged_substack: Array = []
 var drag_offset: Vector2 = Vector2.ZERO
 var all_stacks: Array = []
-var card_scene = preload("res://Scenes/card.tscn")
+var card_scene = preload("res://Scenes/Card.tscn")
 var battle_manager: Node = null
 var job_manager: Node = null
 var screen_size: Vector2
@@ -84,18 +84,16 @@ func spawn_card(subtype: String, position: Vector2) -> Card:
 #  DRAG & STACK MANAGEMENT
 # ==============================
 func handle_mouse_press() -> void:
-	var card = raycast_check_for_card()
-	if not card:
+	var clicked_card = raycast_check_for_card()
+	if not clicked_card:
+		return  # No card clicked, nothing else to do
+	if clicked_card.in_battle:
+		print("Cannot drag card in battle:", clicked_card.subtype)
 		return
-	if not card is Card:
+	if clicked_card.card_type == "enemy":
+		print("Cannot drag enemy card:", clicked_card.subtype)
 		return
-	if card.in_battle:
-		print("Cannot drag card in battle:", card.subtype)
-		return
-	if card.card_type == "enemy":
-		print("Cannot drag enemy card:", card.subtype)
-		return
-	start_drag(card)
+	start_drag(clicked_card)
 
 func handle_mouse_release() -> void:
 	if card_being_dragged:
@@ -238,31 +236,6 @@ func merge_overlapping_stacks(card: Node2D) -> void:
 	# --- 5) Tween visuals for smooth merge ---
 	update_stack_visuals(target_stack, target_stack[0].position)
 
-func merge_stacks(target_stack: Array, dragged_stack: Array) -> void:
-	# Kill tweens
-	for c in target_stack + dragged_stack:
-		if is_instance_valid(c):
-			kill_card_tween(c)
-	# Append logically
-	for c in dragged_stack:
-		if is_instance_valid(c):
-			target_stack.append(c)
-	if all_stacks.has(dragged_stack):
-		all_stacks.erase(dragged_stack)
-	# Move cards with tween
-	if target_stack.size() > 0 and is_instance_valid(target_stack[0]):
-		var base_pos = target_stack[0].position
-		for i in range(target_stack.size()):
-			var card = target_stack[i]
-			if is_instance_valid(card):
-				var target_position = base_pos + Vector2(0, i * STACK_Y_OFFSET)
-				var tween = get_tree().create_tween()
-				tween.tween_property(card, "position", target_position, STACK_TWEEN_DURATION)
-				tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-				card_tweens[card] = tween
-				# Recalculate z after tween completes
-				tween.connect("finished", Callable(self, "_on_stack_tween_complete").bind(card, i))
-
 func update_stack_visuals(stack: Array, base_position: Vector2, y_offset: float = STACK_Y_OFFSET) -> void:
 	for i in range(stack.size()):
 		var card = stack[i]
@@ -302,13 +275,6 @@ func update_cached_rects() -> void:
 		if valid_cards.size() > 0:
 			cleaned_stacks.append(valid_cards)
 	all_stacks = cleaned_stacks
-
-func recalc_all_stack_z_indices():
-	for stack in all_stacks:
-		for i in range(stack.size()):
-			var card = stack[i]
-			if is_instance_valid(card):
-				card.z_index = i + 1
 
 func _on_stack_tween_complete(card: Node2D, index: int) -> void:
 	if not is_instance_valid(card):

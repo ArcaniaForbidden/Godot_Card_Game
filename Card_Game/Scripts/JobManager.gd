@@ -15,7 +15,6 @@ const OUTPUT_TWEEN_TIME := 0.3
 # --- Active jobs ---
 # each job = { "stack": Array, "recipe": Dictionary, "progress": float, "work_time": float }
 var active_jobs: Array = []
-var stack_progress: Dictionary = {}  # stack -> progress (0.0 to 1.0)
 
 func _ready() -> void:
 	card_manager = get_parent().get_node("CardManager")
