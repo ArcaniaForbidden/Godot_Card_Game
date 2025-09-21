@@ -28,6 +28,14 @@ var screen_size: Vector2
 var cached_rects: Dictionary = {}  # card -> Rect2
 var cards_moving: Dictionary = {}  # card -> target_position
 var card_tweens: Dictionary = {}  # card -> SceneTreeTween
+var allowed_stack_types := {
+	"unit": ["unit", "resource", "material", "building"],   # units can stack with other units and equipment
+	"equipment": ["unit", "equipment"],
+	"resource": ["unit", "resource", "material", "building"],
+	"material": ["unit", "resource", "material", "building"],
+	"enemy": [],                     # enemies cannot stack
+	"building": ["unit", "resource", "material", "building"]
+}
 
 func _ready() -> void:
 	battle_manager = get_parent().get_node("BattleManager")
@@ -202,39 +210,51 @@ func merge_overlapping_stacks(card: Node2D) -> void:
 	var overlapping = get_overlapping_cards_any(card, OVERLAP_THRESHOLD)
 	if overlapping.size() == 0:
 		return
-	# Find the stack with the maximum overlap
-	var max_overlap_entry = overlapping[0]
-	for entry in overlapping:
-		if entry["overlap"] > max_overlap_entry["overlap"]:
-			max_overlap_entry = entry
 	var dragged_stack = find_stack(card)
-	var target_stack = find_stack(max_overlap_entry["card"])
-	if dragged_stack == target_stack:
-		return  # already the same stack
-	# --- 1) Kill tweens on all involved cards ---
-	for c in dragged_stack:
-		if is_instance_valid(c):
-			kill_card_tween(c)
-	for c in target_stack:
-		if is_instance_valid(c):
-			kill_card_tween(c)
-	# --- 2) Append dragged stack to target stack ---
-	for c in dragged_stack:
-		if is_instance_valid(c):
-			target_stack.append(c)
-	# --- 3) Remove old reference ---
-	if all_stacks.has(dragged_stack):
-		all_stacks.erase(dragged_stack)
-	# --- 4) Snap positions and recalc z-index for full stack ---
-	if target_stack.size() > 0 and is_instance_valid(target_stack[0]):
-		var base_pos = target_stack[0].position
-		for i in range(target_stack.size()):
-			var c = target_stack[i]
+	if dragged_stack.is_empty():
+		return
+	# Bottom card of dragged stack
+	var dragged_bottom_card = dragged_stack[0]
+	# Iterate over overlapping stacks
+	for entry in overlapping:
+		var target_stack = find_stack(entry["card"])
+		if target_stack.is_empty():
+			continue
+		# Top card of target stack
+		var target_top_card = target_stack[-1]
+		var dragged_type = dragged_bottom_card.card_type
+		var target_type = target_top_card.card_type
+		# Check allowed stacking rules
+		if not allowed_stack_types.has(dragged_type):
+			continue
+		if not target_type in allowed_stack_types[dragged_type]:
+			continue
+		# --- Type allowed: merge stacks ---
+		# Kill any existing tweens
+		for c in dragged_stack:
 			if is_instance_valid(c):
-				c.position = base_pos + Vector2(0, i * STACK_Y_OFFSET)
-				c.z_index = i + 1  # visual stacking from bottom up
-	# --- 5) Tween visuals for smooth merge ---
-	update_stack_visuals(target_stack, target_stack[0].position)
+				kill_card_tween(c)
+		for c in target_stack:
+			if is_instance_valid(c):
+				kill_card_tween(c)
+		# Append dragged stack to target stack
+		for c in dragged_stack:
+			if is_instance_valid(c):
+				target_stack.append(c)
+		# Remove old reference
+		if all_stacks.has(dragged_stack):
+			all_stacks.erase(dragged_stack)
+		# Snap positions and recalc z-index
+		if target_stack.size() > 0 and is_instance_valid(target_stack[0]):
+			var base_pos = target_stack[0].position
+			for i in range(target_stack.size()):
+				var c = target_stack[i]
+				if is_instance_valid(c):
+					c.position = base_pos + Vector2(0, i * STACK_Y_OFFSET)
+					c.z_index = i + 1
+		# Tween visuals for smooth merge
+		update_stack_visuals(target_stack, target_stack[0].position)
+		return  # Only merge with one stack
 
 func update_stack_visuals(stack: Array, base_position: Vector2, y_offset: float = STACK_Y_OFFSET) -> void:
 	for i in range(stack.size()):
@@ -316,7 +336,7 @@ func get_overlapping_cards_any(card: Node2D, min_overlap_percent := OVERLAP_THRE
 		if stack.size() == 0:
 			continue
 		for target_card in stack:
-			if not is_instance_valid(target_card) or target_card.card_type == "enemy":
+			if not is_instance_valid(target_card):
 				continue
 			var target_rect = get_card_global_rect(target_card)
 			var intersection = dragged_rect.intersection(target_rect)

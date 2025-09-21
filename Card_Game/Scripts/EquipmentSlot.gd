@@ -3,31 +3,29 @@ class_name EquipmentSlot
 
 @export var allowed_type: String = ""        # e.g., "weapon", "helmet"
 var equipped_card: Card = null               # The card currently in this slot
-
-# Reference to the owning Peasant card
-var owner_card: Card = null
+var owner_card: Card = null                  # The card that owns this inventory
 
 func setup(owner: Card) -> void:
 	owner_card = owner
 
 # Check if a card can be equipped here
 func can_accept(card: Card) -> bool:
-	if equipped_card != null:
-		return false
 	return card.card_type == "equipment" and card.slot == allowed_type
 
 # Equip a card into this slot
 func equip(card: Card) -> void:
-	if not can_accept(card):
+	if card.card_type != "equipment" or card.slot != allowed_type:
 		return
-	# Reparent card to this slot
+	# Unequip old card if any
+	if equipped_card != null:
+		unequip()
+	# Parent the new card to this slot
 	if card.get_parent():
 		card.get_parent().remove_child(card)
 	add_child(card)
 	card.position = Vector2.ZERO
 	card.is_being_dragged = false
 	equipped_card = card
-	# Apply equipment stats
 	_apply_equipment_stats(card)
 
 # Unequip the card from this slot
@@ -36,9 +34,7 @@ func unequip() -> void:
 		return
 	var card_to_return = equipped_card
 	equipped_card = null
-	# Remove stats
 	_remove_equipment_stats(card_to_return)
-	# Return card to CardManager
 	remove_child(card_to_return)
 	var card_manager = get_tree().get_root().get_node("Main/CardManager")
 	card_manager.add_child(card_to_return)

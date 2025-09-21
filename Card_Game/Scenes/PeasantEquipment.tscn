@@ -22,43 +22,38 @@ texture_normal = ExtResource("2_4y8sc")
 [node name="EquipmentSlots" type="Node2D" parent="."]
 
 [node name="HelmetSlot" parent="EquipmentSlots" instance=ExtResource("3_a3o2m")]
-position = Vector2(-240, 20)
+position = Vector2(-100, -140)
 allowed_type = "helmet"
 
 [node name="SlotImage" parent="EquipmentSlots/HelmetSlot" index="0"]
-position = Vector2(140, -160)
 texture = ExtResource("4_a3o2m")
 
 [node name="ChestplateSlot" parent="EquipmentSlots" instance=ExtResource("3_a3o2m")]
-position = Vector2(-120, 60)
+position = Vector2(-100, 0)
 allowed_type = "chestplate"
 
 [node name="SlotImage" parent="EquipmentSlots/ChestplateSlot" index="0"]
-position = Vector2(20, -60)
 texture = ExtResource("5_rtvxq")
 
 [node name="LeggingsSlot" parent="EquipmentSlots" instance=ExtResource("3_a3o2m")]
-position = Vector2(0, 100)
+position = Vector2(100, -140)
 allowed_type = "leggings"
 
 [node name="SlotImage" parent="EquipmentSlots/LeggingsSlot" index="0"]
-position = Vector2(100, -240)
 texture = ExtResource("6_2u4mr")
 
 [node name="BootsSlot" parent="EquipmentSlots" instance=ExtResource("3_a3o2m")]
-position = Vector2(120, 60)
+position = Vector2(100, 0)
 allowed_type = "boots"
 
 [node name="SlotImage" parent="EquipmentSlots/BootsSlot" index="0"]
-position = Vector2(-20, -60)
 texture = ExtResource("7_18x2d")
 
 [node name="WeaponSlot" parent="EquipmentSlots" instance=ExtResource("3_a3o2m")]
-position = Vector2(240, 20)
+position = Vector2(0, 100)
 allowed_type = "weapon"
 
 [node name="SlotImage" parent="EquipmentSlots/WeaponSlot" index="0"]
-position = Vector2(-240, 40)
 texture = ExtResource("8_ipt63")
 
 [editable path="EquipmentSlots/HelmetSlot"]

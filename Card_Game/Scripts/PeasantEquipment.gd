@@ -1,7 +1,7 @@
 extends Node2D
-class_name PeasantInventory
+class_name PeasantEquipment
 
-@onready var inventory_button: TextureButton = $EquipmentButton
+@onready var equipment_button: TextureButton = $EquipmentButton
 @onready var slots_container: Node2D = $EquipmentSlots
 
 var parent_card: Card
@@ -9,10 +9,13 @@ var parent_card: Card
 func _ready() -> void:
 	parent_card = get_parent() as Card
 	slots_container.visible = false
-	inventory_button.connect("pressed", Callable(self, "_on_inventory_button_pressed"))
+	equipment_button.connect("pressed", Callable(self, "_on_equipment_button_pressed"))
+	for slot in slots_container.get_children():
+		if slot is EquipmentSlot:
+			slot.setup(parent_card)
 
 # Toggle slots visibility
-func _on_inventory_button_pressed() -> void:
+func _on_equipment_button_pressed() -> void:
 	if not parent_card or parent_card.in_battle:
 		return
 	slots_container.visible = not slots_container.visible
