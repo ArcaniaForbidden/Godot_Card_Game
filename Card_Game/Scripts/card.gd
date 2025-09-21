@@ -83,12 +83,6 @@ func setup(subtype_name: String) -> void:
 	attack = int(stats.get("attack", 0))
 	armor = int(stats.get("armor", 0))
 	attack_speed = float(stats.get("attack_speed", 1.0))
-	if subtype == "peasant":
-		var equipment_scene = preload("res://Scenes/PeasantEquipment.tscn")
-		var equipment_panel = equipment_scene.instantiate()
-		add_child(equipment_panel)
-		equipment_panel.position = Vector2(0, 79)  # adjust as needed
-		equipment_panel.equipment_slots.visible = false
 
 # --- Hover signals ---
 func _on_area_2d_mouse_entered() -> void:
