@@ -325,62 +325,69 @@ func update_cards_moving(delta: float) -> void:
 func push_apart_cards() -> void:
 	if all_stacks.size() < 2:
 		return
-	# --- Precompute stack bounds & centers once ---
+	# --- Precompute stack bounds & card centers ---
 	var stack_bounds := []
-	var stack_centers := []
+	var stack_card_centers := []
 	for stack in all_stacks:
 		if stack.is_empty() or stack_has_protected_card(stack) or stack.has(card_being_dragged):
 			stack_bounds.append(null)
-			stack_centers.append(null)
+			stack_card_centers.append(null)
 			continue
-		var bounds = get_stack_bounds(stack)
-		stack_bounds.append(bounds)
-		stack_centers.append(bounds.position + bounds.size / 2)
+		stack_bounds.append(get_stack_bounds(stack))
+		var centers := []
+		for card in stack:
+			if is_instance_valid(card):
+				var rect = get_card_global_rect(card)
+				centers.append(rect.position + rect.size / 2)
+			else:
+				centers.append(Vector2.ZERO)
+		stack_card_centers.append(centers)
 	# --- Compare each stack pair ---
 	for i in range(all_stacks.size()):
 		var stack_a = all_stacks[i]
 		var bounds_a = stack_bounds[i]
-		var center_a = stack_centers[i]
+		var centers_a = stack_card_centers[i]
 		if not bounds_a:
 			continue
 		for j in range(i + 1, all_stacks.size()):
 			var stack_b = all_stacks[j]
 			var bounds_b = stack_bounds[j]
-			var center_b = stack_centers[j]
+			var centers_b = stack_card_centers[j]
 			if not bounds_b:
 				continue
-			# Skip distant stacks (cheap bounding check)
-			var distance = center_a.distance_to(center_b)
-			var max_reach = bounds_a.size.length() / 2 + bounds_b.size.length() / 2 + 50.0
-			if distance > max_reach:
+			# Skip distant stacks
+			if not bounds_a.intersects(bounds_b.grow(50.0)):
 				continue
-			# --- Compute single push vector per stack pair ---
 			var push_vector := Vector2.ZERO
 			var overlap_found := false
-			for card_a in stack_a:
+			for a_index in range(stack_a.size()):
+				var card_a = stack_a[a_index]
 				if not is_instance_valid(card_a) or card_a in spawn_protected_cards:
 					continue
 				var rect_a = get_card_global_rect(card_a)
-				for card_b in stack_b:
+				var center_a = centers_a[a_index]
+				for b_index in range(stack_b.size()):
+					var card_b = stack_b[b_index]
 					if not is_instance_valid(card_b) or card_b in spawn_protected_cards:
 						continue
 					var rect_b = get_card_global_rect(card_b)
+					var center_b = centers_b[b_index]
 					if rect_a.intersects(rect_b):
 						overlap_found = true
 						var intersection = rect_a.intersection(rect_b)
-						var dir = (rect_a.position + rect_a.size / 2) - (rect_b.position + rect_b.size / 2)
+						var dir = center_a - center_b
 						if dir == Vector2.ZERO:
-							dir = Vector2.RIGHT  # avoid zero-length vector
+							dir = Vector2.RIGHT
 						push_vector += dir.normalized() * clamp((intersection.size.x * intersection.size.y) / (rect_a.size.x * rect_a.size.y), 0.1, 1.0)
 			if overlap_found:
 				push_vector *= PUSH_STRENGTH
-				# --- Apply gradual movement to each stack's cards ---
+				# Apply gradual movement
 				for c in stack_a:
 					if is_instance_valid(c) and not c.is_being_dragged and not (c in spawn_protected_cards):
-						c.position = c.position.lerp(c.position + push_vector, 0.3)
+						c.position = c.position.lerp(c.position + push_vector, 0.5)
 				for c in stack_b:
 					if is_instance_valid(c) and not c.is_being_dragged and not (c in spawn_protected_cards):
-						c.position = c.position.lerp(c.position - push_vector, 0.3)
+						c.position = c.position.lerp(c.position - push_vector, 0.5)
 
 func update_cached_rects() -> void:
 	cached_rects.clear()
