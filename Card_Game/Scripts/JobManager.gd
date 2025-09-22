@@ -6,11 +6,10 @@ var card_manager: Node = null
 var battle_manager: Node = null
 var RecipeDatabase = preload("res://Scripts/RecipeDatabase.gd")
 
-const PROGRESS_BAR_OFFSET := Vector2(-50, -100)  # above the bottom card
-const PROGRESS_BAR_SIZE := Vector2(100, 20)
+const PROGRESS_BAR_OFFSET := Vector2(-50, -95)  # above the bottom card
+const PROGRESS_BAR_SIZE := Vector2(100, 15)
 
 # --- Active jobs ---
-# each job = { "stack": Array, "recipe": Dictionary, "progress": float, "work_time": float }
 var active_jobs: Array = []
 
 func _ready() -> void:

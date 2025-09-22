@@ -11,12 +11,12 @@ const ENEMY_IDLE_MIN := 0.8            	 # Min wait time before next step
 const ENEMY_IDLE_MAX := 1.5             # Max wait time before next step
 const ENEMY_TWEEN_DURATION := 0.3       # Tween duration for enemy movement
 const STACK_TWEEN_DURATION := 0.2       # Tween duration for stack visuals
-const PUSH_TWEEN_DURATION := 0.05
+const PUSH_TWEEN_DURATION := 0.025
 const PLAY_AREA := Rect2(Vector2(-2000, -1000), Vector2(4000, 2000))
 const OUTPUT_MIN_DIST := 100.0
 const OUTPUT_MAX_DIST := 150.0
 const OUTPUT_TWEEN_TIME := 0.3
-const PUSH_STRENGTH := 5
+const PUSH_STRENGTH := 7
 const PUSH_ITERATIONS := 10
 
 # --- Member variables ---
@@ -32,11 +32,11 @@ var cached_rects: Dictionary = {}  # card -> Rect2
 var cards_moving: Dictionary = {}  # card -> target_position
 var card_tweens: Dictionary = {}  # card -> SceneTreeTween
 var allowed_stack_types := {
-	"unit": ["unit", "resource", "material", "building"],   # units can stack with other units and equipment
-	"equipment": ["unit", "equipment"],
+	"unit": ["unit", "resource", "material", "building"],      # units can stack with other units and equipment
+	"equipment": ["unit", "equipment"],                        # equipment only stacks on equipment or units
 	"resource": ["unit", "resource", "material", "building"],
 	"material": ["unit", "resource", "material", "building"],
-	"enemy": [],                     # enemies cannot stack
+	"enemy": [],                                               # enemies cannot stack
 	"building": ["unit", "resource", "material", "building"]
 }
 
@@ -361,6 +361,10 @@ func push_apart_cards() -> void:
 				if overlap_found:
 					var push_vec = total_push * PUSH_STRENGTH
 					# Calculate new base positions for smooth tween
+					if stack_a.size() == 0 or not is_instance_valid(stack_a[0]):
+						continue
+					if stack_b.size() == 0 or not is_instance_valid(stack_b[0]):
+						continue
 					var base_pos_a = stack_a[0].position + push_vec
 					var base_pos_b = stack_b[0].position - push_vec
 					# Apply tweens to all cards in stack_a
