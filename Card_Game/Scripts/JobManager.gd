@@ -135,21 +135,20 @@ func update_jobs(delta: float) -> void:
 				progress_names2.append(c.subtype)
 			print("✅ Job complete! Recipe:", job["recipe_name"], "Stack:", progress_names2)
 			# --- 5a) Consume inputs (safe removal + drag fix) ---
-			var inputs: Array = recipe["inputs"]
-			# We'll remove from highest index to lowest so stack indices remain valid
-			for i in range(inputs.size() - 1, -1, -1):
-				if inputs[i].get("consume", true):
-					if i < stack.size() and is_instance_valid(stack[i]):
-						var removed_card = stack[i]
-						# If CardManager exists, remove references from dragged_substack BEFORE freeing
-						if card_manager:
-							# Remove all occurrences of removed_card from dragged_substack
-							for j in range(card_manager.dragged_substack.size() - 1, -1, -1):
-								if card_manager.dragged_substack[j] == removed_card:
-									card_manager.dragged_substack.remove_at(j)
-						# Now remove from the stack and free the node
-						stack.remove_at(i)
-						removed_card.queue_free()
+			var matching_indices = is_stack_matching_recipe(stack, recipe)
+			if matching_indices:
+				for i in range(matching_indices.size() - 1, -1, -1):
+					var idx = matching_indices[i]
+					if recipe["inputs"][i].get("consume", true):
+						if is_instance_valid(stack[idx]):
+							var removed_card = stack[idx]
+							# Remove from dragged_substack if necessary
+							if card_manager:
+								for j in range(card_manager.dragged_substack.size() - 1, -1, -1):
+									if card_manager.dragged_substack[j] == removed_card:
+										card_manager.dragged_substack.remove_at(j)
+							stack.remove_at(idx)
+							removed_card.queue_free()
 			# --- 5b) After consuming inputs: fix drag state if needed ---
 			if card_manager:
 				# If nothing left being dragged -> ensure drag finishes cleanly
@@ -206,14 +205,23 @@ func update_jobs(delta: float) -> void:
 # -----------------------------
 # Matching logic
 # -----------------------------
-func is_stack_matching_recipe(stack: Array, recipe: Dictionary) -> bool:
-	var inputs: Array = recipe["inputs"]
-	if stack.size() != inputs.size():
-		return false
-	for i in range(inputs.size()):
-		if stack[i].subtype != inputs[i]["subtype"]:
-			return false
-	return true
+# Returns Array of stack indices that match required inputs, or null if no match
+func is_stack_matching_recipe(stack: Array, recipe: Dictionary) -> Array:
+	var indices: Array = []
+	var stack_index = 0
+	var input_index = 0
+	while input_index < recipe["inputs"].size() and stack_index < stack.size():
+		var required = recipe["inputs"][input_index]
+		var card = stack[stack_index]
+		if not is_instance_valid(card):
+			return []
+		if card.subtype == required["subtype"]:
+			indices.append(stack_index)  # remember index for consumption
+			input_index += 1
+		stack_index += 1
+	if input_index == recipe["inputs"].size():
+		return indices  # all inputs found
+	return []
 
 func is_stack_job_active(stack: Array) -> bool:
 	for job in active_jobs:
