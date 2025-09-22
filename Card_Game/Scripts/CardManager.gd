@@ -7,7 +7,7 @@ const STACK_Y_OFFSET := 25.0            # Vertical spacing between cards in a st
 const DRAG_Z_INDEX := 100               # Z-index while dragging
 const OVERLAP_THRESHOLD := 10.0         # Percent overlap for merging stacks
 const ENEMY_STEP_DISTANCE := 150.0      # How far enemies move per step
-const ENEMY_IDLE_MIN := 0.8            	 # Min wait time before next step
+const ENEMY_IDLE_MIN := 0.8             # Min wait time before next step
 const ENEMY_IDLE_MAX := 1.5             # Max wait time before next step
 const ENEMY_TWEEN_DURATION := 0.3       # Tween duration for enemy movement
 const STACK_TWEEN_DURATION := 0.2       # Tween duration for stack visuals
@@ -30,14 +30,15 @@ var job_manager: Node = null
 var screen_size: Vector2
 var cached_rects: Dictionary = {}  # card -> Rect2
 var cards_moving: Dictionary = {}  # card -> target_position
-var card_tweens: Dictionary = {}  # card -> SceneTreeTween
+var card_tweens: Dictionary = {}   # card -> SceneTreeTween
 var allowed_stack_types := {
-	"unit": ["unit", "resource", "material", "building"],      # units can stack with other units and equipment
-	"equipment": ["unit", "equipment"],                        # equipment only stacks on equipment or units
+	"unit": ["unit", "resource", "material", "building", "location"],      # units can stack with other units and equipment
+	"equipment": ["unit", "equipment"],                                    # equipment only stacks on equipment or units
 	"resource": ["unit", "resource", "material", "building"],
 	"material": ["unit", "resource", "material", "building"],
-	"enemy": [],                                               # enemies cannot stack
-	"building": ["unit", "resource", "material", "building"]
+	"enemy": [],                                                           # enemies cannot stack
+	"building": ["building"],
+	"location": []
 }
 
 func _ready() -> void:

@@ -53,7 +53,7 @@ static var card_database = {
 	"forest": {
 		"card": preload("res://Images/green_card.png"),
 		"sprite": preload("res://Images/forest.png"),
-		"card_type": "resource",
+		"card_type": "location",
 		"display_name": "Forest"
 	},
 	"house": {
