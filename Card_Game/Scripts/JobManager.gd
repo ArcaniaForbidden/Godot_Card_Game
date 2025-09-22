@@ -8,9 +8,6 @@ var RecipeDatabase = preload("res://Scripts/RecipeDatabase.gd")
 
 const PROGRESS_BAR_OFFSET := Vector2(-50, -100)  # above the bottom card
 const PROGRESS_BAR_SIZE := Vector2(100, 20)
-const OUTPUT_MIN_DIST := 100.0
-const OUTPUT_MAX_DIST := 150.0
-const OUTPUT_TWEEN_TIME := 0.3
 
 # --- Active jobs ---
 # each job = { "stack": Array, "recipe": Dictionary, "progress": float, "work_time": float }
@@ -198,10 +195,10 @@ func update_jobs(delta: float) -> void:
 					var amount = output_dict.get("amount", 1)
 					for t_i in range(amount):
 						# spawn with sound and volume
-						spawn_card_with_popout(stack, subtype, default_sound, default_volume_db)
+						card_manager.spawn_card_with_popout(stack, subtype, default_sound, default_volume_db)
 			elif "loot_table" in recipe:
 				# Spawn one item from the loot table with sound
-				spawn_loot_table_outputs(stack, recipe["loot_table"], default_sound, default_volume_db)
+				card_manager.spawn_loot_table_outputs(stack, recipe["loot_table"], default_sound, default_volume_db)
 			# --- 5d) Finalize job removal and re-check stacks ---
 			remove_progress_bar(job)
 			active_jobs.erase(job)
@@ -298,40 +295,3 @@ func remove_progress_bar(job: Dictionary) -> void:
 		if is_instance_valid(bar):
 			bar.queue_free()
 		job.erase("progress_bar")
-
-# -----------------------------
-# Helpers
-# -----------------------------
-func spawn_card_with_popout(stack: Array, subtype: String, sound: String = "", volume_db: float = -6.0) -> void:
-	if stack.size() == 0:
-		return
-	var origin = stack[0].global_position
-	var new_card = card_manager.spawn_card(subtype, origin)
-	stack.append(new_card)
-	# Random direction + distance
-	var angle = randf() * TAU
-	var distance = randf_range(OUTPUT_MIN_DIST, OUTPUT_MAX_DIST)
-	var target_pos = origin + Vector2(cos(angle), sin(angle)) * distance
-	# Tween the card
-	var tween = get_tree().create_tween()
-	tween.tween_property(new_card, "position", target_pos, OUTPUT_TWEEN_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	if card_manager.card_tweens:
-		card_manager.card_tweens[new_card] = tween
-	print("Produced output:", new_card.subtype, "on stack (popped out)")
-	# Play the sound if provided
-	if sound != "" and SoundManager:
-		SoundManager.play(sound, volume_db)
-
-func spawn_loot_table_outputs(stack: Array, loot_table: Array, sound: String = "", volume_db: float = -6.0) -> void:
-	var total_weight = 0
-	for entry in loot_table:
-		total_weight += entry.get("weight", 0)
-	if total_weight <= 0:
-		return
-	var roll = randf() * total_weight
-	for entry in loot_table:
-		roll -= entry.get("weight", 0)
-		if roll <= 0:
-			for out in entry.get("outputs", []):
-				spawn_card_with_popout(stack, out["subtype"], sound, volume_db)
-			break

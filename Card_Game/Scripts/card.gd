@@ -9,7 +9,6 @@ const LABEL_COLOR := Color.BLACK
 
 var target_position: Vector2
 var is_being_dragged: bool = false
-var stack_target_position: Vector2 = Vector2.ZERO
 var card_type: String = ""
 var subtype: String = ""
 var display_name: String = ""
@@ -83,13 +82,13 @@ func setup(subtype_name: String) -> void:
 	attack = int(stats.get("attack", 0))
 	armor = int(stats.get("armor", 0))
 	attack_speed = float(stats.get("attack_speed", 1.0))
-	if subtype == "peasant" and not has_node("PeasantEquipment"):
-		var peasant_equipment_scene = preload("res://Scenes/PeasantEquipment.tscn")
-		var equipment_instance = peasant_equipment_scene.instantiate()
-		add_child(equipment_instance)
-		equipment_instance.parent_card = self
-		equipment_instance.position = Vector2(0, 80)
-		equipment_instance.get_node("EquipmentButton").visible = true
+	#if subtype == "peasant" and not has_node("PeasantEquipment"):
+		#var peasant_equipment_scene = preload("res://Scenes/PeasantEquipment.tscn")
+		#var equipment_instance = peasant_equipment_scene.instantiate()
+		#add_child(equipment_instance)
+		#equipment_instance.parent_card = self
+		#equipment_instance.position = Vector2(0, 80)
+		#equipment_instance.get_node("EquipmentButton").visible = true
 
 # --- Hover signals ---
 func _on_area_input_event(viewport: Object, event: InputEvent, shape_idx: int) -> void:

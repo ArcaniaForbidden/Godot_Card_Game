@@ -16,7 +16,7 @@ const PLAY_AREA := Rect2(Vector2(-2000, -1000), Vector2(4000, 2000))
 const OUTPUT_MIN_DIST := 100.0
 const OUTPUT_MAX_DIST := 150.0
 const OUTPUT_TWEEN_TIME := 0.3
-const PUSH_STRENGTH := 10
+const PUSH_STRENGTH := 5
 const PUSH_ITERATIONS := 10
 
 # --- Member variables ---
@@ -92,8 +92,41 @@ func spawn_card(subtype: String, position: Vector2) -> Card:
 	all_stacks.append([card])
 	return card
 
+func spawn_card_with_popout(stack: Array, subtype: String, sound: String = "", volume_db: float = -6.0) -> void:
+	if stack.size() == 0:
+		return
+	var origin = stack[0].global_position
+	var new_card = spawn_card(subtype, origin)
+	stack.append(new_card)
+	# Random direction + distance
+	var angle = randf() * TAU
+	var distance = randf_range(OUTPUT_MIN_DIST, OUTPUT_MAX_DIST)
+	var target_pos = origin + Vector2(cos(angle), sin(angle)) * distance
+	# Tween the card
+	var tween = get_tree().create_tween()
+	tween.tween_property(new_card, "position", target_pos, OUTPUT_TWEEN_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	card_tweens[new_card] = tween
+	print("Produced output:", new_card.subtype, "on stack (popped out)")
+	# Play the sound if provided
+	if sound != "" and SoundManager:
+		SoundManager.play(sound, volume_db)
+
+func spawn_loot_table_outputs(stack: Array, loot_table: Array, sound: String = "", volume_db: float = -6.0) -> void:
+	var total_weight = 0
+	for entry in loot_table:
+		total_weight += entry.get("weight", 0)
+	if total_weight <= 0:
+		return
+	var roll = randf() * total_weight
+	for entry in loot_table:
+		roll -= entry.get("weight", 0)
+		if roll <= 0:
+			for out in entry.get("outputs", []):
+				spawn_card_with_popout(stack, out["subtype"], sound, volume_db)
+			break
+
 # ==============================
-#  DRAG & STACK MANAGEMENT
+#  DRAG & DROP
 # ==============================
 func handle_mouse_press() -> void:
 	var clicked_card = raycast_check_for_card()
@@ -196,24 +229,6 @@ func finish_drag() -> void:
 	if job_manager:
 		job_manager.check_all_stacks()
 
-func update_cards_moving(delta: float) -> void:
-	var finished_cards: Array = []
-	for card in cards_moving.keys():
-		# Skip if card is no longer valid
-		if not is_instance_valid(card):
-			finished_cards.append(card)
-			continue
-		var target_pos = cards_moving[card]
-		card.position = card.position.lerp(target_pos, 0.15)
-		if card.position.distance_to(target_pos) < 1.0:
-			finished_cards.append(card)
-	# Remove finished or invalid cards from cards_moving
-	for card in finished_cards:
-		cards_moving.erase(card)
-
-# ==============================
-#  STACK HELPER FUNCTIONS
-# ==============================
 func merge_overlapping_stacks(card: Node2D) -> void:
 	var overlapping = get_overlapping_cards_any(card, OVERLAP_THRESHOLD)
 	if overlapping.size() == 0:
@@ -269,17 +284,104 @@ func merge_overlapping_stacks(card: Node2D) -> void:
 				card_tweens[c] = tween
 				c.z_index = i + 1
 
-func find_stack(card: Node2D) -> Array:
-	for stack in all_stacks:
-		if card in stack:
-			return stack
-	return []
+# ==============================
+#  CARD MOVEMENT UPDATES
+# ==============================
+func update_cards_moving(delta: float) -> void:
+	var finished_cards: Array = []
+	for card in cards_moving.keys():
+		# Skip if card is no longer valid
+		if not is_instance_valid(card):
+			finished_cards.append(card)
+			continue
+		var target_pos = cards_moving[card]
+		card.position = card.position.lerp(target_pos, 0.15)
+		if card.position.distance_to(target_pos) < 1.0:
+			finished_cards.append(card)
+	# Remove finished or invalid cards from cards_moving
+	for card in finished_cards:
+		cards_moving.erase(card)
 
-func get_card_index_in_stack(card: Node2D) -> int:
-	var stack = find_stack(card)
-	if stack.size() == 0:
-		return -1
-	return stack.find(card)
+func push_apart_cards() -> void:
+	if all_stacks.size() < 2:
+		return
+	var iteration := 0
+	var moved_any := true
+	while moved_any and iteration < PUSH_ITERATIONS:
+		iteration += 1
+		moved_any = false
+		var locked_stacks := {}
+		if card_being_dragged:
+			var dragged_stack = find_stack(card_being_dragged)
+			if dragged_stack.size() > 0:
+				for other_stack in all_stacks:
+					if other_stack == dragged_stack:
+						continue
+					for c1 in dragged_stack:
+						if not is_instance_valid(c1):
+							continue
+						var rect1 = get_card_global_rect(c1)
+						for c2 in other_stack:
+							if not is_instance_valid(c2):
+								continue
+							var rect2 = get_card_global_rect(c2)
+							if rect1.intersects(rect2):
+								locked_stacks[other_stack] = true
+								break
+						if locked_stacks.has(other_stack):
+							break
+		for i in range(all_stacks.size()):
+			var stack_a = all_stacks[i]
+			if stack_a.is_empty() or stack_a.has(card_being_dragged) or locked_stacks.has(stack_a):
+				continue
+			for j in range(i + 1, all_stacks.size()):
+				var stack_b = all_stacks[j]
+				if stack_b.is_empty() or stack_b.has(card_being_dragged) or locked_stacks.has(stack_b):
+					continue
+				var total_push := Vector2.ZERO
+				var overlap_found := false
+				for card_a in stack_a:
+					if not is_instance_valid(card_a):
+						continue
+					var rect_a = get_card_global_rect(card_a)
+					for card_b in stack_b:
+						if not is_instance_valid(card_b):
+							continue
+						var rect_b = get_card_global_rect(card_b)
+						if rect_a.intersects(rect_b):
+							overlap_found = true
+							var intersection = rect_a.intersection(rect_b)
+							var center_a = rect_a.position + rect_a.size / 2
+							var center_b = rect_b.position + rect_b.size / 2
+							var push_dir = (center_a - center_b).normalized()
+							var overlap_area = intersection.size.x * intersection.size.y
+							var rect_area = rect_a.size.x * rect_a.size.y
+							var weight = clamp(overlap_area / rect_area, 0.1, 1.0)
+							total_push += push_dir * weight
+				if overlap_found:
+					var push_vec = total_push * PUSH_STRENGTH
+					# Calculate new base positions for smooth tween
+					var base_pos_a = stack_a[0].position + push_vec
+					var base_pos_b = stack_b[0].position - push_vec
+					# Apply tweens to all cards in stack_a
+					for k in range(stack_a.size()):
+						if is_instance_valid(stack_a[k]) and not stack_a[k].is_being_dragged:
+							var target_pos = base_pos_a + Vector2(0, k * STACK_Y_OFFSET)
+							kill_card_tween(stack_a[k])
+							var tween_a = get_tree().create_tween()
+							tween_a.tween_property(stack_a[k], "position", target_pos, PUSH_TWEEN_DURATION).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+							card_tweens[stack_a[k]] = tween_a
+							stack_a[k].z_index = k + 1
+					# Apply tweens to all cards in stack_b
+					for k in range(stack_b.size()):
+						if is_instance_valid(stack_b[k]) and not stack_b[k].is_being_dragged:
+							var target_pos = base_pos_b + Vector2(0, k * STACK_Y_OFFSET)
+							kill_card_tween(stack_b[k])
+							var tween_b = get_tree().create_tween()
+							tween_b.tween_property(stack_b[k], "position", target_pos, PUSH_TWEEN_DURATION).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+							card_tweens[stack_b[k]] = tween_b
+							stack_b[k].z_index = k + 1
+					moved_any = true
 
 func update_cached_rects() -> void:
 	cached_rects.clear()
@@ -295,13 +397,23 @@ func update_cached_rects() -> void:
 			cleaned_stacks.append(valid_cards)
 	all_stacks = cleaned_stacks
 
-func _on_stack_tween_complete(card: Node2D, index: int) -> void:
-	if not is_instance_valid(card):
-		return
-	card.z_index = index + 1
+# ==============================
+#  STACK HELPERS
+# ==============================
+func find_stack(card: Node2D) -> Array:
+	for stack in all_stacks:
+		if card in stack:
+			return stack
+	return []
+
+func get_card_index_in_stack(card: Node2D) -> int:
+	var stack = find_stack(card)
+	if stack.size() == 0:
+		return -1
+	return stack.find(card)
 
 # ==============================
-#  UTILITY FUNCTIONS
+#  UTILITIES & HELPERS
 # ==============================
 func raycast_check_for_card() -> Node2D:
 	var space_state = get_world_2d().direct_space_state
@@ -398,87 +510,6 @@ func debug_print_stacks() -> void:
 				names.append("<invalid>")
 		print("Stack %d: %s" % [i, names])
 	print("--------------------")
-
-func push_apart_cards() -> void:
-	if all_stacks.size() < 2:
-		return
-	var iteration := 0
-	var moved_any := true
-	while moved_any and iteration < PUSH_ITERATIONS:
-		iteration += 1
-		moved_any = false
-		var locked_stacks := {}
-		if card_being_dragged:
-			var dragged_stack = find_stack(card_being_dragged)
-			if dragged_stack.size() > 0:
-				for other_stack in all_stacks:
-					if other_stack == dragged_stack:
-						continue
-					for c1 in dragged_stack:
-						if not is_instance_valid(c1):
-							continue
-						var rect1 = get_card_global_rect(c1)
-						for c2 in other_stack:
-							if not is_instance_valid(c2):
-								continue
-							var rect2 = get_card_global_rect(c2)
-							if rect1.intersects(rect2):
-								locked_stacks[other_stack] = true
-								break
-						if locked_stacks.has(other_stack):
-							break
-		for i in range(all_stacks.size()):
-			var stack_a = all_stacks[i]
-			if stack_a.is_empty() or stack_a.has(card_being_dragged) or locked_stacks.has(stack_a):
-				continue
-			for j in range(i + 1, all_stacks.size()):
-				var stack_b = all_stacks[j]
-				if stack_b.is_empty() or stack_b.has(card_being_dragged) or locked_stacks.has(stack_b):
-					continue
-				var total_push := Vector2.ZERO
-				var overlap_found := false
-				for card_a in stack_a:
-					if not is_instance_valid(card_a):
-						continue
-					var rect_a = get_card_global_rect(card_a)
-					for card_b in stack_b:
-						if not is_instance_valid(card_b):
-							continue
-						var rect_b = get_card_global_rect(card_b)
-						if rect_a.intersects(rect_b):
-							overlap_found = true
-							var intersection = rect_a.intersection(rect_b)
-							var center_a = rect_a.position + rect_a.size / 2
-							var center_b = rect_b.position + rect_b.size / 2
-							var push_dir = (center_a - center_b).normalized()
-							var overlap_area = intersection.size.x * intersection.size.y
-							var rect_area = rect_a.size.x * rect_a.size.y
-							var weight = clamp(overlap_area / rect_area, 0.1, 1.0)
-							total_push += push_dir * weight
-				if overlap_found:
-					var push_vec = total_push * PUSH_STRENGTH
-					# Calculate new base positions for smooth tween
-					var base_pos_a = stack_a[0].position + push_vec
-					var base_pos_b = stack_b[0].position - push_vec
-					# Apply tweens to all cards in stack_a
-					for k in range(stack_a.size()):
-						if is_instance_valid(stack_a[k]) and not stack_a[k].is_being_dragged:
-							var target_pos = base_pos_a + Vector2(0, k * STACK_Y_OFFSET)
-							kill_card_tween(stack_a[k])
-							var tween_a = get_tree().create_tween()
-							tween_a.tween_property(stack_a[k], "position", target_pos, PUSH_TWEEN_DURATION).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-							card_tweens[stack_a[k]] = tween_a
-							stack_a[k].z_index = k + 1
-					# Apply tweens to all cards in stack_b
-					for k in range(stack_b.size()):
-						if is_instance_valid(stack_b[k]) and not stack_b[k].is_being_dragged:
-							var target_pos = base_pos_b + Vector2(0, k * STACK_Y_OFFSET)
-							kill_card_tween(stack_b[k])
-							var tween_b = get_tree().create_tween()
-							tween_b.tween_property(stack_b[k], "position", target_pos, PUSH_TWEEN_DURATION).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-							card_tweens[stack_b[k]] = tween_b
-							stack_b[k].z_index = k + 1
-					moved_any = true
 
 # ==============================
 #  ENEMY MOVEMENT
