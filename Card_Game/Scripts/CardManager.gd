@@ -16,8 +16,8 @@ const PLAY_AREA := Rect2(Vector2(-2000, -1000), Vector2(4000, 2000))
 const OUTPUT_MIN_DIST := 100.0
 const OUTPUT_MAX_DIST := 150.0
 const OUTPUT_TWEEN_TIME := 0.3
-const PUSH_STRENGTH := 6
-const PUSH_ITERATIONS := 2
+const PUSH_STRENGTH := 20
+const PUSH_ITERATIONS := 1
 
 # --- Member variables ---
 var card_being_dragged: Node2D = null
@@ -30,6 +30,7 @@ var battle_manager: Node = null
 var job_manager: Node = null
 var screen_size: Vector2
 var cached_rects: Dictionary = {}  # card -> Rect2
+var stack_bounds_cache := {}
 var cards_moving: Dictionary = {}  # card -> target_position
 var card_tweens: Dictionary = {}   # card -> SceneTreeTween
 var allowed_stack_types := {
@@ -324,9 +325,9 @@ func update_cards_moving(delta: float) -> void:
 func push_apart_cards() -> void:
 	if all_stacks.size() < 2:
 		return
-	# Precompute stack bounds and centers
-	var stack_bounds = []
-	var stack_centers = []
+	# --- Precompute stack bounds & centers once ---
+	var stack_bounds := []
+	var stack_centers := []
 	for stack in all_stacks:
 		if stack.is_empty() or stack_has_protected_card(stack) or stack.has(card_being_dragged):
 			stack_bounds.append(null)
@@ -335,7 +336,7 @@ func push_apart_cards() -> void:
 		var bounds = get_stack_bounds(stack)
 		stack_bounds.append(bounds)
 		stack_centers.append(bounds.position + bounds.size / 2)
-	# Compare each pair of stacks
+	# --- Compare each stack pair ---
 	for i in range(all_stacks.size()):
 		var stack_a = all_stacks[i]
 		var bounds_a = stack_bounds[i]
@@ -348,15 +349,13 @@ func push_apart_cards() -> void:
 			var center_b = stack_centers[j]
 			if not bounds_b:
 				continue
-			# Skip distant stacks (cheap check)
-			var distance_between_centers = center_a.distance_to(center_b)
-			var max_reach_a = bounds_a.size.length() / 2
-			var max_reach_b = bounds_b.size.length() / 2
-			var padding = 50.0
-			if distance_between_centers > max_reach_a + max_reach_b + padding:
+			# Skip distant stacks (cheap bounding check)
+			var distance = center_a.distance_to(center_b)
+			var max_reach = bounds_a.size.length() / 2 + bounds_b.size.length() / 2 + 50.0
+			if distance > max_reach:
 				continue
-			# --- Compute push vector based on overlapping cards ---
-			var total_push := Vector2.ZERO
+			# --- Compute single push vector per stack pair ---
+			var push_vector := Vector2.ZERO
 			var overlap_found := false
 			for card_a in stack_a:
 				if not is_instance_valid(card_a) or card_a in spawn_protected_cards:
@@ -369,26 +368,19 @@ func push_apart_cards() -> void:
 					if rect_a.intersects(rect_b):
 						overlap_found = true
 						var intersection = rect_a.intersection(rect_b)
-						var center_a_card = rect_a.position + rect_a.size / 2
-						var center_b_card = rect_b.position + rect_b.size / 2
-						var push_dir = (center_a_card - center_b_card).normalized()
-						var overlap_area = intersection.size.x * intersection.size.y
-						var rect_area = rect_a.size.x * rect_a.size.y
-						var weight = clamp(overlap_area / rect_area, 0.1, 1.0)
-						total_push += push_dir * weight
+						var dir = (rect_a.position + rect_a.size / 2) - (rect_b.position + rect_b.size / 2)
+						if dir == Vector2.ZERO:
+							dir = Vector2.RIGHT  # avoid zero-length vector
+						push_vector += dir.normalized() * clamp((intersection.size.x * intersection.size.y) / (rect_a.size.x * rect_a.size.y), 0.1, 1.0)
 			if overlap_found:
-				var push_vec = total_push * PUSH_STRENGTH
-				# Apply lerp-based movement per card in stack
-				for k in range(stack_a.size()):
-					var c = stack_a[k]
+				push_vector *= PUSH_STRENGTH
+				# --- Apply gradual movement to each stack's cards ---
+				for c in stack_a:
 					if is_instance_valid(c) and not c.is_being_dragged and not (c in spawn_protected_cards):
-						var target_pos = c.position + push_vec
-						c.position = c.position.lerp(target_pos, 0.5)
-				for k in range(stack_b.size()):
-					var c = stack_b[k]
+						c.position = c.position.lerp(c.position + push_vector, 0.3)
+				for c in stack_b:
 					if is_instance_valid(c) and not c.is_being_dragged and not (c in spawn_protected_cards):
-						var target_pos = c.position - push_vec
-						c.position = c.position.lerp(target_pos, 0.5)
+						c.position = c.position.lerp(c.position - push_vector, 0.3)
 
 func update_cached_rects() -> void:
 	cached_rects.clear()
@@ -420,6 +412,12 @@ func get_stack_bounds(stack: Array) -> Rect2:
 		max_x = max(max_x, rect.position.x + rect.size.x)
 		max_y = max(max_y, rect.position.y + rect.size.y)
 	return Rect2(Vector2(min_x, min_y), Vector2(max_x - min_x, max_y - min_y))
+
+func update_stack_bounds(stack: Array) -> void:
+	if stack.is_empty():
+		stack_bounds_cache.erase(stack)
+	else:
+		stack_bounds_cache[stack] = get_stack_bounds(stack)
 
 # ==============================
 #  STACK HELPERS
