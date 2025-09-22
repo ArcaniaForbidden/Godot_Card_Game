@@ -13,6 +13,7 @@ var card_type: String = ""
 var subtype: String = ""
 var display_name: String = ""
 var slot: String = ""
+var shadow: Sprite2D = null
 var stats: Dictionary = {}
 var health: int = 0
 var max_health: int = 0
@@ -35,6 +36,11 @@ var in_battle: bool = false
 
 func _ready() -> void:
 	area.connect("input_event", Callable(self, "_on_area_input_event"))
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_PREDELETE:
+		if shadow and is_instance_valid(shadow):
+			shadow.queue_free()
 
 # --- Helper for health ---
 func set_health(value: int) -> void:
