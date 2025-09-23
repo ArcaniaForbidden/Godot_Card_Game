@@ -254,6 +254,57 @@ extends Node2D
 			#names.append(c.subtype)
 	#return names
 #
+#func spawn_card_with_popout(stack: Array, subtype: String, sound: String = "", volume_db: float = -6.0) -> void:
+	#if stack.size() == 0:
+		#return
+	#var origin = stack[0].global_position
+	## Start card *at the stack center*, no offset yet
+	#var new_card = spawn_card(subtype, origin)
+	#stack.append(new_card)
+	## Protect this card from push_apart until its popout animation finishes
+	#spawn_protected_cards.append(new_card)
+	## Compute where we want it to end up (offset outward from origin)
+	#var angle = randf() * TAU
+	#var distance = randf_range(OUTPUT_MIN_DIST, OUTPUT_MAX_DIST)
+	#var target_pos = origin + Vector2(cos(angle), sin(angle)) * distance
+	## Animate: start small, scale up & slide outward simultaneously
+	#new_card.scale = Vector2.ZERO
+	#var tween = get_tree().create_tween()
+	#tween.tween_property(new_card, "scale", Vector2.ONE, 0.15).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	#tween.parallel().tween_property(new_card, "position", target_pos, OUTPUT_TWEEN_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	## store tween if you are tracking them
+	#card_tweens[new_card] = tween
+	## When tween finishes, unprotect card so push_apart works again
+	#tween.connect("finished", Callable(self, "_on_spawn_popout_finished").bind(new_card))
+	#print("Produced output:", new_card.subtype, "on stack (popped out)")
+	#if sound != "" and SoundManager:
+		#SoundManager.play(sound, volume_db)
+#
+#func spawn_loot_table_outputs(stack: Array, loot_table: Array, sound: String = "", volume_db: float = -6.0) -> void:
+	#var total_weight = 0
+	#for entry in loot_table:
+		#total_weight += entry.get("weight", 0)
+	#if total_weight <= 0:
+		#return
+	#var roll = randf() * total_weight
+	#for entry in loot_table:
+		#roll -= entry.get("weight", 0)
+		#if roll <= 0:
+			#for out in entry.get("outputs", []):
+				#spawn_card_with_popout(stack, out["subtype"], sound, volume_db)
+			#break
+#
+#func _on_spawn_popout_finished(card: Node2D) -> void:
+	#if card in spawn_protected_cards:
+		#spawn_protected_cards.erase(card)
+#
+#func stack_has_protected_card(stack: Array) -> bool:
+	#for c in stack:
+		#if c in spawn_protected_cards:
+			#return true
+	#return false
+#
+
 ## -----------------------------
 ## Progress bar
 ## -----------------------------

@@ -1,6 +1,11 @@
 extends Node
 class_name CraftingManager
 
+const SEARCH_RADIUS := 200.0
+const LAUNCH_OFFSET := 150.0
+const LAUNCH_ANGLE_DEG := 10.0
+const LAUNCH_TWEEN_TIME := 0.3
+
 # ----------------------
 # Member Variables
 # ----------------------
@@ -17,23 +22,19 @@ func _process(delta: float) -> void:
 	for i in range(jobs.size() - 1, -1, -1):
 		var job = jobs[i]
 		var stack = card_manager.find_stack(job.core_bottom)
-
 		# Cancel job if stack is invalid
 		if not _validate_job_stack(stack, job):
 			print("Crafting job canceled:", job.recipe)
 			_stop_drag_if_needed(stack)
 			jobs.remove_at(i)
 			continue
-
 		# Increment elapsed time
 		job.time_elapsed += delta
-
 		# Print progress at interval
 		job.last_print += delta
 		if job.last_print >= print_interval:
 			print("Job progress:", job.time_elapsed, "/", job.recipe.get("work_time", 0), "for recipe:", job.recipe)
 			job.last_print = 0
-
 		# Complete job if elapsed time reached
 		if job.time_elapsed >= job.recipe.get("work_time", 0):
 			_complete_job(stack, job)
@@ -45,7 +46,6 @@ func _process(delta: float) -> void:
 func validate_all_stacks() -> void:
 	if not card_manager:
 		return
-
 	# Validate running jobs
 	for i in range(jobs.size() - 1, -1, -1):
 		var job = jobs[i]
@@ -54,7 +54,6 @@ func validate_all_stacks() -> void:
 			print("Crafting job canceled:", job.recipe)
 			_stop_drag_if_needed(stack)
 			jobs.remove_at(i)
-
 	# Check each stack for new recipes
 	for stack in card_manager.all_stacks:
 		_try_run_recipes_for_stack(stack)
@@ -67,17 +66,14 @@ func _try_run_recipes_for_stack(stack: Array) -> void:
 		return
 	var bottom_card = stack[0]
 	var top_card = stack[-1]
-
 	for recipe_name in recipe_database.recipes.keys():
 		var recipe = recipe_database.recipes[recipe_name]
 		if not recipe.has("inputs") or recipe["inputs"].size() < 2:
 			continue
-
 		var inputs = recipe["inputs"]
 		var first_input_type = inputs[0].get("role", "bottom")
 		var second_input_type = inputs[1].get("role", "top")
 		var is_match = false
-
 		# Match top-core or bottom-core recipes
 		if first_input_type == "bottom" and second_input_type == "top":
 			if inputs[0]["subtype"] == bottom_card.subtype and inputs[1]["subtype"] == top_card.subtype:
@@ -85,10 +81,8 @@ func _try_run_recipes_for_stack(stack: Array) -> void:
 		elif first_input_type == "top" and second_input_type == "bottom":
 			if inputs[0]["subtype"] == top_card.subtype and inputs[1]["subtype"] == bottom_card.subtype:
 				is_match = true
-
 		if not is_match:
 			continue
-
 		# Check for additional consumables
 		var needed = _collect_needed_inputs(recipe, 2, inputs.size())
 		if _can_fulfill_consumables(needed, stack):
@@ -111,14 +105,11 @@ func _start_job(core_bottom: Node2D, core_top: Node2D, recipe: Dictionary) -> vo
 func _complete_job(stack: Array, job: Dictionary) -> void:
 	if not stack or stack.size() == 0:
 		return
-
 	# Validate before completion
 	if not _validate_job_stack(stack, job):
 		print("Job invalid at completion, skipping:", job.recipe)
 		return
-
 	var recipe = job.recipe
-
 	# Remove consumed cards safely
 	var inputs = recipe.get("inputs", [])
 	var consumed_indices = []
@@ -128,7 +119,6 @@ func _complete_job(stack: Array, job: Dictionary) -> void:
 				if stack[j].subtype == inputs[i]["subtype"]:
 					consumed_indices.append(j)
 					break
-
 	consumed_indices.sort()
 	for i in range(consumed_indices.size() - 1, -1, -1):
 		var idx = consumed_indices[i]
@@ -143,27 +133,13 @@ func _complete_job(stack: Array, job: Dictionary) -> void:
 				if card_manager.dragged_substack.has(card):
 					card_manager.finish_drag()
 				card.queue_free()
-
 	# Spawn outputs as new stacks
 	if recipe.has("outputs"):
 		for out in recipe["outputs"]:
-			var new_card = card_manager.spawn_card(out["subtype"], stack[0].global_position)
-			new_card.target_position = new_card.position  # fix drifting
-			card_manager.all_stacks.append([new_card])
-
-	# Spawn loot table outputs as new stacks
-	if recipe.has("loot_table"):
-		for entry in recipe["loot_table"]:
-			for out in entry.get("outputs", []):
-				var loot_card = card_manager.spawn_card(out["subtype"], stack[0].global_position)
-				loot_card.target_position = loot_card.position  # fix drifting
-				card_manager.all_stacks.append([loot_card])
-
+			_spawn_crafting_output(out["subtype"], stack[0].global_position)
 	# After completion, immediately re-check the stack for repeated crafting
 	if stack.size() >= 2:
 		_try_run_recipes_for_stack(stack)
-
-
 
 func _collect_needed_inputs(recipe: Dictionary, start_idx: int, end_idx: int) -> Array:
 	var needed: Array = []
@@ -190,7 +166,6 @@ func _validate_job_stack(stack: Array, job: Dictionary) -> bool:
 		return false
 	if stack[0] != job.core_bottom or stack[-1] != job.core_top:
 		return false
-
 	var temp_stack = stack.duplicate()
 	temp_stack.remove_at(temp_stack.size() - 1)  # remove top core
 	temp_stack.remove_at(0)                     # remove bottom core
