@@ -29,7 +29,8 @@ var all_stacks: Array = []
 var spawn_protected_cards: Array = []
 var card_scene = preload("res://Scenes/Card.tscn")
 var battle_manager: Node = null
-var job_manager: Node = null
+var crafting_manager: CraftingManager = null
+#var job_manager: Node = null
 var screen_size: Vector2
 var shadows: Node2D
 var cached_rects: Dictionary = {}  # card -> Rect2
@@ -47,7 +48,8 @@ var allowed_stack_types := {
 
 func _ready() -> void:
 	battle_manager = get_parent().get_node("BattleManager")
-	job_manager = get_parent().get_node("JobManager")
+	crafting_manager = get_parent().get_node("CraftingManager") as CraftingManager
+	#job_manager = get_parent().get_node("JobManager")
 	screen_size = get_viewport_rect().size
 	if self:
 		shadows = Node2D.new()
@@ -237,8 +239,10 @@ func start_drag(card: Card) -> void:
 				card_tweens[c] = tween
 	card_being_dragged = dragged_substack[0]
 	# Re-check jobs
-	if job_manager:
-		job_manager.check_all_stacks()
+	#if job_manager:
+		#job_manager.check_all_stacks()
+	if crafting_manager:
+		crafting_manager.validate_all_stacks()
 
 func finish_drag() -> void:
 	if dragged_substack.size() == 0:
@@ -278,8 +282,10 @@ func finish_drag() -> void:
 	card_being_dragged = null
 	dragged_substack.clear()
 	# Re-check jobs
-	if job_manager:
-		job_manager.check_all_stacks()
+	#if job_manager:
+		#job_manager.check_all_stacks()
+	if crafting_manager:
+		crafting_manager.validate_all_stacks()
 
 func merge_overlapping_stacks(card: Node2D) -> bool:
 	var overlapping = get_overlapping_cards_any(card, OVERLAP_THRESHOLD)
