@@ -229,7 +229,7 @@ func start_drag(card: Card) -> void:
 		if is_instance_valid(c):
 			c.is_being_dragged = true
 			c.z_index = DRAG_Z_INDEX + i
-			var target_scale = Vector2(1.05, 1.05)
+			var target_scale = Vector2(1.1, 1.1)
 			if c.scale != target_scale:
 				kill_card_tween(c) # kill any existing tween
 				var tween = get_tree().create_tween()
