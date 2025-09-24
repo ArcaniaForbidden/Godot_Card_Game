@@ -26,7 +26,6 @@ var debug_show_progress := true
 # ==============================
 func _ready() -> void:
 	card_manager = get_parent().get_node("CardManager") as CardManager
-	randomize()
 
 func _process(delta: float) -> void:
 	update_jobs(delta)

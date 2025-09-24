@@ -30,6 +30,7 @@ var spawn_protected_cards: Array = []
 var card_scene = preload("res://Scenes/Card.tscn")
 var battle_manager: Node = null
 var crafting_manager: Node = null
+var exploration_manager: Node = null
 var screen_size: Vector2
 var shadows: Node2D
 var cached_rects: Dictionary = {}  # card -> Rect2
@@ -41,13 +42,14 @@ var allowed_stack_types := {
 	"resource": ["unit", "resource", "material", "building"],
 	"material": ["unit", "resource", "material", "building"],
 	"enemy": [],                                                           # enemies cannot stack
-	"building": ["building"],
+	"building": ["building", "location"],
 	"location": []
 }
 
 func _ready() -> void:
 	battle_manager = get_parent().get_node("BattleManager")
 	crafting_manager = get_parent().get_node("CraftingManager")
+	exploration_manager = get_parent().get_node("ExplorationManager")
 	screen_size = get_viewport_rect().size
 	if self:
 		shadows = Node2D.new()
@@ -133,6 +135,9 @@ func handle_dragging() -> void:
 	if dragged_substack.size() == 0:
 		return
 	var mouse_pos = get_global_mouse_position()
+	var explored_area = get_explored_area()
+	if explored_area.size == Vector2.ZERO:
+		return 
 	for i in range(dragged_substack.size() - 1, -1, -1):
 		var card = dragged_substack[i]
 		if not is_instance_valid(card):
@@ -151,8 +156,8 @@ func handle_dragging() -> void:
 				# fallback if previous card was freed
 				target_pos = mouse_pos + drag_offset + Vector2(0, drag_lift_y)
 		# Clamp to play area
-		target_pos.x = clamp(target_pos.x, PLAY_AREA.position.x, PLAY_AREA.position.x + PLAY_AREA.size.x)
-		target_pos.y = clamp(target_pos.y, PLAY_AREA.position.y, PLAY_AREA.position.y + PLAY_AREA.size.y)
+		target_pos.x = clamp(target_pos.x, explored_area.position.x, explored_area.position.x + explored_area.size.x)
+		target_pos.y = clamp(target_pos.y, explored_area.position.y, explored_area.position.y + explored_area.size.y)
 		# Smoothly move toward target
 		card.position = card.position.lerp(target_pos, 0.1)
 
@@ -347,7 +352,7 @@ func push_apart_cards() -> void:
 	for stack in all_stacks:
 		if stack.is_empty() or not is_instance_valid(stack[0]) \
 			or stack.has(card_being_dragged) or stack[0].card_type == "enemy" \
-			or stack_has_crafted_dragged(stack):
+			or stack_has_crafted_dragged(stack) or stack[0].card_type == "location":
 			stack_bounds.append(null)
 			stack_card_centers.append(null)
 			stack_center_x.append(INF)  # sentinel
@@ -450,6 +455,19 @@ func get_stack_bounds(stack: Array) -> Rect2:
 		max_x = max(max_x, rect.position.x + rect.size.x)
 		max_y = max(max_y, rect.position.y + rect.size.y)
 	return Rect2(Vector2(min_x, min_y), Vector2(max_x - min_x, max_y - min_y))
+
+func get_explored_area() -> Rect2:
+	var min_pos = Vector2(INF, INF)
+	var max_pos = Vector2(-INF, -INF)
+	for tile in exploration_manager.tiles:
+		if tile.is_explored:
+			min_pos.x = min(min_pos.x, tile.position.x)
+			min_pos.y = min(min_pos.y, tile.position.y)
+			max_pos.x = max(max_pos.x, tile.position.x + exploration_manager.TILE_SIZE.x)
+			max_pos.y = max(max_pos.y, tile.position.y + exploration_manager.TILE_SIZE.y)
+	if min_pos.x == INF:  # No explored tiles yet
+		return Rect2(Vector2.ZERO, Vector2.ZERO)
+	return Rect2(min_pos, max_pos - min_pos)
 
 # ==============================
 #  STACK HELPERS

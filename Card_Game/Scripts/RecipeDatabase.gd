@@ -8,6 +8,7 @@ static var recipes = {
 			{"subtype": "tree", "consume": true}
 		],
 		"outputs": [
+			{"subtype": "wood"},
 			{"subtype": "wood"}
 		],
 		"work_time": 2.0
@@ -19,21 +20,22 @@ static var recipes = {
 			
 		],
 		"outputs": [
+			{"subtype": "stone"},
 			{"subtype": "stone"}
 		],
 		"work_time": 2.0
 	},
-	#"Search Forest": {
-		#"inputs": [
-			#{"subtype": "forest", "consume": false}, # environment card
-			#{"subtype": "peasant", "consume": false} # unit on top
-		#],
-		#"loot_table": [
-			#{"weight": 10, "outputs": [{"subtype": "tree"}]},
-			#{"weight": 50, "outputs": [{"subtype": "wood"}]}
-		#],
-		#"work_time": 10.0
-	#},
+	"Search Forest": {
+		"inputs": [
+			{"subtype": "forest", "consume": false}, # environment card
+			{"subtype": "peasant", "consume": false} # unit on top
+		],
+		"loot_table": [
+			{"weight": 10, "outputs": [{"subtype": "tree"}]},
+			{"weight": 50, "outputs": [{"subtype": "wood"}]}
+		],
+		"work_time": 10.0
+	},
 	"Craft Wooden Spear": {
 		"inputs": [
 			{"subtype": "peasant", "consume": false},
@@ -97,7 +99,7 @@ static var recipes = {
 		"outputs": [
 			{"subtype": "wood"}
 		],
-		"work_time": 2.0
+		"work_time": 10.0
 	},
 	"Use Quarry": {
 		"inputs": [
