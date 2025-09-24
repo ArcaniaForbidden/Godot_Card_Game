@@ -1,191 +1,224 @@
-extends Node
+extends Node2D
 class_name CraftingManager
 
-const SEARCH_RADIUS := 200.0
-const LAUNCH_OFFSET := 150.0
-const LAUNCH_ANGLE_DEG := 10.0
-const LAUNCH_TWEEN_TIME := 0.3
+# ==============================
+#  Crafting Job Class
+# ==============================
+class CraftingJob:
+	var stack_index: int
+	var recipe_name: String
+	var progress: float = 0.0
+	var is_active: bool = true
+	var input_cards: Array = []  # actual card instances used
+	var debug_timer: float = 0.0
 
-# ----------------------
-# Member Variables
-# ----------------------
-var jobs: Array = []  # Each job: {core_bottom: Card, core_top: Card, recipe: Dictionary, time_elapsed: float, last_print: float}
+# ==============================
+#  Member Variables
+# ==============================
+var active_jobs: Array = []
 var card_manager: CardManager = null
-var recipe_database = preload("res://Scripts/RecipeDatabase.gd")
-var print_interval: float = 0.5  # seconds
 
+# Optional: show progress for debugging
+var debug_show_progress := true
+
+# ==============================
+#  Initialization
+# ==============================
 func _ready() -> void:
 	card_manager = get_parent().get_node("CardManager") as CardManager
+	randomize()
 
 func _process(delta: float) -> void:
-	# Iterate backwards to allow removal
-	for i in range(jobs.size() - 1, -1, -1):
-		var job = jobs[i]
-		var stack = card_manager.find_stack(job.core_bottom)
-		# Cancel job if stack is invalid
-		if not _validate_job_stack(stack, job):
-			print("Crafting job canceled:", job.recipe)
-			_stop_drag_if_needed(stack)
-			jobs.remove_at(i)
+	update_jobs(delta)
+	check_all_stacks_for_recipes()
+
+# ==============================
+#  Job Management
+# ==============================
+func update_jobs(delta: float) -> void:
+	for job in active_jobs.duplicate():
+		if not job.is_active:
+			active_jobs.erase(job)
 			continue
-		# Increment elapsed time
-		job.time_elapsed += delta
-		# Print progress at interval
-		job.last_print += delta
-		if job.last_print >= print_interval:
-			print("Job progress:", job.time_elapsed, "/", job.recipe.get("work_time", 0), "for recipe:", job.recipe)
-			job.last_print = 0
-		# Complete job if elapsed time reached
-		if job.time_elapsed >= job.recipe.get("work_time", 0):
-			_complete_job(stack, job)
-			jobs.remove_at(i)
-
-# ----------------------
-# Public Functions
-# ----------------------
-func validate_all_stacks() -> void:
-	if not card_manager:
-		return
-	# Validate running jobs
-	for i in range(jobs.size() - 1, -1, -1):
-		var job = jobs[i]
-		var stack = card_manager.find_stack(job.core_bottom)
-		if not _validate_job_stack(stack, job):
-			print("Crafting job canceled:", job.recipe)
-			_stop_drag_if_needed(stack)
-			jobs.remove_at(i)
-	# Check each stack for new recipes
-	for stack in card_manager.all_stacks:
-		_try_run_recipes_for_stack(stack)
-
-# ----------------------
-# Internal Helpers
-# ----------------------
-func _try_run_recipes_for_stack(stack: Array) -> void:
-	if stack.size() < 2:
-		return
-	var bottom_card = stack[0]
-	var top_card = stack[-1]
-	for recipe_name in recipe_database.recipes.keys():
-		var recipe = recipe_database.recipes[recipe_name]
-		if not recipe.has("inputs") or recipe["inputs"].size() < 2:
+		# Fetch the stack
+		if job.stack_index >= card_manager.all_stacks.size():
+			cancel_job(job)
 			continue
-		var inputs = recipe["inputs"]
-		var first_input_type = inputs[0].get("role", "bottom")
-		var second_input_type = inputs[1].get("role", "top")
-		var is_match = false
-		# Match top-core or bottom-core recipes
-		if first_input_type == "bottom" and second_input_type == "top":
-			if inputs[0]["subtype"] == bottom_card.subtype and inputs[1]["subtype"] == top_card.subtype:
-				is_match = true
-		elif first_input_type == "top" and second_input_type == "bottom":
-			if inputs[0]["subtype"] == top_card.subtype and inputs[1]["subtype"] == bottom_card.subtype:
-				is_match = true
-		if not is_match:
+		var stack = card_manager.all_stacks[job.stack_index]
+		# Cancel if any required input card is missing
+		for c in job.input_cards:
+			if not is_instance_valid(c) or not stack.has(c):
+				cancel_job(job)
+				break
+		if not job.is_active:
 			continue
-		# Check for additional consumables
-		var needed = _collect_needed_inputs(recipe, 2, inputs.size())
-		if _can_fulfill_consumables(needed, stack):
-			_start_job(bottom_card, top_card, recipe)
-			break
+		# Progress crafting
+		var recipe = RecipeDatabase.recipes[job.recipe_name]
+		job.progress += delta
+		# Throttle debug print
+		job.debug_timer += delta
+		if debug_show_progress and job.debug_timer >= 0.5:
+			print("Crafting '%s' on stack %d: %.2f / %.2f" %
+				[job.recipe_name, job.stack_index, job.progress, recipe.work_time])
+			job.debug_timer = 0.0  # reset timer
+		# Complete if done
+		if job.progress >= recipe.work_time:
+			complete_job(job)
 
-func _start_job(core_bottom: Node2D, core_top: Node2D, recipe: Dictionary) -> void:
-	for job in jobs:
-		if job.core_bottom == core_bottom and job.core_top == core_top and job.recipe == recipe:
-			return
-	var job = {
-		"core_bottom": core_bottom,
-		"core_top": core_top,
-		"recipe": recipe,
-		"time_elapsed": 0.0,
-		"last_print": 0.0
-	}
-	jobs.append(job)
+# ==============================
+#  Start a Job
+# ==============================
+func start_job(stack_index: int, recipe_name: String) -> void:
+	if stack_index >= card_manager.all_stacks.size():
+		return
+	# --- Check if this stack already has an active job ---
+	for job in active_jobs:
+		if job.stack_index == stack_index and job.is_active:
+			return  # already crafting something on this stack
+	var stack = card_manager.all_stacks[stack_index]
+	var recipe = RecipeDatabase.recipes.get(recipe_name, null)
+	if not recipe:
+		return
+	var matched_cards = stack_matches_recipe(stack, recipe.inputs)
+	if matched_cards.size() == 0:
+		return  # ingredients not available
+	# --- Create the new job ---
+	var job = CraftingJob.new()
+	job.stack_index = stack_index
+	job.recipe_name = recipe_name
+	job.input_cards = matched_cards
+	active_jobs.append(job)
 
-func _complete_job(stack: Array, job: Dictionary) -> void:
-	if not stack or stack.size() == 0:
-		return
-	# Validate before completion
-	if not _validate_job_stack(stack, job):
-		print("Job invalid at completion, skipping:", job.recipe)
-		return
-	var recipe = job.recipe
-	# Remove consumed cards safely
-	var inputs = recipe.get("inputs", [])
-	var consumed_indices = []
-	for i in range(inputs.size()):
-		if inputs[i].get("consume", false):
-			for j in range(stack.size()):
-				if stack[j].subtype == inputs[i]["subtype"]:
-					consumed_indices.append(j)
+# ==============================
+#  Cancel / Complete Jobs
+# ==============================
+func complete_job(job: CraftingJob) -> void:
+	var stack = card_manager.all_stacks[job.stack_index]
+	var recipe = RecipeDatabase.recipes[job.recipe_name]
+	# Remove consumed cards
+	for input in recipe.inputs:
+		if input.get("consume", false):
+			var count_to_consume = input.get("count", 1)
+			# Iterate over a copy of job.input_cards so we can safely remove items
+			for c in job.input_cards.duplicate():
+				if count_to_consume <= 0:
 					break
-	consumed_indices.sort()
-	for i in range(consumed_indices.size() - 1, -1, -1):
-		var idx = consumed_indices[i]
-		if idx >= 0 and idx < stack.size():
-			var card = stack[idx]
-			stack.remove_at(idx)
-			if is_instance_valid(card):
-				# Remove shadow first
-				if card.shadow and is_instance_valid(card.shadow):
-					card.shadow.queue_free()
-				# Stop dragging if this card was being dragged
-				if card_manager.dragged_substack.has(card):
-					card_manager.finish_drag()
-				card.queue_free()
-	# Spawn outputs as new stacks
-	if recipe.has("outputs"):
-		for out in recipe["outputs"]:
-			_spawn_crafting_output(out["subtype"], stack[0].global_position)
-	# After completion, immediately re-check the stack for repeated crafting
-	if stack.size() >= 2:
-		_try_run_recipes_for_stack(stack)
+				if is_instance_valid(c) and c.subtype == input["subtype"]:
+					if c.is_being_dragged:
+						card_manager.finish_drag_player()
+					stack.erase(c)
+					c.queue_free()
+					job.input_cards.erase(c)  # remove from job's input list too
+					count_to_consume -= 1
+	# Spawn output cards
+	for output in recipe.outputs:
+		var start_pos = Vector2.ZERO
+		if stack.size() > 0:
+			start_pos = stack[0].position
+		var new_card = card_manager.spawn_card(output["subtype"], start_pos)
+		if SoundManager:
+			SoundManager.play("card_pop", -6.0)
+		new_card.is_being_crafted_dragged = true
+		print("Spawned '%s' at %s" % [new_card.subtype, start_pos])
+		# Check nearby stacks within radius
+		var target_pos = null
+		var merge_stack = null
+		var search_radius = 400
+		for s in card_manager.all_stacks:
+			if s == stack or s.size() == 0:
+				continue
+			var top_card = s[s.size() - 1]
+			var bottom_card = s[0]
+			if not is_instance_valid(top_card) or not is_instance_valid(bottom_card):
+				continue
+			if bottom_card.is_being_dragged:
+				continue
+			if top_card.subtype == output["subtype"]:
+				var dist = bottom_card.position.distance_to(start_pos)
+				print("Checking stack top '%s' at %s, distance = %.2f" % [top_card.subtype, top_card.position, dist])
+				if dist < 1:
+					continue  # ignore itself
+				if dist <= search_radius:
+					target_pos = top_card.position
+					merge_stack = s
+					print("-> Found merge stack at %s" % top_card.position)
+					break
+		# If no valid merge stack, pick random direction/distance
+		if target_pos == null:
+			var angle = randf() * PI * 2
+			var distance = 200 + randf() * 200  # 200-400 pixels
+			target_pos = start_pos + Vector2(cos(angle), sin(angle)) * distance
+			print("No nearby stack, moving to random position %s" % target_pos)
+		else:
+			print("Will merge onto existing stack at %s" % target_pos)
+		# Tween card to final position
+		new_card.scale = Vector2(1.1, 1.1)
+		new_card.z_index = card_manager.DRAG_Z_INDEX
+		new_card.is_being_crafted_dragged = true
+		# Tween to the target position
+		var tween = get_tree().create_tween()
+		tween.tween_property(new_card, "position", target_pos, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
-func _collect_needed_inputs(recipe: Dictionary, start_idx: int, end_idx: int) -> Array:
-	var needed: Array = []
-	var inputs = recipe.get("inputs", [])
-	for i in range(start_idx, end_idx):
-		needed.append(inputs[i])
-	return needed
+		# Optional: you can also tween scale back to 1 after it reaches destination
+		tween.finished.connect(Callable(func() -> void:
+			if is_instance_valid(new_card):
+				new_card.scale = Vector2(1, 1)  # reset scale
+				new_card.is_being_crafted_dragged = false
+				card_manager.finish_drag_simulated([new_card])
+		))
+	# Finish job
+	job.is_active = false
+	if job in active_jobs:
+		active_jobs.erase(job)
+	print("Job completed: %s" % job.recipe_name)
 
-func _can_fulfill_consumables(needed: Array, stack: Array) -> bool:
+func cancel_job(job: CraftingJob) -> void:
+	job.is_active = false
+	active_jobs.erase(job)
+	print("Crafting Cancelled: %s" % job.recipe_name)
+
+# ==============================
+#  Recipe Matching Helper
+# ==============================
+func stack_matches_recipe(stack: Array, recipe_inputs: Array) -> Array:
 	var temp_stack = stack.duplicate()
-	for need in needed:
-		var found = false
-		for i in range(temp_stack.size()):
-			if temp_stack[i].subtype == need["subtype"]:
-				found = true
-				temp_stack.remove_at(i)
+	var matched_cards: Array = []
+	for input in recipe_inputs:
+		var subtype = input["subtype"]
+		var consume = input.get("consume", true)
+		var found_card = null
+		for c in temp_stack:
+			if is_instance_valid(c) and c.subtype == subtype:
+				found_card = c
 				break
-		if not found:
-			return false
-	return true
+		if found_card:
+			matched_cards.append(found_card)
+			if consume:
+				temp_stack.erase(found_card)  # only remove if consumed
+		else:
+			# Fail if required consumable or required non-consumable is missing
+			return []
+	return matched_cards
 
-func _validate_job_stack(stack: Array, job: Dictionary) -> bool:
-	if not stack or stack.size() < 2:
-		return false
-	if stack[0] != job.core_bottom or stack[-1] != job.core_top:
-		return false
-	var temp_stack = stack.duplicate()
-	temp_stack.remove_at(temp_stack.size() - 1)  # remove top core
-	temp_stack.remove_at(0)                     # remove bottom core
-	var inputs = job.recipe.get("inputs", [])
-	for i in range(2, inputs.size()):
-		var input_dict = inputs[i]
-		var found = false
-		for j in range(temp_stack.size()):
-			if temp_stack[j].subtype == input_dict["subtype"]:
-				found = true
-				temp_stack.remove_at(j)
+# ==============================
+#  Auto-Check All Stacks for Recipes
+# ==============================
+func check_all_stacks_for_recipes():
+	for i in range(card_manager.all_stacks.size()):
+		var stack = card_manager.all_stacks[i]
+		# Skip if a job is already running on this stack
+		var already_running := false
+		for job in active_jobs:
+			if job.stack_index == i:
+				already_running = true
 				break
-		if not found:
-			return false
-	return true
-
-func _stop_drag_if_needed(stack: Array) -> void:
-	# Stop dragging if any card in this stack is being dragged
-	if card_manager.dragged_substack.size() > 0:
-		for c in stack:
-			if c in card_manager.dragged_substack:
-				card_manager.finish_drag()
+		if already_running:
+			continue
+		# Check recipes
+		for recipe_name in RecipeDatabase.recipes.keys():
+			var recipe = RecipeDatabase.recipes[recipe_name]
+			var matched = stack_matches_recipe(stack, recipe.inputs)
+			if matched.size() > 0:
+				start_job(i, recipe_name)
+				# Stop checking other recipes for this stack
 				break

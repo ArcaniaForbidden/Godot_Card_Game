@@ -29,8 +29,7 @@ var all_stacks: Array = []
 var spawn_protected_cards: Array = []
 var card_scene = preload("res://Scenes/Card.tscn")
 var battle_manager: Node = null
-var crafting_manager: CraftingManager = null
-#var job_manager: Node = null
+var crafting_manager: Node = null
 var screen_size: Vector2
 var shadows: Node2D
 var cached_rects: Dictionary = {}  # card -> Rect2
@@ -48,8 +47,7 @@ var allowed_stack_types := {
 
 func _ready() -> void:
 	battle_manager = get_parent().get_node("BattleManager")
-	crafting_manager = get_parent().get_node("CraftingManager") as CraftingManager
-	#job_manager = get_parent().get_node("JobManager")
+	crafting_manager = get_parent().get_node("CraftingManager")
 	screen_size = get_viewport_rect().size
 	if self:
 		shadows = Node2D.new()
@@ -88,9 +86,9 @@ func spawn_initial_cards() -> void:
 	spawn_card("wood", Vector2(700, 300))
 	spawn_card("stone", Vector2(800, 300))
 	spawn_card("stone", Vector2(800, 300))
-	spawn_card("wolf", Vector2(800, 600))
-	spawn_card("wolf", Vector2(900, 600))
-	spawn_card("wolf", Vector2(1800, 600))
+	#spawn_card("wolf", Vector2(800, 600))
+	#spawn_card("wolf", Vector2(900, 600))
+	#spawn_card("wolf", Vector2(1800, 600))
 	spawn_card("forest", Vector2(0, 100))
 
 func spawn_card(subtype: String, position: Vector2) -> Card:
@@ -101,6 +99,7 @@ func spawn_card(subtype: String, position: Vector2) -> Card:
 	var shadow = Sprite2D.new()
 	shadow.texture = preload("res://Images/card_shadow.png")
 	shadow.z_index = 0
+	shadow.global_position = card.global_position
 	shadows.add_child(shadow)
 	card.shadow = shadow
 	card.is_being_dragged = false
@@ -121,11 +120,13 @@ func handle_mouse_press() -> void:
 	if clicked_card.card_type == "enemy":
 		print("Cannot drag enemy card:", clicked_card.subtype)
 		return
+	if clicked_card.is_being_crafted_dragged:
+		return
 	start_drag(clicked_card)
 
 func handle_mouse_release() -> void:
 	if card_being_dragged:
-		finish_drag()
+		finish_drag_player()
 	debug_print_stacks()
 
 func handle_dragging() -> void:
@@ -188,30 +189,42 @@ func start_drag(card: Card) -> void:
 				tween.tween_property(c, "scale", target_scale, 0.15).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 				card_tweens[c] = tween
 	card_being_dragged = dragged_substack[0]
-	# Re-check jobs
-	#if job_manager:
-		#job_manager.check_all_stacks()
-	if crafting_manager:
-		crafting_manager.validate_all_stacks()
 
-func finish_drag() -> void:
-	if dragged_substack.size() == 0:
+func finish_drag_generic(cards: Array, is_simulated: bool, play_sound: bool = true) -> void:
+	if cards.is_empty():
 		return
-	if SoundManager:
+	if play_sound and SoundManager:
 		SoundManager.play("card_drop", -6.0)
-	# Stop dragging state
-	for c in dragged_substack:
-		if is_instance_valid(c):
+	# Choose which flag to set/clear
+	for c in cards:
+		if not is_instance_valid(c):
+			continue
+		if is_simulated:
+			c.is_being_crafted_dragged = true
+		else:
 			c.is_being_dragged = false
-	# Merge overlapping stacks
-	var merged_with_stack = false
-	if dragged_substack[0].in_battle == false:
-		merged_with_stack = merge_overlapping_stacks(dragged_substack[0])
-	# Determine extra offset only if not merged
-	var extra_offset_y = 20 if not merged_with_stack else 0
-	# Snap dragged stack to top card's position
-	var stack = find_stack(dragged_substack[0])
-	if stack.size() > 0:
+		kill_card_tween(c)
+	# Make sure stack membership is clean before merging
+	if is_simulated:
+		for c in cards:
+			var old_stack = find_stack(c)
+			if not old_stack.is_empty():
+				old_stack.erase(c)
+				if old_stack.is_empty():
+					all_stacks.erase(old_stack)
+	if is_simulated:
+		all_stacks.append(cards)
+	var bottom_card = cards[0]
+	if not is_instance_valid(bottom_card):
+		return
+	var can_merge = not (not is_simulated and bottom_card.in_battle)
+	var merged := false
+	if can_merge:
+		merged = merge_overlapping_stacks(bottom_card)
+	var extra_offset_y = 20 if (not merged and not is_simulated) else 0
+	# Snap positions (or let tween place them)
+	var stack = find_stack(bottom_card)
+	if not stack.is_empty():
 		var base_pos = stack[0].position + Vector2(0, extra_offset_y)
 		for i in range(stack.size()):
 			var card = stack[i]
@@ -221,21 +234,24 @@ func finish_drag() -> void:
 			kill_card_tween(card)
 			var tween = get_tree().create_tween()
 			tween.tween_property(card, "position", target_pos, STACK_TWEEN_DURATION)\
-				.set_trans(Tween.TRANS_QUAD)\
-				.set_ease(Tween.EASE_OUT)
+				.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 			tween.parallel().tween_property(card, "scale", Vector2(1, 1), STACK_TWEEN_DURATION)\
-				.set_trans(Tween.TRANS_QUAD)\
-				.set_ease(Tween.EASE_OUT)
+				.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 			card_tweens[card] = tween
 			card.z_index = i + 1
-	# Clear drag
+	# Clear flags after merge/tween setup
+	for c in cards:
+		if is_instance_valid(c):
+			if is_simulated:
+				c.is_being_crafted_dragged = false
+
+func finish_drag_player() -> void:
+	finish_drag_generic(dragged_substack, false, true)
 	card_being_dragged = null
 	dragged_substack.clear()
-	# Re-check jobs
-	#if job_manager:
-		#job_manager.check_all_stacks()
-	if crafting_manager:
-		crafting_manager.validate_all_stacks()
+
+func finish_drag_simulated(cards_to_place: Array) -> void:
+	finish_drag_generic(cards_to_place, true, false)
 
 func merge_overlapping_stacks(card: Node2D) -> bool:
 	var overlapping = get_overlapping_cards_any(card, OVERLAP_THRESHOLD)
@@ -252,6 +268,9 @@ func merge_overlapping_stacks(card: Node2D) -> bool:
 		if target_stack.is_empty():
 			continue
 		var target_top_card = target_stack[-1]
+		var target_bottom_card = target_stack[0]
+		if target_bottom_card.is_being_dragged:
+			continue
 		var dragged_type = dragged_bottom_card.card_type
 		var target_type = target_top_card.card_type
 		if not allowed_stack_types.has(dragged_type):
@@ -311,6 +330,12 @@ func update_cards_moving(delta: float) -> void:
 	for card in finished_cards:
 		cards_moving.erase(card)
 
+func stack_has_crafted_dragged(stack: Array) -> bool:
+	for card in stack:
+		if is_instance_valid(card) and card.is_being_crafted_dragged:
+			return true
+	return false
+
 func push_apart_cards() -> void:
 	if all_stacks.size() < 2:
 		return
@@ -321,7 +346,8 @@ func push_apart_cards() -> void:
 	var card_rects := {}  # cache rects for this frame
 	for stack in all_stacks:
 		if stack.is_empty() or not is_instance_valid(stack[0]) \
-			or stack.has(card_being_dragged) or stack[0].card_type == "enemy":
+			or stack.has(card_being_dragged) or stack[0].card_type == "enemy" \
+			or stack_has_crafted_dragged(stack):
 			stack_bounds.append(null)
 			stack_card_centers.append(null)
 			stack_center_x.append(INF)  # sentinel

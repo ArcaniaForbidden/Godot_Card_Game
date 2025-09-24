@@ -9,6 +9,7 @@ const LABEL_COLOR := Color.BLACK
 
 var target_position: Vector2
 var is_being_dragged: bool = false
+var is_being_crafted_dragged: bool = false
 var card_type: String = ""
 var subtype: String = ""
 var display_name: String = ""

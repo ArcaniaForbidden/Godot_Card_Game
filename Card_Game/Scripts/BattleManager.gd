@@ -65,7 +65,7 @@ func update_battle_detection() -> void:
 			if card_manager.dragged_substack.size() > 0:
 				for c in card_manager.dragged_substack:
 					if c in unit_cards:
-						card_manager.finish_drag()
+						card_manager.finish_drag_player()
 						break
 			stack.clear()
 			for c in non_unit_cards:
