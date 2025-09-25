@@ -49,7 +49,6 @@ func generate_tile_biome(tile: Tile) -> String:
 		"desert": 20,
 		"mountain": 20
 	}
-
 	# --- Adjacency bias ---
 	for neighbor in get_adjacent_tiles(tile):
 		if neighbor.is_explored:
@@ -62,13 +61,11 @@ func generate_tile_biome(tile: Tile) -> String:
 					#biome_weights["desert"] += 5
 				#"mountain":
 					#biome_weights["mountain"] += 5
-
 	# --- Distance weighting ---
 	var start_center = Vector2(START_GRID_SIZE / 2, START_GRID_SIZE / 2)
 	var dist = tile.grid_pos.distance_to(start_center)
 	biome_weights["desert"] += int(dist * 2)
 	biome_weights["mountain"] += int(dist * 1.5)
-
 	# --- Noise influence ---
 	if noise_val < 0.3:
 		biome_weights["forest"] += 5
@@ -76,19 +73,16 @@ func generate_tile_biome(tile: Tile) -> String:
 	elif noise_val > 0.7:
 		biome_weights["desert"] += 5
 		biome_weights["mountain"] += 5
-
 	# --- Pick weighted random biome ---
 	var total = 0
 	for weight in biome_weights.values():
 		total += weight
-
 	var pick = randi() % total
 	var running = 0
 	for biome in biome_weights.keys():
 		running += biome_weights[biome]
 		if pick < running:
 			return biome
-
 	return "plains"  # fallback
 
 # -----------------------------

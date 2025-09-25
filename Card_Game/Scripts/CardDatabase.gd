@@ -123,5 +123,12 @@ static var card_database = {
 				"attack_speed": 1.0  # 10% slower attacks
 			}
 		}
+	},
+	"exploration_mark": {
+		"card": preload("res://Images/green_card.png"),
+		"sprite": preload("res://Images/wolf.png"),
+		"card_type": "location",
+		"display_name": "Undiscovered Area",
+		"description": "A new area to be explored!",
 	}
 }
