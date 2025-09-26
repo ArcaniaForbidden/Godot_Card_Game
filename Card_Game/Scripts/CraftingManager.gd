@@ -56,19 +56,31 @@ func update_jobs(delta: float) -> void:
 	var remaining_jobs: Array = []
 	for job in active_jobs:
 		if not job.is_active:
-			active_jobs.erase(job)
 			continue
 		# --- Cancel if any card in the stack is being dragged ---
 		var dragging := false
 		for c in job.stack:
 			if is_instance_valid(c) and c.is_being_dragged:
+				print("Cancelling job '%s': card being dragged" % job.recipe_name)
 				dragging = true
 				break
 		if dragging:
 			cancel_job(job)
 			continue 
-		# --- Validate stack exists ---
-		if not card_manager.all_stacks.has(job.stack):
+		# --- Validate stack still contains required input cards ---
+		var stack_found := false
+		for s in card_manager.all_stacks:
+			var all_inputs_present := true
+			for input_card in job.input_cards:
+				if not s.has(input_card):
+					all_inputs_present = false
+					break
+			if all_inputs_present:
+				stack_found = true
+				job.stack = s # update reference to current stack
+				break
+		if not stack_found:
+			print("Cancelling job '%s': required cards missing" % job.recipe_name)
 			cancel_job(job)
 			continue
 		# --- Validate stack still matches recipe ---
@@ -78,13 +90,14 @@ func update_jobs(delta: float) -> void:
 			continue
 		var current_match = stack_matches_recipe(job.stack, recipe.inputs)
 		if current_match.size() == 0:
+			print("Cancelling job '%s': stack no longer matches recipe" % job.recipe_name)
 			cancel_job(job)
 			continue
 		# --- Progress crafting ---
 		job.progress += delta
 		job.debug_timer += delta
 		if debug_show_progress and job.debug_timer >= 0.5:
-			print("Crafting '%s' on stack: %.2f / %.2f" % [
+			print("Job '%s' progress: %.2f / %.2f" % [
 				job.recipe_name,
 				job.progress,
 				recipe.work_time
@@ -198,23 +211,15 @@ func complete_job(job: CraftingJob) -> void:
 #  Recipe Matching Helper
 # ==============================
 func stack_matches_recipe(stack: Array, recipe_inputs: Array) -> Array:
-	var temp_stack = stack.duplicate()
+	if stack.size() < recipe_inputs.size():
+		return []
 	var matched_cards: Array = []
-	for input in recipe_inputs:
-		var subtype = input["subtype"]
-		var consume = input.get("consume", true)
-		var found_card = null
-		for c in temp_stack:
-			if is_instance_valid(c) and c.subtype == subtype:
-				found_card = c
-				break
-		if found_card:
-			matched_cards.append(found_card)
-			if consume:
-				temp_stack.erase(found_card)  # only remove if consumed
-		else:
-			# Fail if required consumable or required non-consumable is missing
-			return []
+	for i in range(recipe_inputs.size()):
+		var card = stack[i]
+		var input = recipe_inputs[i]
+		if not is_instance_valid(card) or card.subtype != input["subtype"]:
+			return []  # mismatch
+		matched_cards.append(card)
 	return matched_cards
 
 # ==============================
@@ -223,13 +228,6 @@ func stack_matches_recipe(stack: Array, recipe_inputs: Array) -> Array:
 func check_all_stacks_for_recipes():
 	for stack in card_manager.all_stacks:
 		# Skip if a job is already running on this stack
-		var dragging := false
-		for c in stack:
-			if is_instance_valid(c) and c.is_being_dragged:
-				dragging = true
-				break
-		if dragging:
-			continue
 		var already_running := false
 		for job in active_jobs:
 			if job.stack == stack:
@@ -237,11 +235,23 @@ func check_all_stacks_for_recipes():
 				break
 		if already_running:
 			continue
-		# Check recipes
+		# Find the longest matching recipe
+		var best_recipe_name := ""
+		var best_match: Array = []
 		for recipe_name in RecipeDatabase.recipes.keys():
 			var recipe = RecipeDatabase.recipes[recipe_name]
 			var matched = stack_matches_recipe(stack, recipe.inputs)
-			if matched.size() > 0:
-				start_job(stack, recipe_name)
-				# Stop checking other recipes for this stack
-				break
+			if matched.size() > best_match.size():
+				best_match = matched
+				best_recipe_name = recipe_name
+		if best_match.size() > 0:
+			start_job(stack, best_recipe_name)
+
+# ==============================
+#  Public Helper
+# ==============================
+func is_stack_crafting(stack: Array) -> bool:
+	for job in active_jobs:
+		if job.stack == stack and job.is_active:
+			return true
+	return false

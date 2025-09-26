@@ -275,6 +275,8 @@ func merge_overlapping_stacks(card: Node2D) -> bool:
 			continue
 		var target_top_card = target_stack[-1]
 		var target_bottom_card = target_stack[0]
+		if crafting_manager.is_stack_crafting(target_stack):
+			continue
 		if target_bottom_card.is_being_dragged:
 			continue
 		var dragged_type = dragged_bottom_card.card_type
