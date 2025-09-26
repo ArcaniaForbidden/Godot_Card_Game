@@ -3,8 +3,8 @@ class_name ExplorationManager
 
 const TILE_SCENE = preload("res://Scenes/Tile.tscn")
 const START_BIOME = "plains"        # Starting biome
-const TILE_SIZE = Vector2(700, 700)
-const START_GRID_SIZE = 3            # 3x3 starting area
+const TILE_SIZE = Vector2(350, 350)
+const START_GRID_SIZE = 2           # 3x3 starting area
 
 var tiles: Array = []
 var noise := FastNoiseLite.new()

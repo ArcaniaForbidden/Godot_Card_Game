@@ -38,6 +38,12 @@ static var card_database = {
 		"card_type": "material",
 		"display_name": "Stone"
 	},
+	"brick": { 
+		"card": preload("res://Images/material_card.png"),
+		"sprite": preload("res://Images/brick.png"),
+		"card_type": "material",
+		"display_name": "Brick"
+	},
 	"tree": {
 		"card": preload("res://Images/basic_card.png"),
 		"sprite": preload("res://Images/tree.png"),
@@ -50,11 +56,11 @@ static var card_database = {
 		"card_type": "material",
 		"display_name": "Wood"
 	},
-	"forest": {
-		"card": preload("res://Images/green_card.png"),
-		"sprite": preload("res://Images/forest.png"),
-		"card_type": "location",
-		"display_name": "Forest"
+	"plank": {
+		"card": preload("res://Images/material_card.png"),
+		"sprite": preload("res://Images/plank.png"),
+		"card_type": "material",
+		"display_name": "Plank"
 	},
 	"house": {
 		"card": preload("res://Images/unit_card.png"),
@@ -124,11 +130,16 @@ static var card_database = {
 			}
 		}
 	},
-	"exploration_mark": {
+	"plains": {
 		"card": preload("res://Images/green_card.png"),
 		"sprite": preload("res://Images/wolf.png"),
 		"card_type": "location",
-		"display_name": "Undiscovered Area",
-		"description": "A new area to be explored!",
-	}
+		"display_name": "Plains"
+	},
+	"forest": {
+		"card": preload("res://Images/green_card.png"),
+		"sprite": preload("res://Images/forest.png"),
+		"card_type": "location",
+		"display_name": "Forest"
+	},
 }

@@ -92,6 +92,7 @@ func spawn_initial_cards() -> void:
 	#spawn_card("wolf", Vector2(900, 600))
 	#spawn_card("wolf", Vector2(1800, 600))
 	spawn_card("forest", Vector2(0, 100))
+	spawn_card("plains", Vector2(0, 200))
 
 func spawn_card(subtype: String, position: Vector2) -> Card:
 	var card: Card = card_scene.instantiate() as Card

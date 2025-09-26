@@ -1,12 +1,14 @@
 [gd_scene load_steps=3 format=3 uid="uid://fa6ollguik2n"]
 
 [ext_resource type="Script" uid="uid://cf80phhn823u2" path="res://Scripts/Tile.gd" id="1_iof5j"]
-[ext_resource type="Texture2D" uid="uid://ccx827s2rft02" path="res://Images/tile_plains.png" id="1_t0yj4"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_t0yj4"]
+load_path = "res://.godot/imported/tile_plains.png-90951d77b1438b708b57c6a64bcd05c3.ctex"
 
 [node name="Tile" type="Node2D"]
 script = ExtResource("1_iof5j")
 
 [node name="TileSprite2D" type="Sprite2D" parent="."]
-position = Vector2(350, 350)
-scale = Vector2(5, 5)
-texture = ExtResource("1_t0yj4")
+position = Vector2(175, 175)
+scale = Vector2(2.5, 2.5)
+texture = SubResource("CompressedTexture2D_t0yj4")

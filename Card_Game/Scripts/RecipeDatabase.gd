@@ -34,7 +34,20 @@ static var recipes = {
 			{"weight": 10, "outputs": [{"subtype": "tree"}]},
 			{"weight": 50, "outputs": [{"subtype": "wood"}]}
 		],
-		"work_time": 10.0
+		"work_time": 2.0
+	},
+	"Search Plains": {
+		"inputs": [
+			{"subtype": "plains", "consume": false}, # environment card
+			{"subtype": "peasant", "consume": false} # unit on top
+		],
+		"loot_table": [
+			{"weight": 5, "outputs": [{"subtype": "tree"}]},
+			{"weight": 5, "outputs": [{"subtype": "rock"}]},
+			{"weight": 20, "outputs": [{"subtype": "wood"}]},
+			{"weight": 20, "outputs": [{"subtype": "stone"}]}
+		],
+		"work_time": 2.0
 	},
 	"Craft Wooden Spear": {
 		"inputs": [
@@ -110,5 +123,29 @@ static var recipes = {
 			{"subtype": "stone"}
 		],
 		"work_time": 2.0
-	}
+	},
+	"Make Plank": {
+		"inputs": [
+			{"subtype": "peasant", "consume": false},
+			{"subtype": "wood", "consume": true},
+			{"subtype": "wood", "consume": true},
+			{"subtype": "wood", "consume": true}
+		],
+		"outputs": [
+			{"subtype": "plank"}
+		],
+		"work_time": 5.0
+	},
+	"Make Brick": {
+		"inputs": [
+			{"subtype": "peasant", "consume": false},
+			{"subtype": "stone", "consume": true},
+			{"subtype": "stone", "consume": true},
+			{"subtype": "stone", "consume": true}
+		],
+		"outputs": [
+			{"subtype": "brick"}
+		],
+		"work_time": 5.0
+	},
 }

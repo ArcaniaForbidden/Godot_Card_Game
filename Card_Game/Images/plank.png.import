@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bnmbxnq7fwqnd"
-path="res://.godot/imported/tile_plains.png-90951d77b1438b708b57c6a64bcd05c3.ctex"
+uid="uid://cs2exd8v5dryy"
+path="res://.godot/imported/plank.png-0896ff0acd20521acf8b71a7f23d0bd1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/tile_plains.png"
-dest_files=["res://.godot/imported/tile_plains.png-90951d77b1438b708b57c6a64bcd05c3.ctex"]
+source_file="res://Images/plank.png"
+dest_files=["res://.godot/imported/plank.png-0896ff0acd20521acf8b71a7f23d0bd1.ctex"]
 
 [params]
 
