@@ -4,8 +4,8 @@ class_name RecipeDatabase
 static var recipes = {
 	"Chop Tree": {
 		"inputs": [
-			{"subtype": "peasant", "consume": false},
-			{"subtype": "tree", "consume": true}
+			{"subtype": "tree", "consume": true},
+			{"subtype": "peasant", "consume": false}
 		],
 		"outputs": [
 			{"subtype": "wood"},
@@ -15,9 +15,8 @@ static var recipes = {
 	},
 	"Mine Rock": {
 		"inputs": [
-			{"subtype": "peasant", "consume": false},
-			{"subtype": "rock", "consume": true}
-			
+			{"subtype": "rock", "consume": true},
+			{"subtype": "peasant", "consume": false}
 		],
 		"outputs": [
 			{"subtype": "stone"},
@@ -34,7 +33,7 @@ static var recipes = {
 			{"weight": 10, "outputs": [{"subtype": "tree"}]},
 			{"weight": 50, "outputs": [{"subtype": "wood"}]}
 		],
-		"work_time": 2.0
+		"work_time": 10.0
 	},
 	"Search Plains": {
 		"inputs": [
@@ -42,10 +41,11 @@ static var recipes = {
 			{"subtype": "peasant", "consume": false} # unit on top
 		],
 		"loot_table": [
-			{"weight": 5, "outputs": [{"subtype": "tree"}]},
-			{"weight": 5, "outputs": [{"subtype": "rock"}]},
-			{"weight": 20, "outputs": [{"subtype": "wood"}]},
-			{"weight": 20, "outputs": [{"subtype": "stone"}]}
+			{"weight": 5, "outputs": [{"subtype": "plains"}]},
+			{"weight": 10, "outputs": [{"subtype": "tree"}]},
+			{"weight": 10, "outputs": [{"subtype": "rock"}]},
+			{"weight": 30, "outputs": [{"subtype": "wood"}]},
+			{"weight": 30, "outputs": [{"subtype": "stone"}]}
 		],
 		"work_time": 2.0
 	},
@@ -63,11 +63,11 @@ static var recipes = {
 	},
 	"Build House": {
 		"inputs": [
-			{"subtype": "peasant", "consume": false},
 			{"subtype": "wood", "consume": true},
 			{"subtype": "wood", "consume": true},
 			{"subtype": "stone", "consume": true},
 			{"subtype": "stone", "consume": true},
+			{"subtype": "peasant", "consume": false}
 		],
 		"outputs": [
 			{"subtype": "house"}
@@ -76,13 +76,13 @@ static var recipes = {
 	},
 	"Build Lumber Camp": {
 		"inputs": [
-			{"subtype": "peasant", "consume": false},
 			{"subtype": "brick", "consume": true},
 			{"subtype": "brick", "consume": true},
 			{"subtype": "brick", "consume": true},
 			{"subtype": "tree", "consume": true},
 			{"subtype": "tree", "consume": true},
 			{"subtype": "tree", "consume": true},
+			{"subtype": "peasant", "consume": false}
 		],
 		"outputs": [
 			{"subtype": "lumber_camp"}
@@ -91,13 +91,13 @@ static var recipes = {
 	},
 	"Build Quarry": {
 		"inputs": [
-			{"subtype": "peasant", "consume": false},
 			{"subtype": "plank", "consume": true},
 			{"subtype": "plank", "consume": true},
 			{"subtype": "plank", "consume": true},
 			{"subtype": "rock", "consume": true},
 			{"subtype": "rock", "consume": true},
-			{"subtype": "rock", "consume": true}
+			{"subtype": "rock", "consume": true},
+			{"subtype": "peasant", "consume": false}
 		],
 		"outputs": [
 			{"subtype": "quarry"}
@@ -106,13 +106,14 @@ static var recipes = {
 	},
 	"Use Lumber Camp": {
 		"inputs": [
+			{"subtype": "forest", "consume": false},      # location
 			{"subtype": "lumber_camp", "consume": false}, # building
 			{"subtype": "peasant", "consume": false}      # unit
 		],
 		"outputs": [
 			{"subtype": "wood"}
 		],
-		"work_time": 10.0
+		"work_time": 5.0
 	},
 	"Use Quarry": {
 		"inputs": [

@@ -122,7 +122,7 @@ func cancel_job(job: CraftingJob) -> void:
 func complete_job(job: CraftingJob) -> void:
 	var stack = job.stack
 	var recipe = RecipeDatabase.recipes.get(job.recipe_name, {})
-	# Remove consumed cards
+	# --- Remove consumed cards ---
 	for input in recipe.get("inputs", []):
 		if input.get("consume", false):
 			var count_to_consume = input.get("count", 1)
@@ -137,7 +137,20 @@ func complete_job(job: CraftingJob) -> void:
 					c.queue_free()
 					job.input_cards.erase(c)
 					count_to_consume -= 1
-	# Determine outputs
+	# --- Fix positions of remaining cards in the stack ---
+	if stack.size() > 0:
+		var base_pos = stack[0].position
+		for i in range(stack.size()):
+			var card = stack[i]
+			if is_instance_valid(card):
+				var target_pos = base_pos + Vector2(0, i * card_manager.STACK_Y_OFFSET)
+				card_manager.kill_card_tween(card)
+				var tween = get_tree().create_tween()
+				tween.tween_property(card, "position", target_pos, card_manager.STACK_TWEEN_DURATION)\
+					.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+				card.z_index = i + 1
+				card_manager.card_tweens[card] = tween
+	# --- Determine outputs ---
 	var outputs = recipe.get("outputs", [])
 	# Handle loot table if present
 	if recipe.has("loot_table"):
@@ -152,7 +165,7 @@ func complete_job(job: CraftingJob) -> void:
 				if r < 0:
 					outputs = entry.get("outputs", [])
 					break
-	# Spawn output cards
+	# --- Spawn output cards ---
 	for output in outputs:
 		var subtype = output.get("subtype", "")
 		var start_pos = Vector2.ZERO
@@ -201,7 +214,7 @@ func complete_job(job: CraftingJob) -> void:
 				new_card.is_being_crafted_dragged = false
 				card_manager.finish_drag_simulated([new_card])
 		))
-	# Finish job
+	# --- Finish job ---
 	job.is_active = false
 	if job in active_jobs:
 		active_jobs.erase(job)
