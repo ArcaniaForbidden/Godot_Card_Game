@@ -152,19 +152,31 @@ func complete_job(job: CraftingJob) -> void:
 				card_manager.card_tweens[card] = tween
 	# --- Determine outputs ---
 	var outputs = recipe.get("outputs", [])
-	# Handle loot table if present
 	if recipe.has("loot_table"):
 		var loot_rolls = recipe.get("loot_table", [])
 		if loot_rolls.size() > 0:
-			var total_weight = 0
+			var valid_loot := []
 			for entry in loot_rolls:
-				total_weight += entry.get("weight", 1)
-			var r = randi() % total_weight
-			for entry in loot_rolls:
-				r -= entry.get("weight", 1)
-				if r < 0:
-					outputs = entry.get("outputs", [])
-					break
+				var req = entry.get("requirement", null)
+				var passes := true
+				if req:
+					passes = false
+					if req.has("subtype") and PlayerProgress.card_acquired.get(req["subtype"], 0) >= req.get("amount", 1):
+						passes = true
+					if req.has("recipe_name") and PlayerProgress.recipes_completed.get(req["recipe_name"], 0) >= req.get("amount", 1):
+						passes = true
+				if passes:
+					valid_loot.append(entry)
+			if valid_loot.size() > 0:
+				var total_weight = 0
+				for entry in valid_loot:
+					total_weight += entry.get("weight", 1)
+				var r = randi() % total_weight
+				for entry in valid_loot:
+					r -= entry.get("weight", 1)
+					if r < 0:
+						outputs = entry.get("outputs", [])
+						break
 	# --- Spawn output cards ---
 	for output in outputs:
 		var subtype = output.get("subtype", "")
@@ -172,6 +184,7 @@ func complete_job(job: CraftingJob) -> void:
 		if stack.size() > 0:
 			start_pos = stack[0].position
 		var new_card = card_manager.spawn_card(subtype, start_pos)
+		PlayerProgress.increment_card_count(subtype)
 		if SoundManager:
 			SoundManager.play("card_pop", -4.0)
 		new_card.is_being_crafted_dragged = true
@@ -215,6 +228,7 @@ func complete_job(job: CraftingJob) -> void:
 				card_manager.finish_drag_simulated([new_card])
 		))
 	# --- Finish job ---
+	PlayerProgress.increment_recipe(job.recipe_name)
 	job.is_active = false
 	if job in active_jobs:
 		active_jobs.erase(job)

@@ -11,7 +11,7 @@ static var recipes = {
 			{"subtype": "wood"},
 			{"subtype": "wood"}
 		],
-		"work_time": 2.0
+		"work_time": 15.0
 	},
 	"Mine Rock": {
 		"inputs": [
@@ -22,7 +22,7 @@ static var recipes = {
 			{"subtype": "stone"},
 			{"subtype": "stone"}
 		],
-		"work_time": 2.0
+		"work_time": 15.0
 	},
 	"Search Forest": {
 		"inputs": [
@@ -33,7 +33,7 @@ static var recipes = {
 			{"weight": 10, "outputs": [{"subtype": "tree"}]},
 			{"weight": 50, "outputs": [{"subtype": "wood"}]}
 		],
-		"work_time": 10.0
+		"work_time": 15.0
 	},
 	"Search Plains": {
 		"inputs": [
@@ -42,12 +42,13 @@ static var recipes = {
 		],
 		"loot_table": [
 			{"weight": 5, "outputs": [{"subtype": "plains"}]},
+			{"weight": 2, "outputs": [{"subtype": "brick"}], "requirement": {"recipe_name": "Search Plains", "amount": 5}},
 			{"weight": 10, "outputs": [{"subtype": "tree"}]},
 			{"weight": 10, "outputs": [{"subtype": "rock"}]},
 			{"weight": 30, "outputs": [{"subtype": "wood"}]},
 			{"weight": 30, "outputs": [{"subtype": "stone"}]}
 		],
-		"work_time": 2.0
+		"work_time": 15.0
 	},
 	"Craft Wooden Spear": {
 		"inputs": [
@@ -105,6 +106,16 @@ static var recipes = {
 		"work_time": 15.0
 	},
 	"Use Lumber Camp": {
+		"inputs": [
+			{"subtype": "lumber_camp", "consume": false}, # building
+			{"subtype": "peasant", "consume": false}      # unit
+		],
+		"outputs": [
+			{"subtype": "wood"}
+		],
+		"work_time": 7.5
+	},
+	"Use Lumber Camp on Forest": {
 		"inputs": [
 			{"subtype": "forest", "consume": false},      # location
 			{"subtype": "lumber_camp", "consume": false}, # building
