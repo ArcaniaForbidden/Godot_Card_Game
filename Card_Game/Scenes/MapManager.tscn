@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://ccg1j0n23h7g1"]
+
+[ext_resource type="Texture2D" uid="uid://b1ay2jvdsjntq" path="res://Images/Map.png" id="1_65r53"]
+
+[node name="MainIslandNode2D" type="Node2D"]
+
+[node name="MainIslandSprite2D" type="Sprite2D" parent="."]
+position = Vector2(915, 1675)
+texture = ExtResource("1_65r53")

@@ -1,8 +1,6 @@
-[gd_scene load_steps=9 format=3 uid="uid://cghkxgbgp63bk"]
+[gd_scene load_steps=7 format=3 uid="uid://cghkxgbgp63bk"]
 
-[ext_resource type="PackedScene" uid="uid://ccg1j0n23h7g1" path="res://Scenes/MapManager.tscn" id="1_6bp64"]
 [ext_resource type="Script" uid="uid://b4hgpxw38k73o" path="res://Scripts/CardManager.gd" id="1_v1gob"]
-[ext_resource type="Script" uid="uid://bkp1xag5aumsc" path="res://Scripts/MapManager.gd" id="2_344ge"]
 [ext_resource type="Script" uid="uid://cfr6qyn5qtva1" path="res://Scripts/BattleManager.gd" id="2_jw32o"]
 [ext_resource type="Script" uid="uid://bpc6wx82u8j5a" path="res://Scripts/CraftingManager.gd" id="3_6bp64"]
 [ext_resource type="Script" uid="uid://c6hfgigyf8pby" path="res://Scripts/camera.gd" id="4_vy5pj"]
@@ -10,9 +8,6 @@
 [ext_resource type="PackedScene" uid="uid://e8ajh2rt8q5g" path="res://Scenes/UIManager.tscn" id="6_4kpch"]
 
 [node name="Main" type="Node2D"]
-
-[node name="MapManager" parent="." instance=ExtResource("1_6bp64")]
-script = ExtResource("2_344ge")
 
 [node name="CardManager" type="Node2D" parent="."]
 script = ExtResource("1_v1gob")

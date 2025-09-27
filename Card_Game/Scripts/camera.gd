@@ -1,8 +1,8 @@
 extends Camera2D
 
-var pan_speed: float = 1500.0
-var min_zoom: float = 0.5
-var max_zoom: float = 3.0
+var pan_speed: float = 3000.0
+var min_zoom: float = 0.25
+var max_zoom: float = 4.0
 var zoom_speed: float = 0.05
 var dragging: bool = false
 var drag_start: Vector2

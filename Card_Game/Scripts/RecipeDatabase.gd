@@ -42,13 +42,13 @@ static var recipes = {
 		],
 		"loot_table": [
 			{"weight": 5, "outputs": [{"subtype": "plains"}]},
-			{"weight": 2, "outputs": [{"subtype": "brick"}], "requirement": {"recipe_name": "Search Plains", "amount": 5}},
+			{"weight": 5, "outputs": [{"subtype": "forest"}], "requirement": {"recipe_name": "Search Plains", "amount": 50}},
 			{"weight": 10, "outputs": [{"subtype": "tree"}]},
 			{"weight": 10, "outputs": [{"subtype": "rock"}]},
 			{"weight": 30, "outputs": [{"subtype": "wood"}]},
 			{"weight": 30, "outputs": [{"subtype": "stone"}]}
 		],
-		"work_time": 15.0
+		"work_time": 1.0
 	},
 	"Craft Wooden Spear": {
 		"inputs": [

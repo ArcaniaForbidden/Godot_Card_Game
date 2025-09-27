@@ -54,20 +54,20 @@ func start_job(stack: Array, recipe_name: String) -> void:
 
 func update_jobs(delta: float) -> void:
 	var remaining_jobs: Array = []
+	var jobs_to_complete: Array = []
 	for job in active_jobs:
 		if not job.is_active:
 			continue
-		# --- Cancel if any card in the stack is being dragged ---
+		# Cancel if any card is being dragged
 		var dragging := false
 		for c in job.stack:
 			if is_instance_valid(c) and c.is_being_dragged:
-				print("Cancelling job '%s': card being dragged" % job.recipe_name)
 				dragging = true
 				break
 		if dragging:
 			cancel_job(job)
 			continue 
-		# --- Validate stack still contains required input cards ---
+		# Validate stack still has all input cards
 		var stack_found := false
 		for s in card_manager.all_stacks:
 			var all_inputs_present := true
@@ -77,39 +77,29 @@ func update_jobs(delta: float) -> void:
 					break
 			if all_inputs_present:
 				stack_found = true
-				job.stack = s # update reference to current stack
+				job.stack = s
 				break
 		if not stack_found:
-			print("Cancelling job '%s': required cards missing" % job.recipe_name)
 			cancel_job(job)
 			continue
-		# --- Validate stack still matches recipe ---
-		var recipe = RecipeDatabase.recipes.get(job.recipe_name, null)
-		if recipe == null:
-			cancel_job(job)
-			continue
-		var current_match = stack_matches_recipe(job.stack, recipe.inputs)
-		if current_match.size() == 0:
-			print("Cancelling job '%s': stack no longer matches recipe" % job.recipe_name)
-			cancel_job(job)
-			continue
-		# --- Progress crafting ---
+		# Progress crafting
 		job.progress += delta
 		job.debug_timer += delta
 		if debug_show_progress and job.debug_timer >= 0.5:
 			print("Job '%s' progress: %.2f / %.2f" % [
 				job.recipe_name,
 				job.progress,
-				recipe.work_time
+				RecipeDatabase.recipes[job.recipe_name].work_time
 			])
 			job.debug_timer = 0.0
-		if job.progress >= recipe.work_time:
-			complete_job(job)
-			continue
-		# Keep the job alive for the next frame
-		remaining_jobs.append(job)
-	# Replace old job list with only still-active jobs
+		var recipe_time = RecipeDatabase.recipes[job.recipe_name].work_time
+		if job.progress >= recipe_time:
+			jobs_to_complete.append(job)
+		else:
+			remaining_jobs.append(job)
 	active_jobs = remaining_jobs
+	for job in jobs_to_complete:
+		complete_job(job)
 
 func cancel_job(job: CraftingJob) -> void:
 	if not job.is_active:
