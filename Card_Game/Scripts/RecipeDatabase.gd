@@ -24,14 +24,36 @@ static var recipes = {
 		],
 		"work_time": 15.0
 	},
-	"Search Forest": {
+	"Mine Iron Deposit": {
 		"inputs": [
-			{"subtype": "forest", "consume": false}, # environment card
-			{"subtype": "peasant", "consume": false} # unit on top
+			{"subtype": "iron_deposit", "consume": true},
+			{"subtype": "peasant", "consume": false}
 		],
-		"loot_table": [
-			{"weight": 10, "outputs": [{"subtype": "tree"}]},
-			{"weight": 50, "outputs": [{"subtype": "wood"}]}
+		"outputs": [
+			{"subtype": "iron_ore"},
+			{"subtype": "iron_ore"}
+		],
+		"work_time": 15.0
+	},
+	"Mine Copper Deposit": {
+		"inputs": [
+			{"subtype": "copper_deposit", "consume": true},
+			{"subtype": "peasant", "consume": false}
+		],
+		"outputs": [
+			{"subtype": "copper_ore"},
+			{"subtype": "copper_ore"}
+		],
+		"work_time": 15.0
+	},
+	"Mine Gold Deposit": {
+		"inputs": [
+			{"subtype": "gold_deposit", "consume": true},
+			{"subtype": "peasant", "consume": false}
+		],
+		"outputs": [
+			{"subtype": "gold_ore"},
+			{"subtype": "gold_ore"}
 		],
 		"work_time": 15.0
 	},
@@ -42,13 +64,28 @@ static var recipes = {
 		],
 		"loot_table": [
 			{"weight": 5, "outputs": [{"subtype": "plains"}]},
-			{"weight": 5, "outputs": [{"subtype": "forest"}], "requirement": {"recipe_name": "Search Plains", "amount": 50}},
-			{"weight": 10, "outputs": [{"subtype": "tree"}]},
-			{"weight": 10, "outputs": [{"subtype": "rock"}]},
-			{"weight": 30, "outputs": [{"subtype": "wood"}]},
-			{"weight": 30, "outputs": [{"subtype": "stone"}]}
+			{"weight": 5, "outputs": [{"subtype": "forest"}], "requirement": {"recipe_name": "Search Plains", "amount": 20}},
+			{"weight": 5, "outputs": [{"subtype": "water_deposit"}]},
+			#{"weight": 10, "outputs": [{"subtype": "soil"}]},
+			{"weight": 15, "outputs": [{"subtype": "tree"}]},
+			{"weight": 15, "outputs": [{"subtype": "rock"}]},
+			#{"weight": 5, "outputs": [{"subtype": "cow"}]},
+			#{"weight": 5, "outputs": [{"subtype": "horse"}]},
 		],
-		"work_time": 1.0
+		"work_time": 15.0
+	},
+	"Search Forest": {
+		"inputs": [
+			{"subtype": "forest", "consume": false}, # environment card
+			{"subtype": "peasant", "consume": false} # unit on top
+		],
+		"loot_table": [
+			{"weight": 50, "outputs": [{"subtype": "tree"}]},
+			{"weight": 5, "outputs": [{"subtype": "forest"}]},
+			{"weight": 5, "outputs": [{"subtype": "mountain"}], "requirement": {"recipe_name": "Search Forest", "amount": 20}},
+			#{"weight": 5, "outputs": [{"subtype": "wolf"}], "requirement": {"recipe_name": "Search Forest", "amount": 10}},
+		],
+		"work_time": 15.0
 	},
 	"Craft Wooden Spear": {
 		"inputs": [
@@ -64,10 +101,10 @@ static var recipes = {
 	},
 	"Build House": {
 		"inputs": [
-			{"subtype": "wood", "consume": true},
-			{"subtype": "wood", "consume": true},
-			{"subtype": "stone", "consume": true},
-			{"subtype": "stone", "consume": true},
+			{"subtype": "plank", "consume": true},
+			{"subtype": "plank", "consume": true},
+			{"subtype": "brick", "consume": true},
+			{"subtype": "brick", "consume": true},
 			{"subtype": "peasant", "consume": false}
 		],
 		"outputs": [
@@ -105,36 +142,85 @@ static var recipes = {
 		],
 		"work_time": 15.0
 	},
-	"Use Lumber Camp": {
+	"Build Iron Mine": {
 		"inputs": [
-			{"subtype": "lumber_camp", "consume": false}, # building
-			{"subtype": "peasant", "consume": false}      # unit
+			{"subtype": "plank", "consume": true},
+			{"subtype": "plank", "consume": true},
+			{"subtype": "plank", "consume": true},
+			{"subtype": "iron_deposit", "consume": true},
+			{"subtype": "iron_deposit", "consume": true},
+			{"subtype": "iron_deposit", "consume": true},
+			{"subtype": "peasant", "consume": false}
 		],
 		"outputs": [
-			{"subtype": "wood"}
+			{"subtype": "iron_mine"}
 		],
-		"work_time": 7.5
+		"work_time": 15.0
 	},
-	"Use Lumber Camp on Forest": {
+	"Build Copper Mine": {
+		"inputs": [
+			{"subtype": "plank", "consume": true},
+			{"subtype": "plank", "consume": true},
+			{"subtype": "plank", "consume": true},
+			{"subtype": "copper_deposit", "consume": true},
+			{"subtype": "copper_deposit", "consume": true},
+			{"subtype": "copper_deposit", "consume": true},
+			{"subtype": "peasant", "consume": false}
+		],
+		"outputs": [
+			{"subtype": "copper_mine"}
+		],
+		"work_time": 15.0
+	},
+	"Build Gold Mine": {
+		"inputs": [
+			{"subtype": "plank", "consume": true},
+			{"subtype": "plank", "consume": true},
+			{"subtype": "plank", "consume": true},
+			{"subtype": "gold_deposit", "consume": true},
+			{"subtype": "gold_deposit", "consume": true},
+			{"subtype": "gold_deposit", "consume": true},
+			{"subtype": "peasant", "consume": false}
+		],
+		"outputs": [
+			{"subtype": "gold_mine"}
+		],
+		"work_time": 15.0
+	},
+	"Use Lumber Camp": {
 		"inputs": [
 			{"subtype": "forest", "consume": false},      # location
 			{"subtype": "lumber_camp", "consume": false}, # building
 			{"subtype": "peasant", "consume": false}      # unit
 		],
-		"outputs": [
-			{"subtype": "wood"}
+		"loot_table": [
+			{"weight": 45, "outputs": [{"subtype": "wood"}]},
+			#{"weight": 5, "outputs": [{"subtype": "resin"}]},
 		],
-		"work_time": 5.0
+		"work_time": 15.0
 	},
 	"Use Quarry": {
 		"inputs": [
+			{"subtype": "mountain", "consume": false},
 			{"subtype": "quarry", "consume": false}, # building
 			{"subtype": "peasant", "consume": false} # unit
 		],
 		"outputs": [
 			{"subtype": "stone"}
 		],
-		"work_time": 2.0
+		"work_time": 15.0
+	},
+	"Use Iron Mine": {
+		"inputs": [
+			{"subtype": "forest", "consume": false},      # location
+			{"subtype": "iron_mine", "consume": false}, # building
+			{"subtype": "peasant", "consume": false}      # unit
+		],
+		"loot_table": [
+			{"weight": 45, "outputs": [{"subtype": "iron_ore"}]},
+			#{"weight": 5, "outputs": [{"subtype": "gem"}]},
+		],
+		"work_time": 30.0
 	},
 	"Make Plank": {
 		"inputs": [

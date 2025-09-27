@@ -3,13 +3,14 @@
 # ==============================
 
 
-
-
-
-
-
-
-
+# Recipe Progression
+# Wood x3 -> Plank
+# Plank + Resin -> Treated Plank
+# Treated Plank + Magic Dust -> Enchanted Plank
+# Stone x3 -> Brick
+# Brick + Iron Bar -> Reinforced Brick
+# Reinforced Brick + Magic Dust -> Enchanted Brick
+# Fiber obtained from cotton plants, plants and soil are found in plains as well as some animals
 
 
 # ==============================

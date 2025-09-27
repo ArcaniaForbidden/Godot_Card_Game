@@ -276,8 +276,6 @@ func merge_overlapping_stacks(card: Node2D) -> bool:
 			continue
 		var target_top_card = target_stack[-1]
 		var target_bottom_card = target_stack[0]
-		if crafting_manager.is_stack_crafting(target_stack):
-			continue
 		if target_bottom_card.is_being_dragged:
 			continue
 		var dragged_type = dragged_bottom_card.card_type
@@ -356,7 +354,7 @@ func push_apart_cards() -> void:
 	for stack in all_stacks:
 		if stack.is_empty() or not is_instance_valid(stack[0]) \
 			or stack.has(card_being_dragged) or stack[0].card_type == "enemy" \
-			or stack_has_crafted_dragged(stack) or stack[0].card_type == "location":
+			or stack_has_crafted_dragged(stack):
 			stack_bounds.append(null)
 			stack_card_centers.append(null)
 			stack_center_x.append(INF)  # sentinel
