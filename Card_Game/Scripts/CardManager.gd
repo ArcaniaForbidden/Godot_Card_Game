@@ -61,7 +61,7 @@ func _process(delta: float) -> void:
 	push_apart_cards()
 	update_cached_rects()
 	handle_enemy_movement(delta)
-	update_cards_moving(delta)
+	update_cards_moving()
 	update_shadows()
 
 func _input(event):
@@ -322,7 +322,7 @@ func merge_overlapping_stacks(card: Node2D) -> bool:
 # ==============================
 #  CARD MOVEMENT UPDATES
 # ==============================
-func update_cards_moving(delta: float) -> void:
+func update_cards_moving() -> void:
 	var finished_cards: Array = []
 	for card in cards_moving.keys():
 		# Skip if card is no longer valid

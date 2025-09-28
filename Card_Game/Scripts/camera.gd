@@ -8,6 +8,20 @@ var dragging: bool = false
 var drag_start: Vector2
 var camera_start: Vector2
 
+func _process(delta):
+	# Optional keyboard pan
+	var dir = Vector2.ZERO
+	if Input.is_action_pressed("ui_up"):
+		dir.y -= 1
+	if Input.is_action_pressed("ui_down"):
+		dir.y += 1
+	if Input.is_action_pressed("ui_left"):
+		dir.x -= 1
+	if Input.is_action_pressed("ui_right"):
+		dir.x += 1
+	if dir != Vector2.ZERO:
+		global_position += dir.normalized() * pan_speed * delta
+
 func _input(event):
 	# Mouse drag to pan
 	if event is InputEventMouseButton:
@@ -33,17 +47,3 @@ func zoom_camera(amount: float) -> void:
 	new_zoom.x = clamp(new_zoom.x, min_zoom, max_zoom)
 	new_zoom.y = clamp(new_zoom.y, min_zoom, max_zoom)
 	zoom = new_zoom
-
-func _process(delta):
-	# Optional keyboard pan
-	var dir = Vector2.ZERO
-	if Input.is_action_pressed("ui_up"):
-		dir.y -= 1
-	if Input.is_action_pressed("ui_down"):
-		dir.y += 1
-	if Input.is_action_pressed("ui_left"):
-		dir.x -= 1
-	if Input.is_action_pressed("ui_right"):
-		dir.x += 1
-	if dir != Vector2.ZERO:
-		global_position += dir.normalized() * pan_speed * delta

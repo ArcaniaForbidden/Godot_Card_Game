@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 SoundManager="*res://Scenes/SoundManager.tscn"
 PlayerProgress="*res://Scripts/PlayerProgress.gd"
+GameSpeedManager="*res://Scripts/GameSpeedManager.gd"
 
 [display]
 

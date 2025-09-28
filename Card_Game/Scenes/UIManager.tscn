@@ -1,13 +1,20 @@
-[gd_scene load_steps=7 format=3 uid="uid://e8ajh2rt8q5g"]
+[gd_scene load_steps=11 format=3 uid="uid://e8ajh2rt8q5g"]
 
 [ext_resource type="Texture2D" uid="uid://dq1v6edrcxkv4" path="res://Images/basic_card.png" id="1_as1yr"]
 [ext_resource type="Script" uid="uid://bsj7a0hun52jo" path="res://Scripts/UIManager.gd" id="1_felxf"]
 [ext_resource type="Texture2D" uid="uid://bdy54yb3tq71" path="res://Images/stone.png" id="2_sjxgx"]
 [ext_resource type="Texture2D" uid="uid://cuw86jqyoy45n" path="res://Images/card_zoom_background.png" id="3_a33nh"]
+[ext_resource type="Texture2D" uid="uid://n2jyabd0w2rr" path="res://Images/speed_ui.png" id="6_l28dr"]
+[ext_resource type="Script" uid="uid://bllmc0kr64d15" path="res://Scripts/GameSpeedPanel.gd" id="7_jutvs"]
 [ext_resource type="FontFile" uid="uid://q6k4rvj4di0k" path="res://Fonts/MedodicaRegular.otf" id="11_vfi26"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_y1w80"]
 texture = ExtResource("3_a33nh")
+
+[sub_resource type="Theme" id="Theme_jutvs"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_08khg"]
+texture = ExtResource("6_l28dr")
 
 [node name="UICanvasLayer" type="CanvasLayer"]
 script = ExtResource("1_felxf")
@@ -62,3 +69,35 @@ offset_left = 15.0
 offset_top = 17.0
 offset_right = 180.0
 offset_bottom = 263.0
+
+[node name="GameSpeedPanel" type="Panel" parent="."]
+anchors_preset = -1
+anchor_left = 0.93
+anchor_right = 0.93
+offset_left = 0.399902
+offset_right = 134.4
+offset_bottom = 46.0
+theme = SubResource("Theme_jutvs")
+theme_override_styles/panel = SubResource("StyleBoxTexture_08khg")
+script = ExtResource("7_jutvs")
+
+[node name="PlayPauseButton" type="TextureButton" parent="GameSpeedPanel"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = 41.0
+offset_bottom = 41.0
+
+[node name="Speed2xButton" type="TextureButton" parent="GameSpeedPanel"]
+layout_mode = 0
+offset_left = 49.0
+offset_top = 5.0
+offset_right = 85.0
+offset_bottom = 41.0
+
+[node name="Speed3xButton" type="TextureButton" parent="GameSpeedPanel"]
+layout_mode = 0
+offset_left = 93.0
+offset_top = 5.0
+offset_right = 129.0
+offset_bottom = 41.0

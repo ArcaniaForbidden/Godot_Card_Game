@@ -24,6 +24,7 @@ script = ExtResource("2_jw32o")
 script = ExtResource("3_6bp64")
 
 [node name="Camera2D" type="Camera2D" parent="."]
+process_mode = 3
 position_smoothing_enabled = true
 rotation_smoothing_enabled = true
 script = ExtResource("4_vy5pj")
