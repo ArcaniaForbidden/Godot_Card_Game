@@ -27,7 +27,7 @@ var drag_offset: Vector2 = Vector2.ZERO
 var drag_lift_y: float = -20.0
 var all_stacks: Array = []
 var spawn_protected_cards: Array = []
-var card_scene = preload("res://Scenes/Card.tscn")
+var card_scene = preload("res://Scenes/card.tscn")
 var battle_manager: Node = null
 var crafting_manager: Node = null
 var map_manager: Node = null
@@ -291,15 +291,12 @@ func merge_overlapping_stacks(card: Node2D) -> bool:
 	# --- Merge with the stack that has the maximum overlap ---
 	var target_stack = find_stack(max_overlap_entry["card"])
 	# Kill tweens for smooth merge
-	for c in dragged_stack:
-		if is_instance_valid(c):
-			kill_card_tween(c)
 	for c in target_stack:
 		if is_instance_valid(c):
 			kill_card_tween(c)
-	# Append dragged stack to target stack
 	for c in dragged_stack:
 		if is_instance_valid(c):
+			kill_card_tween(c)
 			target_stack.append(c)
 	if all_stacks.has(dragged_stack):
 		all_stacks.erase(dragged_stack)

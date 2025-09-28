@@ -43,7 +43,7 @@ func _notification(what: int) -> void:
 		if shadow and is_instance_valid(shadow):
 			shadow.queue_free()
 
-# --- Helper for health ---
+# --- Helpers ---
 func set_health(value: int) -> void:
 	health = value
 	if health_label:
@@ -58,6 +58,7 @@ func setup(subtype_name: String) -> void:
 	target_position = position 
 	var data = CardDatabase.card_database[subtype]
 	card_type = data.get("card_type", "")
+	print("Setup card '%s': card_type=%s, slot=%s" % [subtype, card_type, data.get("slot","")])
 	display_name = data.get("display_name", subtype)
 	# Set textures
 	if card_image and data.has("card"):
@@ -89,13 +90,6 @@ func setup(subtype_name: String) -> void:
 	attack = int(stats.get("attack", 0))
 	armor = int(stats.get("armor", 0))
 	attack_speed = float(stats.get("attack_speed", 1.0))
-	#if subtype == "peasant" and not has_node("PeasantEquipment"):
-		#var peasant_equipment_scene = preload("res://Scenes/PeasantEquipment.tscn")
-		#var equipment_instance = peasant_equipment_scene.instantiate()
-		#add_child(equipment_instance)
-		#equipment_instance.parent_card = self
-		#equipment_instance.position = Vector2(0, 80)
-		#equipment_instance.get_node("EquipmentButton").visible = true
 
 # --- Hover signals ---
 func _on_area_input_event(viewport: Object, event: InputEvent, shape_idx: int) -> void:

@@ -1,12 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://ccr8s4gxbxtpi"]
+[gd_scene load_steps=6 format=3 uid="uid://ccr8s4gxbxtpi"]
 
 [ext_resource type="Script" uid="uid://5pyhvmdqfmt3" path="res://Scripts/PeasantEquipment.gd" id="1_3p2di"]
 [ext_resource type="Texture2D" uid="uid://cbfxqhsoyeyym" path="res://Images/unit_card_button.png" id="2_4y8sc"]
 [ext_resource type="PackedScene" uid="uid://brr8fxy7pjwi3" path="res://Scenes/EquipmentSlot.tscn" id="3_a3o2m"]
-[ext_resource type="Texture2D" uid="uid://cbodk60bpvy7j" path="res://Images/slot_helmet.png" id="4_a3o2m"]
 [ext_resource type="Texture2D" uid="uid://da5cfkgdutycr" path="res://Images/slot_chestplate.png" id="5_rtvxq"]
-[ext_resource type="Texture2D" uid="uid://bv42uohqcydlj" path="res://Images/slot_leggings.png" id="6_2u4mr"]
-[ext_resource type="Texture2D" uid="uid://e0plg5pn1ibd" path="res://Images/slot_boots.png" id="7_18x2d"]
 [ext_resource type="Texture2D" uid="uid://hujo67otpil6" path="res://Images/slot_weapon.png" id="8_ipt63"]
 
 [node name="PeasantEquipment" type="Node2D"]
@@ -21,13 +18,6 @@ texture_normal = ExtResource("2_4y8sc")
 
 [node name="EquipmentSlots" type="Node2D" parent="."]
 
-[node name="HelmetSlot" parent="EquipmentSlots" instance=ExtResource("3_a3o2m")]
-position = Vector2(-100, -140)
-allowed_type = "helmet"
-
-[node name="SlotImage" parent="EquipmentSlots/HelmetSlot" index="0"]
-texture = ExtResource("4_a3o2m")
-
 [node name="ChestplateSlot" parent="EquipmentSlots" instance=ExtResource("3_a3o2m")]
 position = Vector2(-100, 0)
 allowed_type = "chestplate"
@@ -35,29 +25,12 @@ allowed_type = "chestplate"
 [node name="SlotImage" parent="EquipmentSlots/ChestplateSlot" index="0"]
 texture = ExtResource("5_rtvxq")
 
-[node name="LeggingsSlot" parent="EquipmentSlots" instance=ExtResource("3_a3o2m")]
-position = Vector2(100, -140)
-allowed_type = "leggings"
-
-[node name="SlotImage" parent="EquipmentSlots/LeggingsSlot" index="0"]
-texture = ExtResource("6_2u4mr")
-
-[node name="BootsSlot" parent="EquipmentSlots" instance=ExtResource("3_a3o2m")]
-position = Vector2(100, 0)
-allowed_type = "boots"
-
-[node name="SlotImage" parent="EquipmentSlots/BootsSlot" index="0"]
-texture = ExtResource("7_18x2d")
-
 [node name="WeaponSlot" parent="EquipmentSlots" instance=ExtResource("3_a3o2m")]
-position = Vector2(0, 100)
+position = Vector2(100, 0)
 allowed_type = "weapon"
 
 [node name="SlotImage" parent="EquipmentSlots/WeaponSlot" index="0"]
 texture = ExtResource("8_ipt63")
 
-[editable path="EquipmentSlots/HelmetSlot"]
 [editable path="EquipmentSlots/ChestplateSlot"]
-[editable path="EquipmentSlots/LeggingsSlot"]
-[editable path="EquipmentSlots/BootsSlot"]
 [editable path="EquipmentSlots/WeaponSlot"]
