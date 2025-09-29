@@ -27,7 +27,7 @@ var drag_offset: Vector2 = Vector2.ZERO
 var drag_lift_y: float = -20.0
 var all_stacks: Array = []
 var spawn_protected_cards: Array = []
-var card_scene = preload("res://Scenes/card.tscn")
+var card_scene = preload("res://Scenes/Card.tscn")
 var battle_manager: Node = null
 var crafting_manager: Node = null
 var map_manager: Node = null
@@ -129,7 +129,9 @@ func handle_mouse_press() -> void:
 
 func handle_mouse_release() -> void:
 	if card_being_dragged:
-		finish_drag_player()
+		if card_being_dragged.animation_manager:
+			card_being_dragged.animation_manager.play_idle()
+			finish_drag_player()
 	debug_print_stacks()
 
 func handle_dragging() -> void:
@@ -165,6 +167,8 @@ func handle_dragging() -> void:
 
 func start_drag(card: Card) -> void:
 	var stack = find_stack(card)
+	if card.animation_manager:
+		card.animation_manager.play_walk()
 	var index = get_card_index_in_stack(card)
 	if index == -1:
 		return

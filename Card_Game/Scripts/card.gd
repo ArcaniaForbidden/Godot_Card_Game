@@ -28,15 +28,19 @@ var enemy_jump_distance: float = 150.0
 var in_battle: bool = false
 
 # --- UI references ---
+@onready var animation_manager: AnimationManager = AnimationManager.new()
 @onready var display_name_label: Label = get_node_or_null("CardLabel")
 @onready var card_image: Sprite2D = get_node_or_null("CardImage")
 @onready var sprite_image: Sprite2D = get_node_or_null("SpriteImage")
+@onready var sprite_animated: AnimatedSprite2D = get_node_or_null("SpriteAnimated")
 @onready var health_icon: Node2D = get_node_or_null("HealthIcon")
 @onready var health_label: Label = get_node_or_null("HealthLabel")
 @onready var area: Area2D = get_node_or_null("Area2D")
 
 func _ready() -> void:
 	area.connect("input_event", Callable(self, "_on_area_input_event"))
+	if sprite_animated:
+		animation_manager.setup(self, sprite_animated)
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_PREDELETE:
@@ -61,10 +65,19 @@ func setup(subtype_name: String) -> void:
 	print("Setup card '%s': card_type=%s, slot=%s" % [subtype, card_type, data.get("slot","")])
 	display_name = data.get("display_name", subtype)
 	# Set textures
+	var is_animated = data.get("animated", false)
 	if card_image and data.has("card"):
 		card_image.texture = data["card"]
-	if sprite_image and data.has("sprite"):
-		sprite_image.texture = data["sprite"]
+	if sprite_image:
+		sprite_image.visible = not is_animated
+		if not is_animated and data.has("sprite"):
+			sprite_image.texture = data["sprite"]
+	if sprite_animated:
+		sprite_animated.visible = is_animated
+		if is_animated and data.has("sprite"):
+			sprite_animated.sprite_frames = data["sprite"]
+			if sprite_animated.sprite_frames.has_animation("idle"):
+				sprite_animated.play("idle")
 	if display_name_label:
 		display_name_label.horizontal_alignment = 1
 		display_name_label.vertical_alignment = 1

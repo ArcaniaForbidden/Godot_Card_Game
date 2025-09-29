@@ -4,7 +4,8 @@ class_name CardDatabase
 static var card_database = {
 	"peasant": {
 		"card": preload("res://Images/unit_card.png"),
-		"sprite": preload("res://Images/peasant.png"),
+		"sprite": preload("res://Animations/peasant.tres"),
+		"animated": true,
 		"card_type": "unit",
 		"display_name": "Peasant",
 		"stats": {
