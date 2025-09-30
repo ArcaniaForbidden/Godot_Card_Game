@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cr3fwjsbe8acc"
-path="res://.godot/imported/peasant_spritesheet.png-69e941b9c3aa032beafee98ae6cfc843.ctex"
+uid="uid://c4m7tpomi6nou"
+path="res://.godot/imported/water.png-49d8a9be5e9d572c0c916ca5031630d2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Animations/peasant_spritesheet.png"
-dest_files=["res://.godot/imported/peasant_spritesheet.png-69e941b9c3aa032beafee98ae6cfc843.ctex"]
+source_file="res://Images/water.png"
+dest_files=["res://.godot/imported/water.png-49d8a9be5e9d572c0c916ca5031630d2.ctex"]
 
 [params]
 

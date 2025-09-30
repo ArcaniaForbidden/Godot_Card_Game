@@ -24,6 +24,18 @@ static var recipes = {
 		],
 		"work_time": 15.0
 	},
+	"Harvest Water Deposit": {
+		"inputs": [
+			{"subtype": "water_deposit", "consume": true},
+			{"subtype": "peasant", "consume": false}
+		],
+		"outputs": [
+			{"subtype": "water"},
+			{"subtype": "water"},
+			{"subtype": "water"}
+		],
+		"work_time": 15.0
+	},
 	"Mine Iron Deposit": {
 		"inputs": [
 			{"subtype": "iron_deposit", "consume": true},

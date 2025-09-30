@@ -41,25 +41,25 @@ static var card_database = {
 	},
 	"water_deposit": {
 		"card": preload("res://Images/basic_card.png"),
-		"sprite": preload("res://Images/rock.png"),
+		"sprite": preload("res://Images/water_deposit.png"),
 		"card_type": "resource",
 		"display_name": "Water Deposit"
 	},
 	"iron_deposit": {
 		"card": preload("res://Images/basic_card.png"),
-		"sprite": preload("res://Images/rock.png"),
+		"sprite": preload("res://Images/iron_deposit.png"),
 		"card_type": "resource",
 		"display_name": "Iron Deposit"
 	},
 	"copper_deposit": {
 		"card": preload("res://Images/basic_card.png"),
-		"sprite": preload("res://Images/rock.png"),
+		"sprite": preload("res://Images/copper_deposit.png"),
 		"card_type": "resource",
 		"display_name": "Copper Deposit"
 	},
 	"gold_deposit": {
 		"card": preload("res://Images/basic_card.png"),
-		"sprite": preload("res://Images/rock.png"),
+		"sprite": preload("res://Images/gold_deposit.png"),
 		"card_type": "resource",
 		"display_name": "Gold Deposit"
 	},
@@ -80,6 +80,12 @@ static var card_database = {
 		"sprite": preload("res://Images/wood.png"),
 		"card_type": "material",
 		"display_name": "Wood"
+	},
+	"water": {
+		"card": preload("res://Images/material_card.png"),
+		"sprite": preload("res://Images/water.png"),
+		"card_type": "material",
+		"display_name": "Water"
 	},
 	"iron_ore": {
 		"card": preload("res://Images/material_card.png"),
@@ -217,7 +223,7 @@ static var card_database = {
 	},
 	"plains": {
 		"card": preload("res://Images/green_card.png"),
-		"sprite": preload("res://Images/wolf.png"),
+		"sprite": preload("res://Images/plains.png"),
 		"card_type": "location",
 		"display_name": "Plains"
 	},
