@@ -89,19 +89,19 @@ static var card_database = {
 	},
 	"iron_ore": {
 		"card": preload("res://Images/material_card.png"),
-		"sprite": preload("res://Images/wood.png"),
+		"sprite": preload("res://Images/iron_ore.png"),
 		"card_type": "material",
 		"display_name": "Iron Ore"
 	},
 	"copper_ore": {
 		"card": preload("res://Images/material_card.png"),
-		"sprite": preload("res://Images/wood.png"),
+		"sprite": preload("res://Images/copper_ore.png"),
 		"card_type": "material",
 		"display_name": "Copper Ore"
 	},
 	"gold_ore": {
 		"card": preload("res://Images/material_card.png"),
-		"sprite": preload("res://Images/wood.png"),
+		"sprite": preload("res://Images/gold_ore.png"),
 		"card_type": "material",
 		"display_name": "Gold Ore"
 	},

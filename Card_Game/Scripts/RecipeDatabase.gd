@@ -4,8 +4,8 @@ class_name RecipeDatabase
 static var recipes = {
 	"Chop Tree": {
 		"inputs": [
-			{"subtype": "tree", "consume": true},
-			{"subtype": "peasant", "consume": false}
+			{"subtype": "peasant", "consume": false},
+			{"subtype": "tree", "consume": true}
 		],
 		"outputs": [
 			{"subtype": "wood"},
@@ -15,8 +15,8 @@ static var recipes = {
 	},
 	"Mine Rock": {
 		"inputs": [
-			{"subtype": "rock", "consume": true},
-			{"subtype": "peasant", "consume": false}
+			{"subtype": "peasant", "consume": false},
+			{"subtype": "rock", "consume": true}
 		],
 		"outputs": [
 			{"subtype": "stone"},
@@ -26,8 +26,8 @@ static var recipes = {
 	},
 	"Harvest Water Deposit": {
 		"inputs": [
-			{"subtype": "water_deposit", "consume": true},
-			{"subtype": "peasant", "consume": false}
+			{"subtype": "peasant", "consume": false},
+			{"subtype": "water_deposit", "consume": true}
 		],
 		"outputs": [
 			{"subtype": "water"},
@@ -38,8 +38,8 @@ static var recipes = {
 	},
 	"Mine Iron Deposit": {
 		"inputs": [
-			{"subtype": "iron_deposit", "consume": true},
-			{"subtype": "peasant", "consume": false}
+			{"subtype": "peasant", "consume": false},
+			{"subtype": "iron_deposit", "consume": true}
 		],
 		"outputs": [
 			{"subtype": "iron_ore"},
@@ -49,8 +49,8 @@ static var recipes = {
 	},
 	"Mine Copper Deposit": {
 		"inputs": [
-			{"subtype": "copper_deposit", "consume": true},
-			{"subtype": "peasant", "consume": false}
+			{"subtype": "peasant", "consume": false},
+			{"subtype": "copper_deposit", "consume": true}
 		],
 		"outputs": [
 			{"subtype": "copper_ore"},
@@ -60,8 +60,8 @@ static var recipes = {
 	},
 	"Mine Gold Deposit": {
 		"inputs": [
-			{"subtype": "gold_deposit", "consume": true},
-			{"subtype": "peasant", "consume": false}
+			{"subtype": "peasant", "consume": false},
+			{"subtype": "gold_deposit", "consume": true}
 		],
 		"outputs": [
 			{"subtype": "gold_ore"},
@@ -76,15 +76,15 @@ static var recipes = {
 		],
 		"loot_table": [
 			{"weight": 5, "outputs": [{"subtype": "plains"}]},
-			{"weight": 5, "outputs": [{"subtype": "forest"}], "requirement": {"recipe_name": "Search Plains", "amount": 20}},
-			{"weight": 5, "outputs": [{"subtype": "water_deposit"}]},
+			{"weight": 5, "outputs": [{"subtype": "forest"}]},
+			{"weight": 10, "outputs": [{"subtype": "water_deposit"}]},
 			#{"weight": 10, "outputs": [{"subtype": "soil"}]},
-			{"weight": 15, "outputs": [{"subtype": "tree"}]},
-			{"weight": 15, "outputs": [{"subtype": "rock"}]},
+			{"weight": 10, "outputs": [{"subtype": "tree"}]},
+			{"weight": 5, "outputs": [{"subtype": "rock"}]},
 			#{"weight": 5, "outputs": [{"subtype": "cow"}]},
 			#{"weight": 5, "outputs": [{"subtype": "horse"}]},
 		],
-		"work_time": 15.0
+		"work_time": 30.0
 	},
 	"Search Forest": {
 		"inputs": [
@@ -92,12 +92,26 @@ static var recipes = {
 			{"subtype": "peasant", "consume": false} # unit on top
 		],
 		"loot_table": [
-			{"weight": 50, "outputs": [{"subtype": "tree"}]},
+			{"weight": 80, "outputs": [{"subtype": "tree"}]},
 			{"weight": 5, "outputs": [{"subtype": "forest"}]},
-			{"weight": 5, "outputs": [{"subtype": "mountain"}], "requirement": {"recipe_name": "Search Forest", "amount": 20}},
+			{"weight": 5, "outputs": [{"subtype": "mountain"}]},
 			#{"weight": 5, "outputs": [{"subtype": "wolf"}], "requirement": {"recipe_name": "Search Forest", "amount": 10}},
 		],
-		"work_time": 15.0
+		"work_time": 30.0
+	},
+	"Search Mountain": {
+		"inputs": [
+			{"subtype": "mountain", "consume": false}, # environment card
+			{"subtype": "peasant", "consume": false} # unit on top
+		],
+		"loot_table": [
+			{"weight": 50, "outputs": [{"subtype": "rock"}]},
+			{"weight": 5, "outputs": [{"subtype": "iron_deposit"}], "requirement": {"recipe_name": "Search Mountain", "amount": 30}},
+			{"weight": 5, "outputs": [{"subtype": "copper_deposit"}], "requirement": {"recipe_name": "Search Mountain", "amount": 30}},
+			{"weight": 5, "outputs": [{"subtype": "gold_deposit"}], "requirement": {"recipe_name": "Search Mountain", "amount": 50}},
+			{"weight": 5, "outputs": [{"subtype": "mountain"}]},
+		],
+		"work_time": 30.0
 	},
 	"Craft Wooden Spear": {
 		"inputs": [
@@ -233,6 +247,30 @@ static var recipes = {
 			#{"weight": 5, "outputs": [{"subtype": "gem"}]},
 		],
 		"work_time": 30.0
+	},
+	"Use Copper Mine": {
+		"inputs": [
+			{"subtype": "mountain", "consume": false},
+			{"subtype": "copper_mine", "consume": false}, # building
+			{"subtype": "peasant", "consume": false} # unit
+		],
+		"loot_table": [
+			{"weight": 45, "outputs": [{"subtype": "copper_ore"}]},
+			#{"weight": 5, "outputs": [{"subtype": "gem"}]},
+		],
+		"work_time": 15.0
+	},
+	"Use Gold Mine": {
+		"inputs": [
+			{"subtype": "mountain", "consume": false},
+			{"subtype": "gold_mine", "consume": false}, # building
+			{"subtype": "peasant", "consume": false} # unit
+		],
+		"loot_table": [
+			{"weight": 45, "outputs": [{"subtype": "gold_ore"}]},
+			#{"weight": 5, "outputs": [{"subtype": "gem"}]},
+		],
+		"work_time": 15.0
 	},
 	"Make Plank": {
 		"inputs": [

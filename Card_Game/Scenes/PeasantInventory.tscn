@@ -24,12 +24,14 @@ anchors_preset = 0
 
 [node name="WeaponSlot" parent="InventoryContainer" instance=ExtResource("3_b4jdk")]
 position = Vector2(100, 0)
+slot_type = "weapon"
 
 [node name="SlotIcon" parent="InventoryContainer/WeaponSlot" index="0"]
 texture = ExtResource("4_p1cab")
 
 [node name="ChestplateSlot" parent="InventoryContainer" instance=ExtResource("3_b4jdk")]
 position = Vector2(-100, 0)
+slot_type = "chestplate"
 
 [node name="SlotIcon" parent="InventoryContainer/ChestplateSlot" index="0"]
 texture = ExtResource("5_iw1fe")
