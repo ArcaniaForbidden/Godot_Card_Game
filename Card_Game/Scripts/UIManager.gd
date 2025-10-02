@@ -5,6 +5,7 @@ class_name UIManager
 @onready var card_zoom_panel: Panel = $CardZoomPanel
 @onready var card_zoom: TextureRect = $CardZoomPanel/CardZoomContainer/CardZoom
 @onready var sprite_zoom: TextureRect = $CardZoomPanel/CardZoomContainer/SpriteZoom
+@onready var animated_sprite_zoom: AnimatedSprite2D = $CardZoomPanel/CardZoomContainer/AnimatedSpriteZoom
 @onready var card_zoom_label: Label = $CardZoomPanel/CardZoomContainer/CardZoomLabel
 @onready var stats_panel: Panel = $StatsPanel
 @onready var stats_vbox_container: VBoxContainer = $StatsPanel/StatsVBoxContainer
@@ -32,13 +33,25 @@ func open_card_ui(card: Node) -> void:
 	card_zoom_panel.show()
 	stats_panel.show()
 	card_zoom.show()
-	sprite_zoom.show()
 	card_zoom_label.show()
 	# Set textures
 	card_zoom.texture = card.card_image.texture
-	sprite_zoom.texture = card.sprite_image.texture
 	card_zoom_label.text = card.display_name
-	# Clear previous stats
+		# --- Handle sprite vs animated ---
+	# --- Handle sprite vs animated ---
+	if card.sprite_animated and card.sprite_animated.visible and card.sprite_animated.sprite_frames:
+		# Use animated sprite
+		sprite_zoom.hide()
+		animated_sprite_zoom.show()
+		animated_sprite_zoom.sprite_frames = card.sprite_animated.sprite_frames
+		if animated_sprite_zoom.sprite_frames.has_animation("idle"):
+			animated_sprite_zoom.play("idle")
+	else:
+		# Use static sprite
+		animated_sprite_zoom.hide()
+		sprite_zoom.show()
+		if card.sprite_image and card.sprite_image.texture:
+			sprite_zoom.texture = card.sprite_image.texture
 	# Clear previous stats
 	for child in stats_vbox_container.get_children():
 		child.queue_free()
