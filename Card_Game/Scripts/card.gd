@@ -51,9 +51,9 @@ func _notification(what: int) -> void:
 
 # --- Helpers ---
 func set_health(value: int) -> void:
-	health = value
+	health = clamp(value, 0, max_health)
 	if health_label:
-		health_label.text = str(health)
+		health_label.text = "%d/%d" % [health, max_health]
 		health_label.self_modulate = LABEL_COLOR
 	if health_icon:
 		health_icon.visible = true
@@ -104,7 +104,7 @@ func setup(subtype_name: String) -> void:
 			health_label.visible = false
 	attack = int(stats.get("attack", 0))
 	armor = int(stats.get("armor", 0))
-	attack_speed = float(stats.get("attack_speed", 1.0))
+	attack_speed = float(stats.get("attack_speed", 0))
 	if subtype == "peasant":
 		if not has_node("PeasantInventory"):
 			var inventory_scene = preload("res://Scenes/PeasantInventory.tscn")

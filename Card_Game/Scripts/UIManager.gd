@@ -19,6 +19,8 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		var card_manager = get_node("/root/Main/CardManager")
 		var card = card_manager.raycast_check_for_card()
+		if card == null or card is InventorySlot:
+			return
 		if card:
 			open_card_ui(card)
 		
@@ -44,32 +46,35 @@ func open_card_ui(card: Node) -> void:
 	var type_label = Label.new()
 	type_label.text = "Type: %s" % card.card_type.capitalize()
 	stats_vbox_container.add_child(type_label)
-	# Check if this card is equipment
+	var stat_properties = {
+		"Health": "%d/%d" % [card.health, card.max_health],
+		"Attack": card.attack,
+		"Armor": card.armor,
+		"Attack Speed": card.attack_speed
+	}
+	# Display stats
+	for stat_name in stat_properties.keys():
+		var stat_value = stat_properties[stat_name]
+		if stat_name == "Health":
+			# Always show health
+			if card.max_health > 0:
+				var label = Label.new()
+				label.text = "%s: %s" % [stat_name, str(stat_value)]
+				stats_vbox_container.add_child(label)
+		elif stat_value != null and stat_value != 0:
+			# Only show non-zero stats
+			var label = Label.new()
+			label.text = "%s: %s" % [stat_name, str(stat_value)]
+			stats_vbox_container.add_child(label)
+	# Show equipment stat modifiers if this card is equipment
 	if card.card_type == "equipment" and card.stats:
 		if card.stats.has("add"):
-			for stat_name in card.stats["add"].keys():
+			for key in card.stats["add"].keys():
 				var label = Label.new()
-				label.text = "%s: +%s" % [stat_name.capitalize(), str(card.stats["add"][stat_name])]
+				label.text = "%s: +%s" % [key.capitalize(), str(card.stats["add"][key])]
 				stats_vbox_container.add_child(label)
 		if card.stats.has("mul"):
-			for stat_name in card.stats["mul"].keys():
+			for key in card.stats["mul"].keys():
 				var label = Label.new()
-				label.text = "%s: x%s" % [stat_name.capitalize(), str(card.stats["mul"][stat_name])]
-				stats_vbox_container.add_child(label)
-	else:
-		# Normal unit or building stats
-		for stat_name in card.stats.keys():
-			var stat_value = card.stats[stat_name]
-			if typeof(stat_value) == TYPE_DICTIONARY:
-				for sub_stat in stat_value.keys():
-					var label = Label.new()
-					label.text = "%s %s%s" % [
-						sub_stat.capitalize(),
-						"+" if stat_name == "add" else "x",
-						str(stat_value[sub_stat])
-					]
-					stats_vbox_container.add_child(label)
-			else:
-				var label = Label.new()
-				label.text = "%s: %s" % [stat_name.capitalize(), str(stat_value)]
+				label.text = "%s: x%s" % [key.capitalize(), str(card.stats["mul"][key])]
 				stats_vbox_container.add_child(label)

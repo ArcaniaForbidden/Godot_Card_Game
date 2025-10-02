@@ -221,6 +221,19 @@ static var card_database = {
 			}
 		}
 	},
+	"leather_chestplate": {
+		"card": preload("res://Images/unit_card.png"),
+		"sprite": preload("res://Images/water.png"),
+		"card_type": "equipment",
+		"slot": "chestplate",
+		"display_name": "Leather Chestplate",
+		"description": "A poorly crafted leather chestplate.",
+		"stats": {
+			"add": {
+				"health": 3,
+			}
+		}
+	},
 	"plains": {
 		"card": preload("res://Images/green_card.png"),
 		"sprite": preload("res://Images/plains.png"),

@@ -81,6 +81,7 @@ func spawn_initial_cards() -> void:
 	spawn_card("wooden_spear", Vector2(400,600))
 	spawn_card("wooden_spear", Vector2(400,700))
 	spawn_card("iron_spear", Vector2(400,800))
+	spawn_card("leather_chestplate", Vector2(400,900))
 	spawn_card("lumber_camp", Vector2(400,500))
 	spawn_card("tree", Vector2(500, 300))
 	spawn_card("rock", Vector2(600, 300))
@@ -248,7 +249,7 @@ func finish_drag_generic(cards: Array, is_simulated: bool, play_sound: bool = tr
 	var merged := false
 	if can_merge:
 		merged = merge_overlapping_stacks(bottom_card)
-	var extra_offset_y = 20 if (not merged and not is_simulated) else 0
+	var extra_offset_y = -drag_lift_y if (not merged and not is_simulated) else 0
 	# Snap positions (or let tween place them)
 	var stack = find_stack(bottom_card)
 	if not stack.is_empty():
@@ -259,7 +260,7 @@ func finish_drag_generic(cards: Array, is_simulated: bool, play_sound: bool = tr
 			var card = stack[i]
 			if not is_instance_valid(card):
 				continue
-			var target_pos = base_pos + Vector2(0, i * STACK_Y_OFFSET)
+			var target_pos = base_pos + Vector2(0, i * STACK_Y_OFFSET) + Vector2(0, extra_offset_y)
 			if card.is_equipped and card.attached_slot:
 				card.global_position = target_pos
 				card.scale = Vector2(1, 1)
