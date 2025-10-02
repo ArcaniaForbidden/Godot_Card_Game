@@ -1,17 +1,56 @@
 extends Card
 class_name InventorySlot
 
-# Type of equipment this slot accepts
 @export var slot_type: String = ""
 var attached_card: Card = null
 var is_static: bool = true
 
-func _ready():
-	print("InventorySlot ", name, " accepts slot type: ", slot_type)
+func _process(delta):
+	if attached_card and is_instance_valid(attached_card) and attached_card.is_equipped:
+		attached_card.global_position = global_position # use stored equip_position
 
 func can_accept_card(card: Card) -> bool:
+	if not is_visible_in_tree():
+		return false
 	if card.card_type != "equipment":
 		return false
 	if card.slot != slot_type:
 		return false
+	if attached_card != null:
+		return false
 	return true
+
+# Helper to simulate stack behavior for merge_overlapping_stacks
+func get_top_card() -> Node2D:
+	return attached_card if attached_card else self
+
+func equip_card(card: Card) -> bool:
+	if not can_accept_card(card):
+		return false
+	attached_card = card
+	var card_manager = get_tree().root.get_node("Main/CardManager")
+	card_manager.kill_card_tween(card)  # remove any ongoing tween
+	card.is_being_dragged = false
+	card.attached_slot = self
+	card.is_equipped = true
+	card.scale = Vector2(1, 1)
+	card.global_position = global_position  # immediately snap to slot
+	# add to the stack in CardManager
+	for stack in card_manager.all_stacks:
+		if stack.has(self):
+			if not stack.has(card):
+				stack.append(card)
+			break
+	return true
+
+func unequip_card():
+	if attached_card and is_instance_valid(attached_card):
+		var card_manager = get_tree().root.get_node("Main/CardManager")
+		for stack in card_manager.all_stacks:
+			if stack.has(self):
+				stack.erase(attached_card)
+				break
+		card_manager.all_stacks.append([attached_card])
+		attached_card.attached_slot = null
+		attached_card.is_equipped = false
+		attached_card = null

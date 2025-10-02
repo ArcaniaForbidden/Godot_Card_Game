@@ -26,6 +26,8 @@ var enemy_min_jump_time: float = 0.8
 var enemy_max_jump_time: float = 1.5
 var enemy_jump_distance: float = 150.0
 var in_battle: bool = false
+var is_equipped: bool = false
+var attached_slot: InventorySlot = null
 
 # --- UI references ---
 @onready var animation_manager: AnimationManager = AnimationManager.new()

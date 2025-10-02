@@ -43,7 +43,7 @@ var allowed_stack_types := {
 	"material": ["unit", "resource", "material", "building"],
 	"enemy": [],                                                           # enemies cannot stack
 	"building": ["building", "location"],
-	"location": []
+	"location": ["location"]
 }
 
 func _ready() -> void:
@@ -75,8 +75,8 @@ func _input(event):
 #  CARD SPAWNING
 # ==============================
 func spawn_initial_cards() -> void:
-	spawn_card("peasant", Vector2(400, 300))
-	spawn_card("peasant", Vector2(400, 200))
+	spawn_card("peasant", Vector2(0, 0))
+	spawn_card("peasant", Vector2(0, 0))
 	spawn_card("quarry", Vector2(400,400))
 	spawn_card("wooden_spear", Vector2(400,600))
 	spawn_card("wooden_spear", Vector2(400,700))
@@ -95,11 +95,12 @@ func spawn_initial_cards() -> void:
 	spawn_card("iron_deposit", Vector2(800, 300))
 	spawn_card("copper_deposit", Vector2(800, 300))
 	spawn_card("gold_deposit", Vector2(800, 300))
-	#spawn_card("wolf", Vector2(800, 600))
-	#spawn_card("wolf", Vector2(900, 600))
-	#spawn_card("wolf", Vector2(1800, 600))
+	spawn_card("wolf", Vector2(800, 600))
+	spawn_card("wolf", Vector2(900, 600))
+	spawn_card("wolf", Vector2(1800, 600))
 	spawn_card("forest", Vector2(0, 100))
 	spawn_card("plains", Vector2(0, 200))
+	spawn_card("mountain", Vector2(0, 300))
 
 func spawn_card(subtype: String, position: Vector2) -> Card:
 	var card: Card = card_scene.instantiate() as Card
@@ -124,6 +125,9 @@ func handle_mouse_press() -> void:
 	var clicked_card = raycast_check_for_card()
 	if not clicked_card:
 		return
+	if clicked_card is InventorySlot:
+		print("Cannot drag inventory slot:", clicked_card.name)
+		return
 	if clicked_card.in_battle:
 		print("Cannot drag card in battle:", clicked_card.subtype)
 		return
@@ -131,6 +135,9 @@ func handle_mouse_press() -> void:
 		print("Cannot drag enemy card:", clicked_card.subtype)
 		return
 	if clicked_card.is_being_crafted_dragged:
+		return
+	if clicked_card.is_equipped and clicked_card.attached_slot and not clicked_card.attached_slot.visible:
+		print("Cannot drag invisible card:", clicked_card.name)
 		return
 	start_drag(clicked_card)
 
@@ -173,6 +180,8 @@ func handle_dragging() -> void:
 		card.position = card.position.lerp(target_pos, 0.1)
 
 func start_drag(card: Card) -> void:
+	if card.is_equipped and card.attached_slot:
+		card.attached_slot.unequip_card()
 	var stack = find_stack(card)
 	if card.animation_manager:
 		card.animation_manager.play_walk()
@@ -243,18 +252,26 @@ func finish_drag_generic(cards: Array, is_simulated: bool, play_sound: bool = tr
 	# Snap positions (or let tween place them)
 	var stack = find_stack(bottom_card)
 	if not stack.is_empty():
-		var base_pos = stack[0].position + Vector2(0, extra_offset_y)
+		if stack[0] is InventorySlot:
+			return  # leave slot where it is
+		var base_pos = stack[0].global_position if stack[0] is InventorySlot else stack[0].position
 		for i in range(stack.size()):
 			var card = stack[i]
 			if not is_instance_valid(card):
 				continue
 			var target_pos = base_pos + Vector2(0, i * STACK_Y_OFFSET)
+			if card.is_equipped and card.attached_slot:
+				card.global_position = target_pos
+				card.scale = Vector2(1, 1)
+				card.z_index = i + 1
+				continue 
 			kill_card_tween(card)
 			var tween = get_tree().create_tween()
 			tween.tween_property(card, "position", target_pos, STACK_TWEEN_DURATION)\
 				.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-			tween.parallel().tween_property(card, "scale", Vector2(1, 1), STACK_TWEEN_DURATION)\
-				.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			if not (card is InventorySlot):
+				tween.parallel().tween_property(card, "scale", Vector2(1, 1), STACK_TWEEN_DURATION)\
+					.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 			card_tweens[card] = tween
 			card.z_index = i + 1
 	# Clear flags after merge/tween setup
@@ -285,7 +302,19 @@ func merge_overlapping_stacks(card: Node2D) -> bool:
 		var target_stack = find_stack(entry["card"])
 		if target_stack.is_empty():
 			continue
+		if target_stack.any(func(c): return c.is_equipped if is_instance_valid(c) else false):
+			continue
 		var target_top_card = target_stack[-1]
+		if target_top_card is InventorySlot:
+			if dragged_stack.size() > 1:
+				return false
+			var slot = target_top_card as InventorySlot
+			if slot.can_accept_card(dragged_bottom_card):
+				slot.equip_card(dragged_bottom_card)
+				# Remove dragged_stack from all_stacks if it's empty
+				if all_stacks.has(dragged_stack):
+					all_stacks.erase(dragged_stack)
+				return true  # snapped to slot
 		var target_bottom_card = target_stack[0]
 		if target_bottom_card.is_being_dragged:
 			continue
@@ -362,7 +391,9 @@ func push_apart_cards() -> void:
 	for stack in all_stacks:
 		if stack.is_empty() or not is_instance_valid(stack[0]) \
 			or stack.has(card_being_dragged) or stack[0].card_type == "enemy" \
-			or stack_has_crafted_dragged(stack):
+			or stack[0] is InventorySlot \
+			or stack_has_crafted_dragged(stack) \
+			or stack.any(func(c): return c.is_equipped if is_instance_valid(c) else false):
 			stack_bounds.append(null)
 			stack_card_centers.append(null)
 			stack_center_x.append(INF)  # sentinel
@@ -492,7 +523,14 @@ func raycast_check_for_card() -> Node2D:
 	parameters.collision_mask = COLLISION_MASK_CARD
 	var result = space_state.intersect_point(parameters)
 	if result.size() > 0:
-		return get_card_with_highest_z_index(result)
+		var visible_cards := []
+		for r in result:
+			var card = r.collider.get_parent()
+			if card.visible:
+				visible_cards.append(r)
+		if visible_cards.size() == 0:
+			return null
+		return get_card_with_highest_z_index(visible_cards)
 	return null
 
 func get_card_with_highest_z_index(cards: Array) -> Node2D:
@@ -500,6 +538,8 @@ func get_card_with_highest_z_index(cards: Array) -> Node2D:
 	var highest_z_index = highest_z_card.z_index
 	for i in range(1, cards.size()):
 		var current_card = cards[i].collider.get_parent()
+		if not current_card.visible:
+			continue
 		if current_card.z_index > highest_z_index:
 			highest_z_card = current_card
 			highest_z_index = current_card.z_index

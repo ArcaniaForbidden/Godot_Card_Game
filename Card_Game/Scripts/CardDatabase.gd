@@ -235,7 +235,7 @@ static var card_database = {
 	},
 	"mountain": {
 		"card": preload("res://Images/green_card.png"),
-		"sprite": preload("res://Images/forest.png"),
+		"sprite": preload("res://Images/mountain.png"),
 		"card_type": "location",
 		"display_name": "Mountain"
 	},
