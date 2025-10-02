@@ -20,10 +20,6 @@ func can_accept_card(card: Card) -> bool:
 		return false
 	return true
 
-# Helper to simulate stack behavior for merge_overlapping_stacks
-func get_top_card() -> Node2D:
-	return attached_card if attached_card else self
-
 func get_owner_card() -> Card:
 	var parent = get_parent()
 	while parent:
