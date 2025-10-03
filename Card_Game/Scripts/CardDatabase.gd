@@ -2,6 +2,30 @@ extends Node
 class_name CardDatabase
 
 static var card_database = {
+	"copper_coin": {
+		"card": preload("res://Images/unit_card.png"),
+		"sprite": preload("res://Images/copper_ore.png"),
+		"card_type": "currency",
+		"display_name": "Copper Coin",
+		"value": 1,
+		"description": "A dull copper coin."
+	},
+	"silver_coin": {
+		"card": preload("res://Images/unit_card.png"),
+		"sprite": preload("res://Images/iron_ore.png"),
+		"card_type": "currency",
+		"display_name": "Silver Coin",
+		"value": 10,
+		"description": "A silver coin. Worth 10 copper coins."
+	},
+	"gold_coin": {
+		"card": preload("res://Images/unit_card.png"),
+		"sprite": preload("res://Images/gold_ore.png"),
+		"card_type": "currency",
+		"display_name": "Gold Coin",
+		"value": 100,
+		"description": "A shiny gold coin. Worth 10 silver coins."
+	},
 	"peasant": {
 		"card": preload("res://Images/unit_card.png"),
 		"sprite": preload("res://Animations/peasant.tres"),

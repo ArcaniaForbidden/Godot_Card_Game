@@ -37,6 +37,7 @@ var cached_rects: Dictionary = {}  # card -> Rect2
 var cards_moving: Dictionary = {}  # card -> target_position
 var card_tweens: Dictionary = {}   # card -> SceneTreeTween
 var allowed_stack_types := {
+	"currency": ["currency"],
 	"unit": ["unit", "resource", "material", "building", "location"],      # units can stack with other units and equipment
 	"equipment": ["unit", "equipment"],                                    # equipment only stacks on equipment or units
 	"resource": ["unit", "resource", "material", "building"],
