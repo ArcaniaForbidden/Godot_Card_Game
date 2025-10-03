@@ -308,7 +308,7 @@ func process_battle_combat(delta: float) -> void:
 					if battle.attack_timers.has(target_card):
 						battle.attack_timers.erase(target_card)
 					# Finally, free the node
-					target_card.queue_free()
+					handle_card_death(target_card)
 				lock_cards_in_zone(battle)
 		# End battle if empty
 		if battle.units.is_empty() or battle.enemies.is_empty():
@@ -360,3 +360,60 @@ func mark_card_in_battle(card: Card) -> void:
 	card.is_being_dragged = true
 	if card_manager.cards_moving.has(card):
 		card_manager.cards_moving.erase(card)
+
+# =======================
+# CARD DEATH / LOOT
+# =======================
+func handle_card_death(card: Card) -> void:
+	# Generate loot
+	var loot = roll_loot(card)  # ✨ EDIT: robust loot lookup
+	for subtype in loot:
+		# ✨ EDIT: spawn via CardManager to ensure proper parenting & stacks
+		if subtype and subtype != "":
+			var pos = card.position + Vector2(randf_range(-20, 20), randf_range(-20, 20))
+			card_manager.spawn_card(subtype, pos)
+	# Cleanup card from stacks (safe) then free
+	var stack = card_manager.find_stack(card)
+	if stack.size() > 0:
+		stack.erase(card)
+		if stack.is_empty():
+			card_manager.all_stacks.erase(stack)
+	# free the node
+	if is_instance_valid(card):
+		card.queue_free()
+
+# ✨ EDIT: robust loot rolling that accepts both `item` and `subtype`,
+# falls back to CardDatabase if the Card instance doesn't have loot_table.
+func roll_loot(card: Card) -> Array:
+	var drops: Array = []
+	# Try to read loot table from the card object first
+	var loot_entries = []
+	if "loot_table" in card and card.loot_table:
+		loot_entries = card.loot_table
+	else:
+		# fallback to database entry
+		var db_entry = CardDatabase.card_database.get(card.subtype, null)
+		if db_entry:
+			loot_entries = db_entry.get("loot_table", [])
+	# If nothing, return empty
+	if not loot_entries:
+		return drops
+	# Each entry can be rolled independently (allows multiple drops)
+	for entry in loot_entries:
+		if not typeof(entry) == TYPE_DICTIONARY:
+			continue
+		var chance = float(entry.get("chance", 1.0))
+		if randf() <= chance:
+			# accept "subtype" or "item" keys
+			var subtype = entry.get("subtype", entry.get("item", null))
+			if subtype:
+				drops.append(subtype)
+	return drops
+
+# ✨ EDIT: previous implementation instantiated a Card directly inside the battle node.
+# Use CardManager.spawn_card so spawned loot is parented under CardManager and registered.
+func spawn_loot_card(item_name: String, position: Vector2) -> void:
+	# kept for backward-compatibility/explicit calls but not used above
+	if not item_name or item_name == "":
+		return
+	card_manager.spawn_card(item_name, position)

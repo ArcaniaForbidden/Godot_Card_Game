@@ -24,18 +24,6 @@ static var recipes = {
 		],
 		"work_time": 15.0
 	},
-	"Harvest Water Deposit": {
-		"inputs": [
-			{"subtype": "peasant", "consume": false},
-			{"subtype": "water_deposit", "consume": true}
-		],
-		"outputs": [
-			{"subtype": "water"},
-			{"subtype": "water"},
-			{"subtype": "water"}
-		],
-		"work_time": 15.0
-	},
 	"Mine Iron Deposit": {
 		"inputs": [
 			{"subtype": "peasant", "consume": false},
@@ -78,7 +66,6 @@ static var recipes = {
 			{"weight": 5, "outputs": [{"subtype": "aquifer"}]},
 			{"weight": 5, "outputs": [{"subtype": "plains"}]},
 			{"weight": 5, "outputs": [{"subtype": "forest"}]},
-			{"weight": 10, "outputs": [{"subtype": "water_deposit"}]},
 			{"weight": 10, "outputs": [{"subtype": "soil"}]},
 			{"weight": 10, "outputs": [{"subtype": "tree"}]},
 			{"weight": 5, "outputs": [{"subtype": "rock"}]},
@@ -142,10 +129,8 @@ static var recipes = {
 	"Build Well": {
 		"inputs": [
 			{"subtype": "brick", "consume": true},
-			{"subtype": "plank", "consume": true},
-			{"subtype": "water_deposit", "consume": true},
-			{"subtype": "water_deposit", "consume": true},
-			{"subtype": "water_deposit", "consume": true},
+			{"subtype": "brick", "consume": true},
+			{"subtype": "wood", "consume": true},
 			{"subtype": "peasant", "consume": false}
 		],
 		"outputs": [
@@ -235,8 +220,7 @@ static var recipes = {
 			{"subtype": "peasant", "consume": false}      # unit
 		],
 		"loot_table": [
-			{"weight": 45, "outputs": [{"subtype": "water"}]},
-			#{"weight": 5, "outputs": [{"subtype": "resin"}]},
+			{"weight": 1, "outputs": [{"subtype": "water"}]},
 		],
 		"work_time": 15.0
 	},
@@ -265,7 +249,7 @@ static var recipes = {
 	},
 	"Use Iron Mine": {
 		"inputs": [
-			{"subtype": "mountain", "consume": false},      # location
+			{"subtype": "cave", "consume": false},      # location
 			{"subtype": "iron_mine", "consume": false}, # building
 			{"subtype": "peasant", "consume": false}      # unit
 		],
@@ -277,7 +261,7 @@ static var recipes = {
 	},
 	"Use Copper Mine": {
 		"inputs": [
-			{"subtype": "mountain", "consume": false},
+			{"subtype": "cave", "consume": false},
 			{"subtype": "copper_mine", "consume": false}, # building
 			{"subtype": "peasant", "consume": false} # unit
 		],
@@ -289,7 +273,7 @@ static var recipes = {
 	},
 	"Use Gold Mine": {
 		"inputs": [
-			{"subtype": "mountain", "consume": false},
+			{"subtype": "cave", "consume": false},
 			{"subtype": "gold_mine", "consume": false}, # building
 			{"subtype": "peasant", "consume": false} # unit
 		],

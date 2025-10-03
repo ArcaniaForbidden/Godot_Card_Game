@@ -92,7 +92,6 @@ func spawn_initial_cards() -> void:
 	spawn_card("brick", Vector2(800, 300))
 	spawn_card("plank", Vector2(800, 300))
 	spawn_card("water", Vector2(800, 300))
-	spawn_card("water_deposit", Vector2(800, 300))
 	spawn_card("iron_deposit", Vector2(800, 300))
 	spawn_card("copper_deposit", Vector2(800, 300))
 	spawn_card("gold_deposit", Vector2(800, 300))
@@ -102,6 +101,7 @@ func spawn_initial_cards() -> void:
 	spawn_card("forest", Vector2(0, 100))
 	spawn_card("plains", Vector2(0, 200))
 	spawn_card("mountain", Vector2(0, 300))
+	spawn_card("cave", Vector2(0, 400))
 
 func spawn_card(subtype: String, position: Vector2) -> Card:
 	var card: Card = card_scene.instantiate() as Card

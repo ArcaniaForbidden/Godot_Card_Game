@@ -15,7 +15,11 @@ static var card_database = {
 		"sprite": preload("res://Images/wolf.png"),
 		"card_type": "enemy",
 		"display_name": "Wolf",
-		"stats": {"health": 4, "attack": 1, "armor": 0, "attack_speed": 1.2}
+		"stats": {"health": 4, "attack": 1, "armor": 0, "attack_speed": 1.2},
+		#"loot_table": [
+			#{ "subtype": "wood", "chance": 0.8 },
+			#{ "subtype": "tree", "chance": 0.7 }
+		#]
 	},
 	"tree": {
 		"card": preload("res://Images/resource_card.png"),
@@ -28,12 +32,6 @@ static var card_database = {
 		"sprite": preload("res://Images/rock.png"),
 		"card_type": "resource",
 		"display_name": "Rock"
-	},
-	"water_deposit": {
-		"card": preload("res://Images/resource_card.png"),
-		"sprite": preload("res://Images/water_deposit.png"),
-		"card_type": "resource",
-		"display_name": "Water Deposit"
 	},
 	"iron_deposit": {
 		"card": preload("res://Images/resource_card.png"),
@@ -206,5 +204,11 @@ static var card_database = {
 		"sprite": preload("res://Images/mountain.png"),
 		"card_type": "location",
 		"display_name": "Mountain"
+	},
+	"cave": {
+		"card": preload("res://Images/location_card.png"),
+		"sprite": preload("res://Images/mountain.png"),
+		"card_type": "location",
+		"display_name": "Cave"
 	},
 }

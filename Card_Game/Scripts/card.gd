@@ -28,6 +28,7 @@ var enemy_jump_distance: float = 150.0
 var in_battle: bool = false
 var is_equipped: bool = false
 var attached_slot: InventorySlot = null
+var loot_table: Array = []
 
 # --- UI references ---
 @onready var animation_manager: AnimationManager = AnimationManager.new()
@@ -102,6 +103,7 @@ func setup(subtype_name: String) -> void:
 		if health_label:
 			health_label.text = ""
 			health_label.visible = false
+	loot_table = data.get("loot_table", [])
 	attack = int(stats.get("attack", 0))
 	armor = int(stats.get("armor", 0))
 	attack_speed = float(stats.get("attack_speed", 0))
