@@ -10,7 +10,7 @@ static var card_database = {
 		"display_name": "Peasant",
 		"stats": {
 			"health": 10,
-			"attack": 1,
+			"attack": 0,
 			"armor": 0,
 			"attack_speed": 0.8
 		},
@@ -28,45 +28,45 @@ static var card_database = {
 		}
 	},
 	"tree": {
-		"card": preload("res://Images/basic_card.png"),
+		"card": preload("res://Images/resource_card.png"),
 		"sprite": preload("res://Images/tree.png"),
 		"card_type": "resource",
 		"display_name": "Tree"
 	},
 	"rock": {
-		"card": preload("res://Images/basic_card.png"),
+		"card": preload("res://Images/resource_card.png"),
 		"sprite": preload("res://Images/rock.png"),
 		"card_type": "resource",
 		"display_name": "Rock"
 	},
 	"water_deposit": {
-		"card": preload("res://Images/basic_card.png"),
+		"card": preload("res://Images/resource_card.png"),
 		"sprite": preload("res://Images/water_deposit.png"),
 		"card_type": "resource",
 		"display_name": "Water Deposit"
 	},
 	"iron_deposit": {
-		"card": preload("res://Images/basic_card.png"),
+		"card": preload("res://Images/resource_card.png"),
 		"sprite": preload("res://Images/iron_deposit.png"),
 		"card_type": "resource",
 		"display_name": "Iron Deposit"
 	},
 	"copper_deposit": {
-		"card": preload("res://Images/basic_card.png"),
+		"card": preload("res://Images/resource_card.png"),
 		"sprite": preload("res://Images/copper_deposit.png"),
 		"card_type": "resource",
 		"display_name": "Copper Deposit"
 	},
 	"gold_deposit": {
-		"card": preload("res://Images/basic_card.png"),
+		"card": preload("res://Images/resource_card.png"),
 		"sprite": preload("res://Images/gold_deposit.png"),
 		"card_type": "resource",
 		"display_name": "Gold Deposit"
 	},
 	"soil": { 
-		"card": preload("res://Images/material_card.png"),
-		"sprite": preload("res://Images/stone.png"),
-		"card_type": "material",
+		"card": preload("res://Images/resource_card.png"),
+		"sprite": preload("res://Images/soil.png"),
+		"card_type": "resource",
 		"display_name": "Soil"
 	},
 	"stone": { 
@@ -122,6 +122,18 @@ static var card_database = {
 		"sprite": preload("res://Images/house.png"),
 		"card_type": "building",
 		"display_name": "House",
+		"stats": {
+			"health": 25,
+			"attack": 0,
+			"armor": 0,
+			"attack_speed": 0
+		}
+	},
+	"well": {
+		"card": preload("res://Images/building_card.png"),
+		"sprite": preload("res://Images/lumber_camp.png"),
+		"card_type": "building",
+		"display_name": "Well",
 		"stats": {
 			"health": 25,
 			"attack": 0,
@@ -234,20 +246,26 @@ static var card_database = {
 			}
 		}
 	},
+	"aquifer": {
+		"card": preload("res://Images/location_card.png"),
+		"sprite": preload("res://Images/plains.png"),
+		"card_type": "location",
+		"display_name": "Aquifer"
+	},
 	"plains": {
-		"card": preload("res://Images/green_card.png"),
+		"card": preload("res://Images/location_card.png"),
 		"sprite": preload("res://Images/plains.png"),
 		"card_type": "location",
 		"display_name": "Plains"
 	},
 	"forest": {
-		"card": preload("res://Images/green_card.png"),
+		"card": preload("res://Images/location_card.png"),
 		"sprite": preload("res://Images/forest.png"),
 		"card_type": "location",
 		"display_name": "Forest"
 	},
 	"mountain": {
-		"card": preload("res://Images/green_card.png"),
+		"card": preload("res://Images/location_card.png"),
 		"sprite": preload("res://Images/mountain.png"),
 		"card_type": "location",
 		"display_name": "Mountain"

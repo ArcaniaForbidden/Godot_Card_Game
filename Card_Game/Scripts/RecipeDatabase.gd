@@ -75,10 +75,11 @@ static var recipes = {
 			{"subtype": "peasant", "consume": false} # unit on top
 		],
 		"loot_table": [
+			{"weight": 5, "outputs": [{"subtype": "aquifer"}]},
 			{"weight": 5, "outputs": [{"subtype": "plains"}]},
 			{"weight": 5, "outputs": [{"subtype": "forest"}]},
 			{"weight": 10, "outputs": [{"subtype": "water_deposit"}]},
-			#{"weight": 10, "outputs": [{"subtype": "soil"}]},
+			{"weight": 10, "outputs": [{"subtype": "soil"}]},
 			{"weight": 10, "outputs": [{"subtype": "tree"}]},
 			{"weight": 5, "outputs": [{"subtype": "rock"}]},
 			#{"weight": 5, "outputs": [{"subtype": "cow"}]},
@@ -135,6 +136,20 @@ static var recipes = {
 		],
 		"outputs": [
 			{"subtype": "house"}
+		],
+		"work_time": 15.0
+	},
+	"Build Well": {
+		"inputs": [
+			{"subtype": "brick", "consume": true},
+			{"subtype": "plank", "consume": true},
+			{"subtype": "water_deposit", "consume": true},
+			{"subtype": "water_deposit", "consume": true},
+			{"subtype": "water_deposit", "consume": true},
+			{"subtype": "peasant", "consume": false}
+		],
+		"outputs": [
+			{"subtype": "well"}
 		],
 		"work_time": 15.0
 	},
@@ -213,6 +228,18 @@ static var recipes = {
 		],
 		"work_time": 15.0
 	},
+	"Use Well": {
+		"inputs": [
+			{"subtype": "aquifer", "consume": false},      # location
+			{"subtype": "well", "consume": false}, # building
+			{"subtype": "peasant", "consume": false}      # unit
+		],
+		"loot_table": [
+			{"weight": 45, "outputs": [{"subtype": "water"}]},
+			#{"weight": 5, "outputs": [{"subtype": "resin"}]},
+		],
+		"work_time": 15.0
+	},
 	"Use Lumber Camp": {
 		"inputs": [
 			{"subtype": "forest", "consume": false},      # location
@@ -238,7 +265,7 @@ static var recipes = {
 	},
 	"Use Iron Mine": {
 		"inputs": [
-			{"subtype": "forest", "consume": false},      # location
+			{"subtype": "mountain", "consume": false},      # location
 			{"subtype": "iron_mine", "consume": false}, # building
 			{"subtype": "peasant", "consume": false}      # unit
 		],

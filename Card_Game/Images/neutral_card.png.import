@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bckpiwlqu4h3q"
-path="res://.godot/imported/quarry.png-91b56dc59f582c015ebe6ec450f920fa.ctex"
+uid="uid://dkdkt24xjj1il"
+path="res://.godot/imported/neutral_card.png-f8ddd2a25e609031ec2a094d2e4e0aeb.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/quarry.png"
-dest_files=["res://.godot/imported/quarry.png-91b56dc59f582c015ebe6ec450f920fa.ctex"]
+source_file="res://Images/neutral_card.png"
+dest_files=["res://.godot/imported/neutral_card.png-f8ddd2a25e609031ec2a094d2e4e0aeb.ctex"]
 
 [params]
 

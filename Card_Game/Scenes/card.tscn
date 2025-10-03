@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://b16dp41rjjkpr"]
 
 [ext_resource type="Script" uid="uid://dgcfaf2fk8x65" path="res://Scripts/card.gd" id="1_wejov"]
-[ext_resource type="Texture2D" uid="uid://dq1v6edrcxkv4" path="res://Images/basic_card.png" id="2_c6tr3"]
+[ext_resource type="Texture2D" uid="uid://dq1v6edrcxkv4" path="res://Images/resource_card.png" id="2_c6tr3"]
 [ext_resource type="SpriteFrames" uid="uid://e55fuhdcrqmo" path="res://Animations/peasant.tres" id="3_xnv4g"]
 [ext_resource type="FontFile" uid="uid://q6k4rvj4di0k" path="res://Fonts/MedodicaRegular.otf" id="4_13sua"]
 [ext_resource type="Texture2D" uid="uid://cjy107yuvngg" path="res://Images/wood.png" id="4_xnv4g"]
