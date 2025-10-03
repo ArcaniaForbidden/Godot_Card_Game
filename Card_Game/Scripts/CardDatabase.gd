@@ -8,24 +8,14 @@ static var card_database = {
 		"animated": true,
 		"card_type": "unit",
 		"display_name": "Peasant",
-		"stats": {
-			"health": 10,
-			"attack": 0,
-			"armor": 0,
-			"attack_speed": 0.8
-		},
+		"stats": {"health": 10, "attack": 0, "armor": 0, "attack_speed": 0.8},
 	},
 	"wolf": {
 		"card": preload("res://Images/enemy_card.png"),
 		"sprite": preload("res://Images/wolf.png"),
 		"card_type": "enemy",
 		"display_name": "Wolf",
-		"stats": {
-			"health": 4,
-			"attack": 1,
-			"armor": 0,
-			"attack_speed": 1.2
-		}
+		"stats": {"health": 4, "attack": 1, "armor": 0, "attack_speed": 1.2}
 	},
 	"tree": {
 		"card": preload("res://Images/resource_card.png"),
@@ -122,84 +112,49 @@ static var card_database = {
 		"sprite": preload("res://Images/house.png"),
 		"card_type": "building",
 		"display_name": "House",
-		"stats": {
-			"health": 25,
-			"attack": 0,
-			"armor": 0,
-			"attack_speed": 0
-		}
+		"stats": {"health": 25}
 	},
 	"well": {
 		"card": preload("res://Images/building_card.png"),
 		"sprite": preload("res://Images/lumber_camp.png"),
 		"card_type": "building",
 		"display_name": "Well",
-		"stats": {
-			"health": 25,
-			"attack": 0,
-			"armor": 0,
-			"attack_speed": 0
-		}
+		"stats": {"health": 25}
 	},
 	"lumber_camp": {
 		"card": preload("res://Images/building_card.png"),
 		"sprite": preload("res://Images/lumber_camp.png"),
 		"card_type": "building",
 		"display_name": "Lumber Camp",
-		"stats": {
-			"health": 25,
-			"attack": 0,
-			"armor": 0,
-			"attack_speed": 0
-		}
+		"stats": {"health": 25}
 	},
 	"quarry": {
 		"card": preload("res://Images/building_card.png"),
 		"sprite": preload("res://Images/quarry.png"),
 		"card_type": "building",
 		"display_name": "Quarry",
-		"stats": {
-			"health": 25,
-			"attack": 0,
-			"armor": 0,
-			"attack_speed": 0
-		}
+		"stats": {"health": 25}
 	},
 	"iron_mine": {
 		"card": preload("res://Images/building_card.png"),
 		"sprite": preload("res://Images/quarry.png"),
 		"card_type": "building",
 		"display_name": "Iron Mine",
-		"stats": {
-			"health": 25,
-			"attack": 0,
-			"armor": 0,
-			"attack_speed": 0
-		}
+		"stats": {"health": 25}
 	},
 	"copper_mine": {
 		"card": preload("res://Images/building_card.png"),
 		"sprite": preload("res://Images/quarry.png"),
 		"card_type": "building",
 		"display_name": "Copper Mine",
-		"stats": {
-			"health": 25,
-			"attack": 0,
-			"armor": 0,
-			"attack_speed": 0
-		}
+		"stats": {"health": 25}
 	},
 	"gold_mine": {
 		"card": preload("res://Images/building_card.png"),
 		"sprite": preload("res://Images/quarry.png"),
 		"card_type": "building",
 		"display_name": "Gold Mine",
-		"stats": {
-			"health": 25,
-			"attack": 0,
-			"armor": 0,
-			"attack_speed": 0
-		}
+		"stats": {"health": 25}
 	},
 	"wooden_spear": {
 		"card": preload("res://Images/unit_card.png"),
@@ -208,14 +163,7 @@ static var card_database = {
 		"slot": "weapon",
 		"display_name": "Wooden Spear",
 		"description": "A crude spear carved from wood. Increases attack slightly, but attacks slower.",
-		"stats": {
-			"add": {
-				"attack": 1
-			},
-			"mul": {
-				"attack_speed": 0.9  # 10% slower attacks
-			}
-		}
+		"stats": {"add": {"attack": 1}, "mul": {"attack_speed": 0.9}}
 	},
 	"iron_spear": {
 		"card": preload("res://Images/unit_card.png"),
@@ -224,14 +172,7 @@ static var card_database = {
 		"slot": "weapon",
 		"display_name": "Iron Spear",
 		"description": "A bigger spear",
-		"stats": {
-			"add": {
-				"attack": 2
-			},
-			"mul": {
-				"attack_speed": 1.0  # 10% slower attacks
-			}
-		}
+		"stats": {"add": {"attack": 2}, "mul": {"attack_speed": 1.0}}
 	},
 	"leather_chestplate": {
 		"card": preload("res://Images/unit_card.png"),
@@ -240,11 +181,7 @@ static var card_database = {
 		"slot": "chestplate",
 		"display_name": "Leather Chestplate",
 		"description": "A poorly crafted leather chestplate.",
-		"stats": {
-			"add": {
-				"health": 3,
-			}
-		}
+		"stats": {"add": {"health": 3}}
 	},
 	"aquifer": {
 		"card": preload("res://Images/location_card.png"),
