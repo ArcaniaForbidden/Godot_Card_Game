@@ -20,7 +20,7 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		var card_manager = get_node("/root/Main/CardManager")
 		var card = card_manager.raycast_check_for_card()
-		if card == null or card is InventorySlot:
+		if card == null or card is InventorySlot or card is SellSlot:
 			return
 		if card:
 			open_card_ui(card)

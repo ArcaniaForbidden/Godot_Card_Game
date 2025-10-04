@@ -18,7 +18,6 @@ const OUTPUT_MAX_DIST := 150.0
 const OUTPUT_TWEEN_TIME := 0.3
 const PUSH_STRENGTH := 1000
 const PUSH_ITERATIONS := 1
-const SPAWN_PROTECT_EXTRA_TIME := 0.5
 
 # --- Member variables ---
 var card_being_dragged: Node2D = null
@@ -26,15 +25,12 @@ var dragged_substack: Array = []
 var drag_offset: Vector2 = Vector2.ZERO
 var drag_lift_y: float = -20.0
 var all_stacks: Array = []
-var spawn_protected_cards: Array = []
 var card_scene = preload("res://Scenes/Card.tscn")
 var battle_manager: Node = null
 var crafting_manager: Node = null
 var map_manager: Node = null
 var screen_size: Vector2
-var shadows: Node2D
 var cached_rects: Dictionary = {}  # card -> Rect2
-var cards_moving: Dictionary = {}  # card -> target_position
 var card_tweens: Dictionary = {}   # card -> SceneTreeTween
 var allowed_stack_types := {
 	"currency": ["currency"],
@@ -52,18 +48,17 @@ func _ready() -> void:
 	crafting_manager = get_parent().get_node("CraftingManager")
 	map_manager = get_parent().get_node("MapManager")
 	screen_size = get_viewport_rect().size
-	if self:
-		shadows = Node2D.new()
-		add_child(shadows)
+	#if self:
+		#shadows = Node2D.new()
+		#add_child(shadows)
 	spawn_initial_cards()
+	spawn_initial_slots()
 
 func _process(delta: float) -> void:
 	handle_dragging()
 	push_apart_cards()
 	update_cached_rects()
 	handle_enemy_movement(delta)
-	update_cards_moving()
-	update_shadows()
 
 func _input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
@@ -109,16 +104,27 @@ func spawn_card(subtype: String, position: Vector2) -> Card:
 	add_child(card)
 	card.position = position
 	card.setup(subtype)
-	var shadow = Sprite2D.new()
-	shadow.texture = preload("res://Images/card_shadow.png")
-	shadow.z_index = 0
-	shadow.global_position = card.global_position
-	shadows.add_child(shadow)
-	card.shadow = shadow
 	card.is_being_dragged = false
 	card.target_position = position
 	all_stacks.append([card])
 	return card
+
+func spawn_initial_slots() -> void:
+	spawn_slot("res://Scenes/SellSlot.tscn", Vector2(0,-300))
+
+func spawn_slot(slot_scene_path: String, position: Vector2) -> Node2D:
+	# Use load() instead of preload() for dynamic paths
+	var slot_scene = load(slot_scene_path)
+	if not slot_scene:
+		push_error("Failed to load slot scene: " + slot_scene_path)
+		return null
+	var slot_instance = slot_scene.instantiate() as Node2D
+	# Set position and add to CardManager
+	slot_instance.position = position
+	add_child(slot_instance)
+	# Add to all_stacks so merging logic works
+	all_stacks.append([slot_instance])
+	return slot_instance
 
 # ==============================
 #  DRAG & DROP
@@ -130,13 +136,16 @@ func handle_mouse_press() -> void:
 	if clicked_card is InventorySlot:
 		print("Cannot drag inventory slot:", clicked_card.name)
 		return
+	if clicked_card is SellSlot:
+		print("Cannot drag sell slot:", clicked_card.name)
+		return
 	if clicked_card.in_battle:
 		print("Cannot drag card in battle:", clicked_card.subtype)
 		return
 	if clicked_card.card_type == "enemy":
 		print("Cannot drag enemy card:", clicked_card.subtype)
 		return
-	if clicked_card.is_being_crafted_dragged:
+	if clicked_card.is_being_simulated_dragged:
 		return
 	if clicked_card.is_equipped and clicked_card.attached_slot and not clicked_card.attached_slot.visible:
 		print("Cannot drag invisible card:", clicked_card.name)
@@ -229,7 +238,7 @@ func finish_drag_generic(cards: Array, is_simulated: bool, play_sound: bool = tr
 		if not is_instance_valid(c):
 			continue
 		if is_simulated:
-			c.is_being_crafted_dragged = true
+			c.is_being_simulated_dragged = true
 		else:
 			c.is_being_dragged = false
 		kill_card_tween(c)
@@ -280,7 +289,7 @@ func finish_drag_generic(cards: Array, is_simulated: bool, play_sound: bool = tr
 	for c in cards:
 		if is_instance_valid(c):
 			if is_simulated:
-				c.is_being_crafted_dragged = false
+				c.is_being_simulated_dragged = false
 
 func finish_drag_player() -> void:
 	finish_drag_generic(dragged_substack, false, true)
@@ -298,41 +307,52 @@ func merge_overlapping_stacks(card: Node2D) -> bool:
 	if dragged_stack.is_empty():
 		return false
 	var dragged_bottom_card = dragged_stack[0]
-	# --- Find the overlapping stack with the maximum overlap ---
 	var max_overlap_entry = null
+	# --- Find the overlapping stack/slot with the maximum overlap ---
 	for entry in overlapping:
 		var target_stack = find_stack(entry["card"])
 		if target_stack.is_empty():
 			continue
 		if target_stack.any(func(c): return c.is_equipped if is_instance_valid(c) else false):
 			continue
-		var target_top_card = target_stack[-1]
-		if target_top_card is InventorySlot:
-			if dragged_stack.size() > 1:
-				return false
-			var slot = target_top_card as InventorySlot
-			if slot.can_accept_card(dragged_bottom_card):
-				slot.equip_card(dragged_bottom_card)
-				# Remove dragged_stack from all_stacks if it's empty
-				if all_stacks.has(dragged_stack):
-					all_stacks.erase(dragged_stack)
-				return true  # snapped to slot
-		var target_bottom_card = target_stack[0]
-		if target_bottom_card.is_being_dragged:
-			continue
-		var dragged_type = dragged_bottom_card.card_type
-		var target_type = target_top_card.card_type
-		if not allowed_stack_types.has(dragged_type):
-			continue
-		if not target_type in allowed_stack_types[dragged_type]:
-			continue
 		if max_overlap_entry == null or entry["overlap"] > max_overlap_entry["overlap"]:
 			max_overlap_entry = entry
 	if max_overlap_entry == null:
 		return false
-	# --- Merge with the stack that has the maximum overlap ---
 	var target_stack = find_stack(max_overlap_entry["card"])
-	# Kill tweens for smooth merge
+	if target_stack.is_empty():
+		return false
+	var target_top_card = target_stack[-1]
+	var target_bottom_card = target_stack[0]
+	# --- Special case: InventorySlot ---
+	if target_top_card is InventorySlot:
+		if dragged_stack.size() > 1:
+			return false
+		var inventory_slot = target_top_card as InventorySlot
+		if inventory_slot.can_accept_card(dragged_bottom_card):
+			inventory_slot.equip_card(dragged_bottom_card)
+			if all_stacks.has(dragged_stack):
+				all_stacks.erase(dragged_stack)
+			return true
+	# --- Special case: SellSlot ---
+	if target_top_card is SellSlot:
+		for c in dragged_stack:
+			if not is_instance_valid(c) or c.value <= 0:
+				return false  # skip this stack, continue normal merging
+		target_top_card.sell_stack(dragged_stack)
+		dragged_stack.clear()
+		return true
+	# --- Skip if top card is being dragged ---
+	if target_bottom_card.is_being_dragged:
+		return false
+	# --- Validate stack types ---
+	var dragged_type = dragged_bottom_card.card_type
+	var target_type = target_top_card.card_type
+	if not allowed_stack_types.has(dragged_type):
+		return false
+	if not target_type in allowed_stack_types[dragged_type]:
+		return false
+	# --- Merge stacks ---
 	for c in target_stack:
 		if is_instance_valid(c):
 			kill_card_tween(c)
@@ -342,7 +362,7 @@ func merge_overlapping_stacks(card: Node2D) -> bool:
 			target_stack.append(c)
 	if all_stacks.has(dragged_stack):
 		all_stacks.erase(dragged_stack)
-	# Snap positions and recalc z-index
+	# --- Snap positions and recalc z-index ---
 	if target_stack.size() > 0 and is_instance_valid(target_stack[0]):
 		var base_pos = target_stack[0].position
 		for i in range(target_stack.size()):
@@ -358,30 +378,15 @@ func merge_overlapping_stacks(card: Node2D) -> bool:
 				c.z_index = i + 1
 	return true
 
-# ==============================
-#  CARD MOVEMENT UPDATES
-# ==============================
-func update_cards_moving() -> void:
-	var finished_cards: Array = []
-	for card in cards_moving.keys():
-		# Skip if card is no longer valid
-		if not is_instance_valid(card):
-			finished_cards.append(card)
-			continue
-		var target_pos = cards_moving[card]
-		card.position = card.position.lerp(target_pos, 0.15)
-		if card.position.distance_to(target_pos) < 1.0:
-			finished_cards.append(card)
-	# Remove finished or invalid cards from cards_moving
-	for card in finished_cards:
-		cards_moving.erase(card)
-
-func stack_has_crafted_dragged(stack: Array) -> bool:
+func stack_has_simulated_dragged(stack: Array) -> bool:
 	for card in stack:
-		if is_instance_valid(card) and card.is_being_crafted_dragged:
+		if is_instance_valid(card) and card.is_being_simulated_dragged:
 			return true
 	return false
 
+# ==============================
+#  CARD MOVEMENT UPDATES
+# ==============================
 func push_apart_cards() -> void:
 	if all_stacks.size() < 2:
 		return
@@ -393,8 +398,8 @@ func push_apart_cards() -> void:
 	for stack in all_stacks:
 		if stack.is_empty() or not is_instance_valid(stack[0]) \
 			or stack.has(card_being_dragged) or stack[0].card_type == "enemy" \
-			or stack[0] is InventorySlot \
-			or stack_has_crafted_dragged(stack) \
+			or stack[0] is InventorySlot  or stack[0] is SellSlot\
+			or stack_has_simulated_dragged(stack) \
 			or stack.any(func(c): return c.is_equipped if is_instance_valid(c) else false):
 			stack_bounds.append(null)
 			stack_card_centers.append(null)
@@ -440,13 +445,13 @@ func push_apart_cards() -> void:
 			# --- Detailed per-card check ---
 			for a_index in range(stack_a.size()):
 				var card_a = stack_a[a_index]
-				if not is_instance_valid(card_a) or card_a in spawn_protected_cards:
+				if not is_instance_valid(card_a):
 					continue
 				var rect_a = card_rects[card_a]
 				var center_a = centers_a[a_index]
 				for b_index in range(stack_b.size()):
 					var card_b = stack_b[b_index]
-					if not is_instance_valid(card_b) or card_b in spawn_protected_cards:
+					if not is_instance_valid(card_b):
 						continue
 					var rect_b = card_rects[card_b]
 					var center_b = centers_b[b_index]
@@ -462,10 +467,10 @@ func push_apart_cards() -> void:
 				var delta = get_process_delta_time()
 				var push_amount = push_vector * PUSH_STRENGTH * delta
 				for c in stack_a:
-					if is_instance_valid(c) and not c.is_being_dragged and not (c in spawn_protected_cards):
+					if is_instance_valid(c) and not c.is_being_dragged:
 						c.position += push_amount
 				for c in stack_b:
-					if is_instance_valid(c) and not c.is_being_dragged and not (c in spawn_protected_cards):
+					if is_instance_valid(c) and not c.is_being_dragged:
 						c.position -= push_amount
 
 func update_cached_rects() -> void:
@@ -548,7 +553,7 @@ func get_card_with_highest_z_index(cards: Array) -> Node2D:
 	return highest_z_card
 
 func get_overlapping_cards_any(card: Node2D, min_overlap_percent := OVERLAP_THRESHOLD) -> Array:
-	var overlapping_cards: Array = []  # renamed to avoid conflict
+	var overlapping_cards: Array = []
 	var dragged_rect = get_card_global_rect(card)
 	if dragged_rect.size == Vector2.ZERO:
 		return overlapping_cards
@@ -621,25 +626,6 @@ func debug_print_stacks() -> void:
 				names.append("<invalid>")
 		print("Stack %d: %s" % [i, names])
 	print("--------------------")
-
-func update_shadows() -> void:
-	var camera := get_viewport().get_camera_2d()
-	var world_camera_pos: Vector2 = camera.get_global_position()
-	var zoom: float = camera.zoom.x
-	var base_y_offset: float = 10.0
-	var base_x_strength: float = 4.0
-	var drag_y_offset: float = 10.0  # how much shadow lifts when dragging
-	for stack in all_stacks:
-		for card in stack:
-			if not is_instance_valid(card) or not card.shadow:
-				continue
-			var delta_x: float = card.global_position.x - world_camera_pos.x
-			var x_offset: float = clamp(delta_x, -100, 100) * base_x_strength / 100.0 / zoom
-			# Lift shadow if card is being dragged
-			var y_offset: float = base_y_offset
-			if card.is_being_dragged:
-				y_offset += drag_y_offset  # move shadow up while dragging
-			card.shadow.global_position = card.global_position + Vector2(x_offset, y_offset)
 
 # ==============================
 #  ENEMY MOVEMENT

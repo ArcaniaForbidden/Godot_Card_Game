@@ -31,23 +31,33 @@ func get_owner_card() -> Card:
 func equip_card(card: Card) -> bool:
 	if not can_accept_card(card):
 		return false
-	attached_card = card
 	var card_manager = get_tree().root.get_node("Main/CardManager")
 	card_manager.kill_card_tween(card)  # remove any ongoing tween
 	card.is_being_dragged = false
-	card.attached_slot = self
-	card.is_equipped = true
-	card.scale = Vector2(1, 1)
-	card.global_position = global_position  # immediately snap to slot
-	var owner_card = get_owner_card()
-	if owner_card:
-		modify_stats(owner_card, card, true)
-	# add to the stack in CardManager
-	for stack in card_manager.all_stacks:
-		if stack.has(self):
-			if not stack.has(card):
-				stack.append(card)
-			break
+	# Tween card to slot position and scale
+	var tween = get_tree().create_tween()
+	tween.tween_property(card, "global_position", global_position, card_manager.STACK_TWEEN_DURATION)\
+		.set_trans(Tween.TRANS_QUAD)\
+		.set_ease(Tween.EASE_OUT)
+	tween.tween_property(card, "scale", Vector2(1, 1), card_manager.STACK_TWEEN_DURATION)\
+		.set_trans(Tween.TRANS_QUAD)\
+		.set_ease(Tween.EASE_OUT)
+	# When tween finishes, mark card as equipped
+	tween.finished.connect(func() -> void:
+		attached_card = card
+		card.attached_slot = self
+		card.is_equipped = true
+		var owner_card = get_owner_card()
+		if owner_card:
+			modify_stats(owner_card, card, true)
+		# Add to stack in CardManager
+		for stack in card_manager.all_stacks:
+			if stack.has(self):
+				if not stack.has(card):
+					stack.append(card)
+				break
+	)
+	card_manager.card_tweens[card] = tween
 	return true
 
 func unequip_card():

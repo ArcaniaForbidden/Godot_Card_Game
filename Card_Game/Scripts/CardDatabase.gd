@@ -50,7 +50,7 @@ static var card_database = {
 		"sprite": preload("res://Images/tree.png"),
 		"card_type": "resource",
 		"display_name": "Tree",
-		"value": 1,
+		"value": 3,
 	},
 	"rock": {
 		"card": preload("res://Images/resource_card.png"),

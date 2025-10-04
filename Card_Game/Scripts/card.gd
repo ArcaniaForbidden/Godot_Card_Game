@@ -9,12 +9,12 @@ const LABEL_COLOR := Color.BLACK
 
 var target_position: Vector2
 var is_being_dragged: bool = false
-var is_being_crafted_dragged: bool = false
+var is_being_simulated_dragged: bool = false
 var card_type: String = ""
 var subtype: String = ""
 var display_name: String = ""
+var value: int = 0
 var slot: String = ""
-var shadow: Sprite2D = null
 var stats: Dictionary = {}
 var health: int = 0
 var max_health: int = 0
@@ -44,11 +44,6 @@ func _ready() -> void:
 	area.connect("input_event", Callable(self, "_on_area_input_event"))
 	if sprite_animated:
 		animation_manager.setup(self, sprite_animated)
-
-func _notification(what: int) -> void:
-	if what == NOTIFICATION_PREDELETE:
-		if shadow and is_instance_valid(shadow):
-			shadow.queue_free()
 
 # --- Helpers ---
 func set_health(value: int) -> void:
@@ -90,6 +85,10 @@ func setup(subtype_name: String) -> void:
 		slot = data.get("slot", "")
 	else:
 		slot = ""
+	if data.has("value"):
+		value = int(data["value"])
+	else:
+		value = 0
 	# --- Stats setup ---
 	stats = data.get("stats", {}).duplicate(true)
 	if stats.has("health") and stats["health"] > 0:

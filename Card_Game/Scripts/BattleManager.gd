@@ -322,8 +322,6 @@ func end_battle(battle: BattleZone) -> void:
 		if is_instance_valid(card):
 			card.in_battle = false
 			card.is_being_dragged = false
-			if card_manager.cards_moving.has(card):
-				card_manager.cards_moving.erase(card)
 	if battle.visual:
 		battle.visual.queue_free()
 	active_battles.erase(battle)
@@ -358,8 +356,6 @@ func animate_attack(attacker: Card, target: Card) -> void:
 func mark_card_in_battle(card: Card) -> void:
 	card.in_battle = true
 	card.is_being_dragged = true
-	if card_manager.cards_moving.has(card):
-		card_manager.cards_moving.erase(card)
 
 # =======================
 # CARD DEATH / LOOT

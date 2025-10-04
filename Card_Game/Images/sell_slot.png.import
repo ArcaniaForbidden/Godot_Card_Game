@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c4kyrb25i04is"
-path="res://.godot/imported/card_shadow.png-590a1790a00e3a3e3c9ba9afa05cbbc3.ctex"
+uid="uid://bwiljeekb80nd"
+path="res://.godot/imported/sell_slot.png-78a83528ed674abf17dbb79d6397443a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/card_shadow.png"
-dest_files=["res://.godot/imported/card_shadow.png-590a1790a00e3a3e3c9ba9afa05cbbc3.ctex"]
+source_file="res://Images/sell_slot.png"
+dest_files=["res://.godot/imported/sell_slot.png-78a83528ed674abf17dbb79d6397443a.ctex"]
 
 [params]
 

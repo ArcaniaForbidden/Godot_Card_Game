@@ -179,7 +179,7 @@ func complete_job(job: CraftingJob) -> void:
 		PlayerProgress.increment_card_count(subtype)
 		if SoundManager:
 			SoundManager.play("card_pop", -4.0)
-		new_card.is_being_crafted_dragged = true
+		new_card.is_being_simulated_dragged = true
 		print("Spawned '%s' at %s" % [subtype, start_pos])
 		# Find nearby stack to merge
 		var target_pos = null
@@ -210,13 +210,13 @@ func complete_job(job: CraftingJob) -> void:
 		# Tween card to final position
 		new_card.scale = Vector2(1.1, 1.1)
 		new_card.z_index = card_manager.DRAG_Z_INDEX
-		new_card.is_being_crafted_dragged = true
+		new_card.is_being_simulated_dragged = true
 		var tween = get_tree().create_tween()
 		tween.tween_property(new_card, "position", target_pos, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 		tween.finished.connect(Callable(func() -> void:
 			if is_instance_valid(new_card):
 				new_card.scale = Vector2(1, 1)
-				new_card.is_being_crafted_dragged = false
+				new_card.is_being_simulated_dragged = false
 				card_manager.finish_drag_simulated([new_card])
 		))
 	# --- Finish job ---
