@@ -88,6 +88,7 @@ func spawn_initial_cards() -> void:
 	spawn_card("brick", Vector2(800, 300))
 	spawn_card("plank", Vector2(800, 300))
 	spawn_card("water", Vector2(800, 300))
+	spawn_card("gold_coin", Vector2(900, 300))
 	spawn_card("iron_deposit", Vector2(800, 300))
 	spawn_card("copper_deposit", Vector2(800, 300))
 	spawn_card("gold_deposit", Vector2(800, 300))
