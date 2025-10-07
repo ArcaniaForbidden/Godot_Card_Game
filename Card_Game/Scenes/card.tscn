@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://b16dp41rjjkpr"]
 
 [ext_resource type="Script" uid="uid://dgcfaf2fk8x65" path="res://Scripts/card.gd" id="1_wejov"]
-[ext_resource type="Texture2D" uid="uid://dq1v6edrcxkv4" path="res://Images/resource_card.png" id="2_c6tr3"]
+[ext_resource type="Texture2D" uid="uid://c0rvslqmgpohg" path="res://Images/unit_card.png" id="2_xnv4g"]
 [ext_resource type="SpriteFrames" uid="uid://e55fuhdcrqmo" path="res://Animations/peasant.tres" id="3_xnv4g"]
 [ext_resource type="FontFile" uid="uid://q6k4rvj4di0k" path="res://Fonts/MedodicaRegular.otf" id="4_13sua"]
 [ext_resource type="Texture2D" uid="uid://cjy107yuvngg" path="res://Images/wood.png" id="4_xnv4g"]
@@ -9,30 +9,30 @@
 [ext_resource type="FontFile" uid="uid://0mmcd4660a7h" path="res://Fonts/BoldPixels.otf" id="6_f3ywt"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ig7tw"]
-size = Vector2(100, 140)
+size = Vector2(98, 140)
 
 [node name="Card" type="Node2D"]
 script = ExtResource("1_wejov")
 
 [node name="CardImage" type="Sprite2D" parent="."]
-texture = ExtResource("2_c6tr3")
+texture = ExtResource("2_xnv4g")
 
 [node name="SpriteAnimated" type="AnimatedSprite2D" parent="."]
-position = Vector2(0, 11)
+position = Vector2(-8.34465e-07, 12)
 scale = Vector2(3, 3)
 sprite_frames = ExtResource("3_xnv4g")
 animation = &"idle"
 frame_progress = 0.644132
 
 [node name="SpriteImage" type="Sprite2D" parent="."]
-position = Vector2(0, 11)
+position = Vector2(0, 12)
 scale = Vector2(3, 3)
 texture = ExtResource("4_xnv4g")
 
 [node name="CardLabel" type="Label" parent="."]
-offset_left = -42.0
+offset_left = -41.0
 offset_top = -62.0
-offset_right = 42.0
+offset_right = 41.0
 offset_bottom = -46.0
 theme_override_fonts/font = ExtResource("4_13sua")
 theme_override_font_sizes/font_size = 16

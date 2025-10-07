@@ -3,7 +3,7 @@ class_name CardManager
 
 # --- Constants ---
 const COLLISION_MASK_CARD := 1
-const STACK_Y_OFFSET := 25.0            # Vertical spacing between cards in a stack
+const STACK_Y_OFFSET := 30.0            # Vertical spacing between cards in a stack
 const DRAG_Z_INDEX := 1000              # Z-index while dragging
 const OVERLAP_THRESHOLD := 10.0         # Percent overlap for merging stacks
 const ENEMY_STEP_DISTANCE := 150.0      # How far enemies move per step
