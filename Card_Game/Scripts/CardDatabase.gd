@@ -26,6 +26,42 @@ static var card_database = {
 		"value": 100,
 		"description": "A shiny gold coin. Worth 10 silver coins."
 	},
+	"plains_card_pack": {
+		"card": preload("res://Images/plains_card_pack.png"),
+		"sprite": preload("res://Images/blank.png"),
+		"card_type": "card_pack",
+		"display_name": "",
+		"description": "The plains card pack. The starting location pack.",
+		"loot_table": [
+			{"subtype": "plains", "weight": 10},
+			{"subtype": "aquifer", "weight": 10},
+			{"subtype": "wood", "weight": 80},
+		]
+	},
+	"forest_card_pack": {
+		"card": preload("res://Images/forest_card_pack.png"),
+		"sprite": preload("res://Images/blank.png"),
+		"card_type": "card_pack",
+		"display_name": "",
+		"description": "The forest card pack.",
+		"loot_table": [
+			{"subtype": "forest", "weight": 10},
+			{"subtype": "tree", "weight": 20},
+			{"subtype": "wood", "weight": 70},
+		]
+	},
+	"mountain_card_pack": {
+		"card": preload("res://Images/mountain_card_pack.png"),
+		"sprite": preload("res://Images/blank.png"),
+		"card_type": "card_pack",
+		"display_name": "",
+		"description": "The mountain card pack.",
+		"loot_table": [
+			{"subtype": "mountain", "weight": 10},
+			{"subtype": "rock", "weight": 20},
+			{"subtype": "stone", "weight": 70},
+		]
+	},
 	"peasant": {
 		"card": preload("res://Images/unit_card.png"),
 		"sprite": preload("res://Animations/peasant.tres"),

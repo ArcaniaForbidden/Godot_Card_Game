@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3 uid="uid://eehfr0mgv82y"]
+
+[ext_resource type="Script" uid="uid://crttcjvpfo8fd" path="res://Scripts/PackSlot.gd" id="1_0dsk3"]
+[ext_resource type="Texture2D" uid="uid://67tkwex40aqa" path="res://Images/pack_slot_default.png" id="2_yr7xx"]
+[ext_resource type="FontFile" uid="uid://0mmcd4660a7h" path="res://Fonts/BoldPixels.otf" id="3_6cmoj"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6cmoj"]
+size = Vector2(98, 140)
+
+[node name="PackSlot" type="Node2D"]
+script = ExtResource("1_0dsk3")
+
+[node name="PackSlotSprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_yr7xx")
+
+[node name="PackProgressLabel" type="Label" parent="."]
+offset_left = -20.0
+offset_top = 15.0
+offset_right = 20.0
+offset_bottom = 38.0
+theme_override_fonts/font = ExtResource("3_6cmoj")
+theme_override_font_sizes/font_size = 16
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_6cmoj")

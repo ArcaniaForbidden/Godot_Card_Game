@@ -1,0 +1,7 @@
+[gd_resource type="LabelSettings" load_steps=2 format=3 uid="uid://b2udwgke5epkp"]
+
+[ext_resource type="FontFile" uid="uid://q6k4rvj4di0k" path="res://Fonts/MedodicaRegular.otf" id="1_om2a7"]
+
+[resource]
+font = ExtResource("1_om2a7")
+font_color = Color(0, 0, 0, 1)

@@ -18,14 +18,23 @@ const OUTPUT_MAX_DIST := 150.0
 const OUTPUT_TWEEN_TIME := 0.3
 const PUSH_STRENGTH := 1000
 const PUSH_ITERATIONS := 1
+const DOUBLE_CLICK_TIME := 0.3
+const PACK_UNLOCK_CHAIN = {
+	"plains_card_pack": [5, "forest_card_pack", 10, Vector2(240, -300)],
+	"forest_card_pack": [5, "mountain_card_pack", 10, Vector2(360, -300)]
+	# add more as needed
+}
 
 # --- Member variables ---
 var card_being_dragged: Node2D = null
 var dragged_substack: Array = []
 var drag_offset: Vector2 = Vector2.ZERO
 var drag_lift_y: float = -20.0
+var last_click_time := 0.0
+var last_clicked_card: Card = null
 var all_stacks: Array = []
 var card_scene = preload("res://Scenes/Card.tscn")
+var CardDatabase = preload("res://Scripts/CardDatabase.gd").card_database
 var battle_manager: Node = null
 var crafting_manager: Node = null
 var map_manager: Node = null
@@ -40,7 +49,8 @@ var allowed_stack_types := {
 	"material": ["unit", "resource", "material", "building"],
 	"enemy": [],                                                           # enemies cannot stack
 	"building": ["building", "location"],
-	"location": ["location"]
+	"location": ["location"],
+	"card_pack": ["card_pack"],
 }
 
 func _ready() -> void:
@@ -48,9 +58,6 @@ func _ready() -> void:
 	crafting_manager = get_parent().get_node("CraftingManager")
 	map_manager = get_parent().get_node("MapManager")
 	screen_size = get_viewport_rect().size
-	#if self:
-		#shadows = Node2D.new()
-		#add_child(shadows)
 	spawn_initial_cards()
 	spawn_initial_slots()
 
@@ -112,18 +119,24 @@ func spawn_card(subtype: String, position: Vector2) -> Card:
 
 func spawn_initial_slots() -> void:
 	spawn_slot("res://Scenes/SellSlot.tscn", Vector2(0,-300))
+	spawn_slot("res://Scenes/PackSlot.tscn", Vector2(120, -300), "plains_card_pack", 10)
 
-func spawn_slot(slot_scene_path: String, position: Vector2) -> Node2D:
-	# Use load() instead of preload() for dynamic paths
+func spawn_slot(slot_scene_path: String, position: Vector2, pack_subtype: String = "", pack_cost: int = 0) -> Node2D:
+	# Load the scene
 	var slot_scene = load(slot_scene_path)
 	if not slot_scene:
 		push_error("Failed to load slot scene: " + slot_scene_path)
 		return null
 	var slot_instance = slot_scene.instantiate() as Node2D
-	# Set position and add to CardManager
 	slot_instance.position = position
 	add_child(slot_instance)
-	# Add to all_stacks so merging logic works
+	# If the slot is a PackSlot, assign pack type and cost
+	if slot_instance is PackSlot and pack_subtype != "":
+		var pack_slot = slot_instance as PackSlot
+		pack_slot.set_pack_type(pack_subtype, pack_cost)
+		if pack_cost > 0:
+			pack_slot.pack_cost = pack_cost
+	# Add to all_stacks so merging/dragging logic works
 	all_stacks.append([slot_instance])
 	return slot_instance
 
@@ -140,6 +153,9 @@ func handle_mouse_press() -> void:
 	if clicked_card is SellSlot:
 		print("Cannot drag sell slot:", clicked_card.name)
 		return
+	if clicked_card is PackSlot:
+		print("Cannot drag pack slot:", clicked_card.name)
+		return
 	if clicked_card.in_battle:
 		print("Cannot drag card in battle:", clicked_card.subtype)
 		return
@@ -148,6 +164,25 @@ func handle_mouse_press() -> void:
 		return
 	if clicked_card.is_being_simulated_dragged:
 		return
+	var current_time = Time.get_ticks_msec() / 1000.0
+	if clicked_card == last_clicked_card and current_time - last_click_time <= DOUBLE_CLICK_TIME:
+		if clicked_card.card_type == "card_pack":
+			open_card_pack(clicked_card)  # Call your pack opening function
+			PlayerProgress.increment_card_pack_opened(clicked_card.subtype)
+			if PACK_UNLOCK_CHAIN.has(clicked_card.subtype):
+				var threshold = PACK_UNLOCK_CHAIN[clicked_card.subtype][0]
+				var next_subtype  = PACK_UNLOCK_CHAIN[clicked_card.subtype][1]
+				var next_card_pack_cost = PACK_UNLOCK_CHAIN[clicked_card.subtype][2]
+				var next_card_pack_position = PACK_UNLOCK_CHAIN[clicked_card.subtype][3]
+				var opened_count = PlayerProgress.card_pack_opened.get(clicked_card.subtype, 0)
+				if opened_count >= threshold:
+					spawn_slot("res://Scenes/PackSlot.tscn", next_card_pack_position, next_subtype, next_card_pack_cost)
+		last_clicked_card = null
+		return
+	else:
+		last_clicked_card = clicked_card
+		last_click_time = current_time
+	# If not double-click, start dragging normally
 	start_drag(clicked_card)
 
 func handle_mouse_release() -> void:
@@ -341,6 +376,21 @@ func merge_overlapping_stacks(card: Node2D) -> bool:
 		target_top_card.sell_stack(dragged_stack)
 		dragged_stack.clear()
 		return true
+	# --- Special case: PackSlot ---
+	if target_top_card is PackSlot:
+		var card_added := false
+		for i in range(dragged_substack.size() - 1, -1, -1):
+			var c = dragged_substack[i]
+			if not is_instance_valid(c):
+				continue
+			if c.card_type == "currency":
+				target_top_card.add_value(c)
+				dragged_substack.remove_at(i)  # remove immediately
+				card_added = true
+		return card_added
+		# Remove only the cards that were accepted
+		dragged_stack = dragged_stack.filter(func(c): return is_instance_valid(c) and c.card_type != "currency")
+		return card_added
 	# --- Skip if top card is being dragged ---
 	if target_bottom_card.is_being_dragged:
 		return false
@@ -398,7 +448,7 @@ func push_apart_cards() -> void:
 	for stack in all_stacks:
 		if stack.is_empty() or not is_instance_valid(stack[0]) \
 			or stack.has(card_being_dragged) or stack[0].card_type == "enemy" \
-			or stack[0] is InventorySlot  or stack[0] is SellSlot\
+			or stack[0] is InventorySlot  or stack[0] is SellSlot or stack[0] is PackSlot\
 			or stack_has_simulated_dragged(stack) \
 			or stack.any(func(c): return c.is_equipped if is_instance_valid(c) else false):
 			stack_bounds.append(null)
@@ -627,6 +677,39 @@ func kill_card_tween(card: Node2D) -> void:
 		if t and t.is_running():
 			t.kill()
 		card_tweens.erase(card)
+
+func get_weighted_loot(loot_table: Array) -> String:
+	var total_weight := 0
+	for item in loot_table:
+		total_weight += item.weight
+	var r = randf() * total_weight
+	var accum = 0.0
+	for item in loot_table:
+		accum += item.weight
+		if r <= accum:
+			return item.subtype
+	return loot_table[-1].subtype # fallback
+
+func open_card_pack(pack_card: Card, num_cards := 5) -> void:
+	if not is_instance_valid(pack_card) or pack_card.card_type != "card_pack":
+		return
+	if not CardDatabase.has(pack_card.subtype):
+		return
+	var pack_data = CardDatabase[pack_card.subtype]
+	if not pack_data.has("loot_table"):
+		return
+	for i in range(num_cards):
+		var loot_subtype = get_weighted_loot(pack_data["loot_table"])
+		var offset = Vector2(randf_range(-50, 50), randf_range(-50, 50))
+		spawn_card(loot_subtype, pack_card.global_position + offset)
+	var stack = find_stack(pack_card)
+	if stack and stack.has(pack_card):
+		stack.erase(pack_card)
+		if stack.is_empty():
+			all_stacks.erase(stack)
+	if SoundManager:
+		SoundManager.play("card_pack_open", 0.0)
+	pack_card.queue_free()
 
 func debug_print_stacks() -> void:
 	print("---- All Stacks ----")

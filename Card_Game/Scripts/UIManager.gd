@@ -20,7 +20,7 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		var card_manager = get_node("/root/Main/CardManager")
 		var card = card_manager.raycast_check_for_card()
-		if card == null or card is InventorySlot or card is SellSlot:
+		if card == null or card is InventorySlot or card is SellSlot or card is PackSlot:
 			return
 		if card:
 			open_card_ui(card)
@@ -37,7 +37,6 @@ func open_card_ui(card: Node) -> void:
 	# Set textures
 	card_zoom.texture = card.card_image.texture
 	card_zoom_label.text = card.display_name
-		# --- Handle sprite vs animated ---
 	# --- Handle sprite vs animated ---
 	if card.sprite_animated and card.sprite_animated.visible and card.sprite_animated.sprite_frames:
 		# Use animated sprite

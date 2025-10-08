@@ -63,11 +63,9 @@ static var recipes = {
 			{"subtype": "peasant", "consume": false} # unit on top
 		],
 		"loot_table": [
-			{"weight": 5, "outputs": [{"subtype": "aquifer"}]},
-			{"weight": 5, "outputs": [{"subtype": "plains"}]},
-			{"weight": 5, "outputs": [{"subtype": "forest"}]},
-			{"weight": 10, "outputs": [{"subtype": "soil"}]},
-			{"weight": 10, "outputs": [{"subtype": "tree"}]},
+			{"weight": 1, "outputs": [{"subtype": "aquifer"}]},
+			{"weight": 9, "outputs": [{"subtype": "soil"}]},
+			{"weight": 5, "outputs": [{"subtype": "tree"}]},
 			{"weight": 5, "outputs": [{"subtype": "rock"}]},
 			#{"weight": 5, "outputs": [{"subtype": "cow"}]},
 			#{"weight": 5, "outputs": [{"subtype": "horse"}]},
@@ -80,10 +78,9 @@ static var recipes = {
 			{"subtype": "peasant", "consume": false} # unit on top
 		],
 		"loot_table": [
-			{"weight": 80, "outputs": [{"subtype": "tree"}]},
-			{"weight": 5, "outputs": [{"subtype": "forest"}]},
-			{"weight": 5, "outputs": [{"subtype": "mountain"}]},
-			#{"weight": 5, "outputs": [{"subtype": "wolf"}], "requirement": {"recipe_name": "Search Forest", "amount": 10}},
+			{"weight": 50, "outputs": [{"subtype": "tree"}]},
+			{"weight": 45, "outputs": [{"subtype": "wood"}]},
+			{"weight": 5, "outputs": [{"subtype": "wolf"}], "requirement": {"recipe_name": "Search Forest", "amount": 10}},
 		],
 		"work_time": 30.0
 	},

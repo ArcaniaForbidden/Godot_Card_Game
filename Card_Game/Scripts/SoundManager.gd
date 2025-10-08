@@ -4,6 +4,7 @@ var sounds = {
 	"card_pickup": preload("res://Sounds/card_pickup.wav"),
 	"card_drop": preload("res://Sounds/card_drop.wav"),
 	"card_pop": preload("res://Sounds/card_pop.wav"),
+	"card_pack_open": preload("res://Sounds/card_pack_open.wav")
 }
 
 func play(sound_name: String, volume_db: float = 0.0) -> void:
