@@ -148,9 +148,6 @@ func handle_mouse_press() -> void:
 		return
 	if clicked_card.is_being_simulated_dragged:
 		return
-	if clicked_card.is_equipped and clicked_card.attached_slot and not clicked_card.attached_slot.visible:
-		print("Cannot drag invisible card:", clicked_card.name)
-		return
 	start_drag(clicked_card)
 
 func handle_mouse_release() -> void:
@@ -210,6 +207,7 @@ func start_drag(card: Card) -> void:
 		all_stacks.erase(stack)
 	# Add dragged_substack as a new stack in all_stacks
 	all_stacks.append(dragged_substack)
+	close_stack_inventories(dragged_substack)
 	# Play pickup sound
 	if SoundManager:
 		SoundManager.play("card_pickup", -12.0)
@@ -365,6 +363,7 @@ func merge_overlapping_stacks(card: Node2D) -> bool:
 		all_stacks.erase(dragged_stack)
 	# --- Snap positions and recalc z-index ---
 	if target_stack.size() > 0 and is_instance_valid(target_stack[0]):
+		close_stack_inventories(target_stack)
 		var base_pos = target_stack[0].position
 		for i in range(target_stack.size()):
 			var c = target_stack[i]
@@ -520,6 +519,20 @@ func get_card_index_in_stack(card: Node2D) -> int:
 		return -1
 	return stack.find(card)
 
+func close_stack_inventories(stack: Array) -> void:
+	for card in stack:
+		if not is_instance_valid(card):
+			continue
+		var inventory = card.get_node_or_null("PeasantInventory")
+		if inventory:
+			var container = inventory.get_node_or_null("InventoryContainer")
+			if container:
+				container.visible = false
+			for slot in inventory.slot_cards:
+				slot.visible = false
+				if slot.attached_card and is_instance_valid(slot.attached_card):
+					slot.attached_card.visible = false
+
 # ==============================
 #  UTILITIES & HELPERS
 # ==============================
@@ -534,7 +547,7 @@ func raycast_check_for_card() -> Node2D:
 		var visible_cards := []
 		for r in result:
 			var card = r.collider.get_parent()
-			if card.visible:
+			if is_instance_valid(card) and card.is_visible_in_tree():
 				visible_cards.append(r)
 		if visible_cards.size() == 0:
 			return null
@@ -546,7 +559,7 @@ func get_card_with_highest_z_index(cards: Array) -> Node2D:
 	var highest_z_index = highest_z_card.z_index
 	for i in range(1, cards.size()):
 		var current_card = cards[i].collider.get_parent()
-		if not current_card.visible:
+		if not is_instance_valid(current_card) or not current_card.is_visible_in_tree():
 			continue
 		if current_card.z_index > highest_z_index:
 			highest_z_card = current_card

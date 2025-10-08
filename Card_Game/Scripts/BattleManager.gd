@@ -401,7 +401,7 @@ func roll_loot(card: Card) -> Array:
 		var chance = float(entry.get("chance", 1.0))
 		if randf() <= chance:
 			# accept "subtype" or "item" keys
-			var subtype = entry.get("subtype", entry.get("item", null))
+			var subtype = entry.get("subtype", null)
 			if subtype:
 				drops.append(subtype)
 	return drops

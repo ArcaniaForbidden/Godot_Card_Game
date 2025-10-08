@@ -7,7 +7,8 @@ var is_static: bool = true
 
 func _process(delta):
 	if attached_card and is_instance_valid(attached_card) and attached_card.is_equipped:
-		attached_card.global_position = global_position # use stored equip_position
+		if not attached_card.is_equipping:
+			attached_card.global_position = global_position
 
 func can_accept_card(card: Card) -> bool:
 	if not is_visible_in_tree():
@@ -34,28 +35,22 @@ func equip_card(card: Card) -> bool:
 	var card_manager = get_tree().root.get_node("Main/CardManager")
 	card_manager.kill_card_tween(card)  # remove any ongoing tween
 	card.is_being_dragged = false
-	# Tween card to slot position and scale
+	# --- Attach immediately (logical, no reparent) ---
+	attached_card = card
+	card.attached_slot = self
+	card.is_equipped = true
+	card.is_equipping = true  # prevent snapping
+	var owner_card = get_owner_card()
+	if owner_card:
+		modify_stats(owner_card, card, true)
 	var tween = get_tree().create_tween()
 	tween.tween_property(card, "global_position", global_position, card_manager.STACK_TWEEN_DURATION)\
-		.set_trans(Tween.TRANS_QUAD)\
-		.set_ease(Tween.EASE_OUT)
-	tween.tween_property(card, "scale", Vector2(1, 1), card_manager.STACK_TWEEN_DURATION)\
-		.set_trans(Tween.TRANS_QUAD)\
-		.set_ease(Tween.EASE_OUT)
-	# When tween finishes, mark card as equipped
+		 .set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(card, "scale", Vector2(1, 1), card_manager.STACK_TWEEN_DURATION)\
+		 .set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.finished.connect(func() -> void:
-		attached_card = card
-		card.attached_slot = self
-		card.is_equipped = true
-		var owner_card = get_owner_card()
-		if owner_card:
-			modify_stats(owner_card, card, true)
-		# Add to stack in CardManager
-		for stack in card_manager.all_stacks:
-			if stack.has(self):
-				if not stack.has(card):
-					stack.append(card)
-				break
+		card.is_equipping = false  # allow _process() to follow the slot now
+		visible = false  # hide the slot visually
 	)
 	card_manager.card_tweens[card] = tween
 	return true
@@ -74,6 +69,7 @@ func unequip_card():
 		attached_card.attached_slot = null
 		attached_card.is_equipped = false
 		attached_card = null
+		visible = true
 
 func modify_stats(owner: Card, equipment: Card, apply: bool = true) -> void:
 	if not equipment.stats:

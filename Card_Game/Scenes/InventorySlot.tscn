@@ -1,16 +1,16 @@
 [gd_scene load_steps=4 format=3 uid="uid://bwvammu487klk"]
 
 [ext_resource type="Script" uid="uid://ds53glj8o4p24" path="res://Scripts/InventorySlot.gd" id="1_aw7i0"]
-[ext_resource type="Texture2D" uid="uid://dkk7fdqfgxn2w" path="res://Images/slot_default.png" id="2_8bubk"]
+[ext_resource type="Texture2D" uid="uid://hujo67otpil6" path="res://Images/slot_weapon.png" id="2_aw7i0"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_aw7i0"]
-size = Vector2(100, 140)
+size = Vector2(98, 140)
 
 [node name="InventorySlot" type="Node2D"]
 script = ExtResource("1_aw7i0")
 
 [node name="SlotIcon" type="Sprite2D" parent="."]
-texture = ExtResource("2_8bubk")
+texture = ExtResource("2_aw7i0")
 
 [node name="Area2D" type="Area2D" parent="."]
 

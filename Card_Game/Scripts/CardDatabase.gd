@@ -40,10 +40,10 @@ static var card_database = {
 		"card_type": "enemy",
 		"display_name": "Wolf",
 		"stats": {"health": 4, "attack": 1, "armor": 0, "attack_speed": 1.2},
-		#"loot_table": [
-			#{ "subtype": "wood", "chance": 0.8 },
-			#{ "subtype": "tree", "chance": 0.7 }
-		#]
+		"loot_table": [
+			{ "subtype": "wood", "chance": 0.8 },
+			{ "subtype": "tree", "chance": 0.7 }
+		]
 	},
 	"tree": {
 		"card": preload("res://Images/resource_card.png"),

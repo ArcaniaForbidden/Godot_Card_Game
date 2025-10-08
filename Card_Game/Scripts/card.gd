@@ -27,6 +27,7 @@ var enemy_max_jump_time: float = 1.5
 var enemy_jump_distance: float = 150.0
 var in_battle: bool = false
 var is_equipped: bool = false
+var is_equipping: bool = false
 var attached_slot: InventorySlot = null
 var loot_table: Array = []
 
