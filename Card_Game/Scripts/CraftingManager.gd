@@ -211,11 +211,15 @@ func complete_job(job: CraftingJob) -> void:
 		new_card.scale = Vector2(1.1, 1.1)
 		new_card.z_index = card_manager.DRAG_Z_INDEX
 		new_card.is_being_simulated_dragged = true
-		var tween = get_tree().create_tween()
-		tween.tween_property(new_card, "position", target_pos, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-		tween.finished.connect(Callable(func() -> void:
+		var tween_pos = get_tree().create_tween()
+		tween_pos.tween_property(new_card, "position", target_pos, 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		# --- Scale tween (up then down) ---
+		var tween_scale = get_tree().create_tween()
+		tween_scale.tween_property(new_card, "scale", Vector2(1.25, 1.25), 0.35).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tween_scale.tween_property(new_card, "scale", Vector2(1.1, 1.1), 0.35).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		# --- Finish callback ---
+		tween_pos.finished.connect(Callable(func() -> void:
 			if is_instance_valid(new_card):
-				new_card.scale = Vector2(1, 1)
 				new_card.is_being_simulated_dragged = false
 				card_manager.finish_drag_simulated([new_card])
 		))
