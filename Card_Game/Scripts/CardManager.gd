@@ -697,9 +697,17 @@ func open_card_pack(pack_card: Card, num_cards := 5) -> void:
 	var pack_data = CardDatabase[pack_card.subtype]
 	if not pack_data.has("loot_table"):
 		return
+	var arc_angle := deg_to_rad(90)  # total arc in radians (90 degrees here)
+	var start_angle := -arc_angle / 2  # start left
+	var radius := 150  # distance from pack center
 	for i in range(num_cards):
 		var loot_subtype = get_weighted_loot(pack_data["loot_table"])
-		var offset = Vector2(randf_range(-50, 50), randf_range(-50, 50))
+		# Compute angle for this card
+		var t: float = 0 if num_cards == 1 else float(i) / float(num_cards - 1)
+		var angle: float = start_angle + t * arc_angle
+		# Compute position offset
+		var offset := Vector2(sin(angle), -cos(angle)) * radius
+		# Spawn the card at the calculated position
 		spawn_card(loot_subtype, pack_card.global_position + offset)
 	var stack = find_stack(pack_card)
 	if stack and stack.has(pack_card):

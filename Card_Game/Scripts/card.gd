@@ -86,6 +86,11 @@ func apply_foil_effect(rarity: String) -> void:
 			foil_overlay.visible = false
 			return
 	foil_overlay.material = foil_material
+	# --- Only card packs get the zigzag mask ---
+	if card_type == "card_pack":
+		foil_overlay.texture = preload("res://Images/foil_mask_card_pack.png")
+	else:
+		foil_overlay.texture = preload("res://Images/foil_mask_rectangle.png")
 	foil_overlay.visible = true
 
 func remove_foil_effect() -> void:
@@ -106,16 +111,16 @@ func setup(subtype_name: String) -> void:
 	var is_animated = data.get("animated", false)
 	if card_type == "card_pack":
 		if card_pack_label1:
+			var parts := subtype.split("_")
+			var first_word := parts[0].capitalize()
 			card_pack_label1.visible = true
-			card_pack_label1.text = "Card Pack"
+			card_pack_label1.text = first_word
 			card_pack_label1.horizontal_alignment = 1
 			card_pack_label1.vertical_alignment = 1
 			card_pack_label1.self_modulate = LABEL_COLOR
 		if card_pack_label2:
-			var parts := subtype.split("_")
-			var first_word := parts[0].capitalize()
 			card_pack_label2.visible = true
-			card_pack_label2.text = first_word
+			card_pack_label2.text = "Card Pack"
 			card_pack_label2.horizontal_alignment = 1
 			card_pack_label2.vertical_alignment = 1
 			card_pack_label2.self_modulate = LABEL_COLOR

@@ -11,6 +11,8 @@ const PACK_TEXTURES := {
 var pack_subtype: String = ""   # The type of card pack this slot produces
 var pack_cost: int = 0          # Cost in coins to unlock
 var current_value: int = 0              # Tracks inserted coins
+var packs_to_spawn: int = 0  # tracks packs that still need to be visually spawned
+var is_spawning_packs: bool = false
 
 @onready var progress_label: Label = $PackProgressLabel
 @onready var slot_sprite: Sprite2D = $PackSlotSprite  # The texture to display
@@ -41,20 +43,51 @@ func add_value(card: Card) -> void:
 		card.queue_free()
 	check_unlock()
 
-# --- Check if enough money to spawn pack ---
 func check_unlock() -> void:
-	var spawned_pack := false
-	while current_value >= pack_cost and pack_subtype != "":
-		spawn_card_pack()
+	while current_value >= pack_cost:
 		current_value -= pack_cost
+		packs_to_spawn += 1
 		update_label()
-		spawned_pack = true
-	if spawned_pack and SoundManager:
-		SoundManager.play("card_pop", -4.0)
+	if not is_spawning_packs and packs_to_spawn > 0:
+		is_spawning_packs = true
+		spawn_card_pack_queue()
 
-# --- Spawn the card pack ---
+func spawn_card_pack_queue() -> void:
+	if packs_to_spawn <= 0:
+		is_spawning_packs = false
+		return
+	await spawn_card_pack()  # spawn one pack
+	packs_to_spawn -= 1
+	# Wait a short time before spawning the next pack
+	await get_tree().create_timer(0.5).timeout
+	spawn_card_pack_queue()  # recursively spawn the next pack
+
 func spawn_card_pack() -> void:
 	var card_manager = get_tree().root.get_node("Main/CardManager")
 	if not card_manager:
 		return
-	var pack_card = card_manager.spawn_card(pack_subtype, global_position + Vector2(0, 100))
+	# Spawn the pack card itself (will be opened later)
+	var spawn_pos = global_position + Vector2(0, -300)
+	var final_pos = global_position + Vector2(0, 200)
+	var pack_card = card_manager.spawn_card(pack_subtype, spawn_pos)
+	if SoundManager:
+		SoundManager.play("card_pop", -6.0)
+	pack_card.is_being_simulated_dragged = true
+	pack_card.z_index = card_manager.DRAG_Z_INDEX
+	pack_card.scale = Vector2(1.1, 1.1)
+	# --- Position tween ---
+	var tween_pos = get_tree().create_tween()
+	tween_pos.tween_property(pack_card, "position", final_pos, 1.0)\
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	# --- Scale tween (pop in mid-flight) ---
+	var tween_scale = get_tree().create_tween()
+	tween_scale.tween_property(pack_card, "scale", Vector2(1.25, 1.25), 0.5)\
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween_scale.tween_property(pack_card, "scale", Vector2(1.1, 1.1), 0.5)\
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	# --- Finish callback ---
+	tween_pos.finished.connect(Callable(func() -> void:
+		if is_instance_valid(pack_card):
+			pack_card.is_being_simulated_dragged = false
+			card_manager.finish_drag_simulated([pack_card])
+	))

@@ -1,6 +1,5 @@
 extends Node
 
-var max_players: int = 30  # maximum simultaneous sounds
 var sounds = {
 	"card_pickup": preload("res://Sounds/card_pickup.wav"),
 	"card_drop": preload("res://Sounds/card_drop.wav"),
