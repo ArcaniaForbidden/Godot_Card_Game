@@ -8,7 +8,7 @@ static var card_database = {
 		"card_type": "currency",
 		"display_name": "Copper Coin",
 		"value": 1,
-		"rarity": "gold",
+		"rarity": "silver",
 		"description": "A dull copper coin."
 	},
 	"silver_coin": {
@@ -17,7 +17,7 @@ static var card_database = {
 		"card_type": "currency",
 		"display_name": "Silver Coin",
 		"value": 10,
-		"rarity": "gold",
+		"rarity": "silver",
 		"description": "A silver coin. Worth 10 copper coins."
 	},
 	"gold_coin": {

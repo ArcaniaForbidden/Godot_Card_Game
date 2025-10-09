@@ -34,11 +34,15 @@ var loot_table: Array = []
 # --- UI references ---
 @onready var animation_manager: AnimationManager = AnimationManager.new()
 @onready var display_name_label: Label = get_node_or_null("CardLabel")
+@onready var card_pack_label1: Label = get_node_or_null("CardPackLabel1")
+@onready var card_pack_label2: Label = get_node_or_null("CardPackLabel2")
 @onready var card_image: Sprite2D = get_node_or_null("CardImage")
 @onready var sprite_image: Sprite2D = get_node_or_null("SpriteImage")
 @onready var sprite_animated: AnimatedSprite2D = get_node_or_null("SpriteAnimated")
 @onready var health_icon: Node2D = get_node_or_null("HealthIcon")
 @onready var health_label: Label = get_node_or_null("HealthLabel")
+@onready var value_icon: Sprite2D = get_node_or_null("ValueIcon")
+@onready var value_label: Label = get_node_or_null("ValueLabel")
 @onready var area: Area2D = get_node_or_null("Area2D")
 @onready var foil_overlay: Sprite2D = get_node_or_null("FoilOverlay")
 
@@ -100,6 +104,26 @@ func setup(subtype_name: String) -> void:
 	# Set textures
 	apply_foil_effect(data.get("rarity", ""))
 	var is_animated = data.get("animated", false)
+	if card_type == "card_pack":
+		if card_pack_label1:
+			card_pack_label1.visible = true
+			card_pack_label1.text = "Card Pack"
+			card_pack_label1.horizontal_alignment = 1
+			card_pack_label1.vertical_alignment = 1
+			card_pack_label1.self_modulate = LABEL_COLOR
+		if card_pack_label2:
+			var parts := subtype.split("_")
+			var first_word := parts[0].capitalize()
+			card_pack_label2.visible = true
+			card_pack_label2.text = first_word
+			card_pack_label2.horizontal_alignment = 1
+			card_pack_label2.vertical_alignment = 1
+			card_pack_label2.self_modulate = LABEL_COLOR
+	else:
+		if card_pack_label1:
+			card_pack_label1.visible = false
+		if card_pack_label2:
+			card_pack_label2.visible = false
 	if card_image and data.has("card"):
 		card_image.texture = data["card"]
 	if sprite_image:
@@ -121,10 +145,26 @@ func setup(subtype_name: String) -> void:
 		slot = data.get("slot", "")
 	else:
 		slot = ""
+	# --- Set value from card data ---
 	if data.has("value"):
 		value = int(data["value"])
 	else:
 		value = 0
+	# --- Show/hide value label and icon ---
+	if value > 0:
+		if value_icon:
+			value_icon.visible = true
+		if value_label:
+			value_label.visible = true
+			value_label.text = str(value)
+			value_label.horizontal_alignment = 1
+			value_label.vertical_alignment = 1
+			value_label.self_modulate = LABEL_COLOR
+	else:
+		if value_icon:
+			value_icon.visible = false
+		if value_label:
+			value_label.visible = false
 	# --- Stats setup ---
 	stats = data.get("stats", {}).duplicate(true)
 	if stats.has("health") and stats["health"] > 0:

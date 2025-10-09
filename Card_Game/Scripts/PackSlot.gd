@@ -2,9 +2,9 @@ extends Card
 class_name PackSlot
 
 const PACK_TEXTURES := {
-	"plains_card_pack": preload("res://Images/pack_slot_default.png"),
-	"forest_card_pack": preload("res://Images/slot_chestplate.png"),
-	"mountain_card_pack": preload("res://Images/pack_slot_default.png")
+	"plains_card_pack": preload("res://Images/pack_slot_plains.png"),
+	"forest_card_pack": preload("res://Images/pack_slot_forest.png"),
+	"mountain_card_pack": preload("res://Images/pack_slot_mountain.png")
 }
 
 # --- Properties ---
@@ -26,7 +26,7 @@ func update_texture() -> void:
 		slot_sprite.texture = PACK_TEXTURES[pack_subtype]
 
 func update_label() -> void:
-	progress_label.text = "%d / %d" % [current_value, pack_cost]
+	progress_label.text = "%d/%d" % [current_value, pack_cost]
 
 # --- Accept coins/cards ---
 func add_value(card: Card) -> void:

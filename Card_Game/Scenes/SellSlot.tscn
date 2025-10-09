@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://br0xupy0007bv"]
+[gd_scene load_steps=5 format=3 uid="uid://br0xupy0007bv"]
 
 [ext_resource type="Script" uid="uid://bc3067khpaqqy" path="res://Scripts/SellSlot.gd" id="1_lhi5b"]
 [ext_resource type="Texture2D" uid="uid://bwiljeekb80nd" path="res://Images/sell_slot.png" id="2_d7jue"]
+[ext_resource type="FontFile" uid="uid://0mmcd4660a7h" path="res://Fonts/BoldPixels.otf" id="3_d7jue"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fc0lp"]
 size = Vector2(100, 140)
@@ -11,6 +12,16 @@ script = ExtResource("1_lhi5b")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_d7jue")
+
+[node name="SellSlotLabel" type="Label" parent="."]
+offset_left = -35.0
+offset_top = -32.0
+offset_right = 37.0
+theme_override_fonts/font = ExtResource("3_d7jue")
+theme_override_font_sizes/font_size = 32
+text = "SELL"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Area2D" type="Area2D" parent="."]
 

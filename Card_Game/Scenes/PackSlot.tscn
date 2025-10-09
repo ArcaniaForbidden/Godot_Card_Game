@@ -1,8 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://eehfr0mgv82y"]
+[gd_scene load_steps=7 format=3 uid="uid://eehfr0mgv82y"]
 
 [ext_resource type="Script" uid="uid://crttcjvpfo8fd" path="res://Scripts/PackSlot.gd" id="1_0dsk3"]
 [ext_resource type="Texture2D" uid="uid://67tkwex40aqa" path="res://Images/pack_slot_default.png" id="2_yr7xx"]
 [ext_resource type="FontFile" uid="uid://0mmcd4660a7h" path="res://Fonts/BoldPixels.otf" id="3_6cmoj"]
+[ext_resource type="FontFile" uid="uid://q6k4rvj4di0k" path="res://Fonts/MedodicaRegular.otf" id="3_emv73"]
+[ext_resource type="Texture2D" uid="uid://du8drnsg1cb6r" path="res://Images/gold_coin.png" id="4_6rnvu"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6cmoj"]
 size = Vector2(98, 140)
@@ -14,12 +16,29 @@ script = ExtResource("1_0dsk3")
 texture = ExtResource("2_yr7xx")
 
 [node name="PackProgressLabel" type="Label" parent="."]
-offset_left = -20.0
-offset_top = 15.0
-offset_right = 20.0
-offset_bottom = 38.0
-theme_override_fonts/font = ExtResource("3_6cmoj")
+offset_left = -21.0
+offset_top = 42.0
+offset_right = 21.0
+offset_bottom = 58.0
+theme_override_fonts/font = ExtResource("3_emv73")
 theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ValueIcon" type="Sprite2D" parent="."]
+position = Vector2(29, 50)
+texture = ExtResource("4_6rnvu")
+
+[node name="PackSlotLabel" type="Label" parent="."]
+offset_left = -35.0
+offset_top = -67.0
+offset_right = 37.0
+offset_bottom = -35.0
+theme_override_fonts/font = ExtResource("3_6cmoj")
+theme_override_font_sizes/font_size = 32
+text = "BUY"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Area2D" type="Area2D" parent="."]
 

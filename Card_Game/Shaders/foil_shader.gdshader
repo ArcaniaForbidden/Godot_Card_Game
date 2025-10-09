@@ -19,14 +19,11 @@ void fragment() {
     float diag = uv.x + uv.y + screen_pos.x + screen_pos.y + TIME * streak_speed;
     float streak = smoothstep(0.0, streak_width, fract(diag)) *
                    smoothstep(1.0, 1.0 - streak_width, fract(diag));
-
     vec3 base_rgb = foil_color.rgb;
-
     if (rainbow_mode) {
         float hue = fract(TIME * hue_speed);
         base_rgb = hsv2rgb(vec3(hue, 1.0, 1.0));
     }
-
     float alpha = foil_color.a * 0.2 + streak * foil_color.a;
     COLOR = vec4(base_rgb, alpha);
 }
