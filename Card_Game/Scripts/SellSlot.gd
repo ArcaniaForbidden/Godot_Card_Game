@@ -5,6 +5,7 @@ func sell_stack(stack: Array) -> void:
 	var card_manager = get_tree().root.get_node("Main/CardManager")
 	var total_value := 0
 	var cards_to_remove := []
+	var sold_stack := false
 	# --- Determine which cards are sellable ---
 	for c in stack:
 		if not is_instance_valid(c):
@@ -35,3 +36,6 @@ func sell_stack(stack: Array) -> void:
 		while total_value >= denom.value:
 			var coin_card = card_manager.spawn_card(denom.name, spawn_pos + Vector2(0, 100))
 			total_value -= denom.value
+			sold_stack = true
+		if sold_stack:
+			SoundManager.play("coin", -16.0)

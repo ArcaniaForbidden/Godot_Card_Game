@@ -205,7 +205,7 @@ func complete_job(job: CraftingJob) -> void:
 		# Pick random position if no merge stack found
 		if target_pos == null:
 			var angle = randf() * PI * 2
-			var distance = 200 + randf() * 200
+			var distance = 200 + randf() * 100
 			target_pos = start_pos + Vector2(cos(angle), sin(angle)) * distance
 		# Tween card to final position
 		new_card.scale = Vector2(1.1, 1.1)

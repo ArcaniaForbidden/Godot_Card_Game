@@ -707,7 +707,7 @@ func open_card_pack(pack_card: Card, num_cards := 5) -> void:
 		if stack.is_empty():
 			all_stacks.erase(stack)
 	if SoundManager:
-		SoundManager.play("card_pack_open", 0.0)
+		SoundManager.play("card_pack_open", -4.0)
 	pack_card.queue_free()
 
 func debug_print_stacks() -> void:
