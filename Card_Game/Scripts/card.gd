@@ -40,11 +40,20 @@ var loot_table: Array = []
 @onready var health_icon: Node2D = get_node_or_null("HealthIcon")
 @onready var health_label: Label = get_node_or_null("HealthLabel")
 @onready var area: Area2D = get_node_or_null("Area2D")
+@onready var foil_overlay: Sprite2D = get_node_or_null("FoilOverlay")
 
 func _ready() -> void:
 	area.connect("input_event", Callable(self, "_on_area_input_event"))
 	if sprite_animated:
 		animation_manager.setup(self, sprite_animated)
+
+func _process(delta: float) -> void:
+	if foil_overlay and foil_overlay.material:
+		var camera = get_viewport().get_camera_2d()
+		if camera:
+			var screen_pos = global_position - camera.global_position + get_viewport().size * 0.5
+			var norm_pos = (screen_pos / Vector2(get_viewport().size)) * 4.0
+			foil_overlay.material.set_shader_parameter("screen_pos", norm_pos)
 
 # --- Helpers ---
 func set_health(value: int) -> void:
@@ -55,6 +64,31 @@ func set_health(value: int) -> void:
 	if health_icon:
 		health_icon.visible = true
 
+func apply_foil_effect(rarity: String) -> void:
+	if not foil_overlay:
+		return
+	var foil_material := ShaderMaterial.new()
+	foil_material.shader = preload("res://Shaders/foil_shader.gdshader")
+	match rarity:
+		"silver":
+			foil_material.set_shader_parameter("foil_color", Color(1,1,1,0.3))
+			foil_material.set_shader_parameter("rainbow_mode", false)
+		"gold":
+			foil_material.set_shader_parameter("foil_color", Color(1,0.84,0,0.3))
+			foil_material.set_shader_parameter("rainbow_mode", false)
+		"ultra":
+			foil_material.set_shader_parameter("rainbow_mode", true)
+		_:
+			foil_overlay.visible = false
+			return
+	foil_overlay.material = foil_material
+	foil_overlay.visible = true
+
+func remove_foil_effect() -> void:
+	if foil_overlay:
+		foil_overlay.visible = false
+		foil_overlay.material = null
+
 # --- Setup function ---
 func setup(subtype_name: String) -> void:
 	subtype = subtype_name
@@ -64,6 +98,7 @@ func setup(subtype_name: String) -> void:
 	print("Setup card '%s': card_type=%s, slot=%s" % [subtype, card_type, data.get("slot","")])
 	display_name = data.get("display_name", subtype)
 	# Set textures
+	apply_foil_effect(data.get("rarity", ""))
 	var is_animated = data.get("animated", false)
 	if card_image and data.has("card"):
 		card_image.texture = data["card"]

@@ -21,8 +21,7 @@ const PUSH_ITERATIONS := 1
 const DOUBLE_CLICK_TIME := 0.3
 const PACK_UNLOCK_CHAIN = {
 	"plains_card_pack": [5, "forest_card_pack", 10, Vector2(240, -300)],
-	"forest_card_pack": [5, "mountain_card_pack", 10, Vector2(360, -300)]
-	# add more as needed
+	"forest_card_pack": [5, "mountain_card_pack", 10, Vector2(360, -300)],
 }
 
 # --- Member variables ---

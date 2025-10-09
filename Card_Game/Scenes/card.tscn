@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://b16dp41rjjkpr"]
+[gd_scene load_steps=9 format=3 uid="uid://b16dp41rjjkpr"]
 
 [ext_resource type="Script" uid="uid://dgcfaf2fk8x65" path="res://Scripts/card.gd" id="1_wejov"]
 [ext_resource type="Texture2D" uid="uid://c0rvslqmgpohg" path="res://Images/unit_card.png" id="2_xnv4g"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://cjy107yuvngg" path="res://Images/wood.png" id="4_xnv4g"]
 [ext_resource type="Texture2D" uid="uid://codod5tgigybh" path="res://Images/heart_icon.png" id="5_pbuqb"]
 [ext_resource type="LabelSettings" uid="uid://b2udwgke5epkp" path="res://Label_Settings.tres" id="5_xnv4g"]
+[ext_resource type="Texture2D" uid="uid://bmfq0b2sqgc3c" path="res://Images/foil_overlay.png" id="7_xnv4g"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ig7tw"]
 size = Vector2(98, 140)
@@ -52,6 +53,11 @@ label_settings = ExtResource("5_xnv4g")
 horizontal_alignment = 1
 vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
+
+[node name="FoilOverlay" type="Sprite2D" parent="."]
+position = Vector2(-4.76837e-07, 8.58307e-06)
+scale = Vector2(98, 140)
+texture = ExtResource("7_xnv4g")
 
 [node name="Area2D" type="Area2D" parent="."]
 

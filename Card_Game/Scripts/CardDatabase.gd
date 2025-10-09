@@ -8,6 +8,7 @@ static var card_database = {
 		"card_type": "currency",
 		"display_name": "Copper Coin",
 		"value": 1,
+		"rarity": "gold",
 		"description": "A dull copper coin."
 	},
 	"silver_coin": {
@@ -16,6 +17,7 @@ static var card_database = {
 		"card_type": "currency",
 		"display_name": "Silver Coin",
 		"value": 10,
+		"rarity": "gold",
 		"description": "A silver coin. Worth 10 copper coins."
 	},
 	"gold_coin": {
@@ -24,6 +26,7 @@ static var card_database = {
 		"card_type": "currency",
 		"display_name": "Gold Coin",
 		"value": 100,
+		"rarity": "gold",
 		"description": "A shiny gold coin. Worth 10 silver coins."
 	},
 	"plains_card_pack": {
@@ -31,6 +34,7 @@ static var card_database = {
 		"sprite": preload("res://Images/blank.png"),
 		"card_type": "card_pack",
 		"display_name": "",
+		"rarity": "silver",
 		"description": "The plains card pack. The starting location pack.",
 		"loot_table": [
 			{"subtype": "plains", "weight": 10},
@@ -43,6 +47,7 @@ static var card_database = {
 		"sprite": preload("res://Images/blank.png"),
 		"card_type": "card_pack",
 		"display_name": "",
+		"rarity": "silver",
 		"description": "The forest card pack.",
 		"loot_table": [
 			{"subtype": "forest", "weight": 10},
@@ -55,6 +60,7 @@ static var card_database = {
 		"sprite": preload("res://Images/blank.png"),
 		"card_type": "card_pack",
 		"display_name": "",
+		"rarity": "silver",
 		"description": "The mountain card pack.",
 		"loot_table": [
 			{"subtype": "mountain", "weight": 10},
