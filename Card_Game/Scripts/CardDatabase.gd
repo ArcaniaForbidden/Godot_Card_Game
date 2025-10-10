@@ -26,7 +26,7 @@ static var card_database = {
 		"card_type": "currency",
 		"display_name": "Gold Coin",
 		"value": 100,
-		"rarity": "gold",
+		"rarity": "ultra",
 		"description": "A shiny gold coin. Worth 10 silver coins."
 	},
 	"plains_card_pack": {
