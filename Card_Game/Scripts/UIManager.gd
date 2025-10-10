@@ -78,6 +78,10 @@ func open_card_ui(card: Node) -> void:
 			var label = Label.new()
 			label.text = "%s: %s" % [stat_name, str(stat_value)]
 			stats_vbox_container.add_child(label)
+	if card.value != null:
+		var value_label = Label.new()
+		value_label.text = "Value: %d" % card.value
+		stats_vbox_container.add_child(value_label)
 	# Show equipment stat modifiers if this card is equipment
 	if card.card_type == "equipment" and card.stats:
 		if card.stats.has("add"):
