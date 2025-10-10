@@ -9,11 +9,11 @@ func sell_stack(stack: Array) -> void:
 	for c in stack:
 		if not is_instance_valid(c):
 			continue
-		if c.value > 0:
+		if c.value != null:
 			total_value += c.value
 			cards_to_remove.append(c)
 		else:
-			print("Card '%s' has zero value, skipping" % c.subtype)
+			print("Card '%s' has no defined value, skipping" % c.subtype)
 	# --- Remove sellable cards from stack and scene ---
 	for c in cards_to_remove:
 		stack.erase(c)

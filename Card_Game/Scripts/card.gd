@@ -13,7 +13,7 @@ var is_being_simulated_dragged: bool = false
 var card_type: String = ""
 var subtype: String = ""
 var display_name: String = ""
-var value: int = 0
+var value = null
 var slot: String = ""
 var stats: Dictionary = {}
 var health: int = 0
@@ -154,9 +154,9 @@ func setup(subtype_name: String) -> void:
 	if data.has("value"):
 		value = int(data["value"])
 	else:
-		value = 0
+		value = null
 	# --- Show/hide value label and icon ---
-	if value > 0:
+	if value != null:
 		if value_icon:
 			value_icon.visible = true
 		if value_label:

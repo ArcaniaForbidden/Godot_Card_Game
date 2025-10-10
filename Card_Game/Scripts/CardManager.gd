@@ -370,7 +370,7 @@ func merge_overlapping_stacks(card: Node2D) -> bool:
 	# --- Special case: SellSlot ---
 	if target_top_card is SellSlot:
 		for c in dragged_stack:
-			if not is_instance_valid(c) or c.value <= 0:
+			if not is_instance_valid(c) or c.value == null:
 				return false  # skip this stack, continue normal merging
 		target_top_card.sell_stack(dragged_stack)
 		dragged_stack.clear()
@@ -627,6 +627,8 @@ func get_overlapping_cards_any(card: Node2D, min_overlap_percent := OVERLAP_THRE
 			continue
 		for target_card in stack:
 			if not is_instance_valid(target_card):
+				continue
+			if target_card.is_being_simulated_dragged:
 				continue
 			var target_rect = get_card_global_rect(target_card)
 			var intersection = dragged_rect.intersection(target_rect)
