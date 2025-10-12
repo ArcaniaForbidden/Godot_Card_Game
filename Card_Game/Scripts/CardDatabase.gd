@@ -195,7 +195,7 @@ static var card_database = {
 	},
 	"well": {
 		"card": preload("res://Images/building_card.png"),
-		"sprite": preload("res://Images/lumber_camp.png"),
+		"sprite": preload("res://Images/well.png"),
 		"card_type": "building",
 		"display_name": "Well",
 		"value": 5,
