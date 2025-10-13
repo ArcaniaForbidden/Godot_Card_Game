@@ -65,6 +65,7 @@ static var recipes = {
 		"loot_table": [
 			{"weight": 1, "outputs": [{"subtype": "aquifer"}]},
 			{"weight": 9, "outputs": [{"subtype": "soil"}]},
+			#{"weight": 5, "outputs": [{"subtype": "plant_fiber"}]},
 			{"weight": 5, "outputs": [{"subtype": "tree"}]},
 			{"weight": 5, "outputs": [{"subtype": "rock"}]},
 			#{"weight": 5, "outputs": [{"subtype": "cow"}]},
@@ -80,7 +81,7 @@ static var recipes = {
 		"loot_table": [
 			{"weight": 50, "outputs": [{"subtype": "tree"}]},
 			{"weight": 45, "outputs": [{"subtype": "wood"}]},
-			{"weight": 5, "outputs": [{"subtype": "wolf"}], "requirement": {"recipe_name": "Search Forest", "amount": 10}},
+			{"weight": 5, "outputs": [{"subtype": "wolf"}], "requirement": {"recipe_name": "Search Forest", "amount": 15}},
 		],
 		"work_time": 30.0
 	},
@@ -169,7 +170,7 @@ static var recipes = {
 		"inputs": [
 			{"subtype": "plank", "consume": true},
 			{"subtype": "plank", "consume": true},
-			{"subtype": "plank", "consume": true},
+			#{"subtype": "iron_bar", "consume": true},
 			{"subtype": "iron_deposit", "consume": true},
 			{"subtype": "iron_deposit", "consume": true},
 			{"subtype": "iron_deposit", "consume": true},
@@ -184,7 +185,7 @@ static var recipes = {
 		"inputs": [
 			{"subtype": "plank", "consume": true},
 			{"subtype": "plank", "consume": true},
-			{"subtype": "plank", "consume": true},
+			#{"subtype": "iron_bar", "consume": true},
 			{"subtype": "copper_deposit", "consume": true},
 			{"subtype": "copper_deposit", "consume": true},
 			{"subtype": "copper_deposit", "consume": true},
@@ -199,7 +200,7 @@ static var recipes = {
 		"inputs": [
 			{"subtype": "plank", "consume": true},
 			{"subtype": "plank", "consume": true},
-			{"subtype": "plank", "consume": true},
+			#{"subtype": "iron_bar", "consume": true},
 			{"subtype": "gold_deposit", "consume": true},
 			{"subtype": "gold_deposit", "consume": true},
 			{"subtype": "gold_deposit", "consume": true},
@@ -290,7 +291,7 @@ static var recipes = {
 		"outputs": [
 			{"subtype": "plank"}
 		],
-		"work_time": 5.0
+		"work_time": 10.0
 	},
 	"Make Brick": {
 		"inputs": [
@@ -302,6 +303,6 @@ static var recipes = {
 		"outputs": [
 			{"subtype": "brick"}
 		],
-		"work_time": 5.0
+		"work_time": 10.0
 	},
 }

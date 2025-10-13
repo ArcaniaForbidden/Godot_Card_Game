@@ -8,7 +8,6 @@ static var card_database = {
 		"card_type": "currency",
 		"display_name": "Copper Coin",
 		"value": 1,
-		"rarity": "silver",
 		"description": "A dull copper coin."
 	},
 	"silver_coin": {
@@ -26,7 +25,7 @@ static var card_database = {
 		"card_type": "currency",
 		"display_name": "Gold Coin",
 		"value": 100,
-		"rarity": "ultra",
+		"rarity": "gold",
 		"description": "A shiny gold coin. Worth 10 silver coins."
 	},
 	"plains_card_pack": {
@@ -38,8 +37,8 @@ static var card_database = {
 		"description": "The plains card pack. The starting location pack.",
 		"loot_table": [
 			{"subtype": "plains", "weight": 10},
-			{"subtype": "aquifer", "weight": 10},
-			{"subtype": "wood", "weight": 80},
+			#{"subtype": "plant_fiber", "weight": 45},
+			{"subtype": "soil", "weight": 45},
 		]
 	},
 	"forest_card_pack": {
@@ -64,8 +63,11 @@ static var card_database = {
 		"description": "The mountain card pack.",
 		"loot_table": [
 			{"subtype": "mountain", "weight": 10},
-			{"subtype": "rock", "weight": 20},
-			{"subtype": "stone", "weight": 70},
+			{"subtype": "rock", "weight": 15},
+			{"subtype": "iron_deposit", "weight": 4},
+			{"subtype": "copper_deposit", "weight": 4},
+			{"subtype": "gold_deposit", "weight": 2},
+			{"subtype": "stone", "weight": 65},
 		]
 	},
 	"peasant": {
@@ -193,6 +195,15 @@ static var card_database = {
 		"value": 5,
 		"stats": {"health": 25}
 	},
+	"makeshift_laboratory": {
+		"card": preload("res://Images/building_card.png"),
+		"sprite": preload("res://Images/well.png"),
+		"card_type": "building",
+		"display_name": "Makeshift Laboratory",
+		"value": 5,
+		"description": "A simple laboratory.",
+		"stats": {"health": 25}
+	},
 	"well": {
 		"card": preload("res://Images/building_card.png"),
 		"sprite": preload("res://Images/well.png"),
@@ -219,7 +230,7 @@ static var card_database = {
 	},
 	"iron_mine": {
 		"card": preload("res://Images/building_card.png"),
-		"sprite": preload("res://Images/quarry.png"),
+		"sprite": preload("res://Images/iron_mine.png"),
 		"card_type": "building",
 		"display_name": "Iron Mine",
 		"value": 5,
@@ -227,7 +238,7 @@ static var card_database = {
 	},
 	"copper_mine": {
 		"card": preload("res://Images/building_card.png"),
-		"sprite": preload("res://Images/quarry.png"),
+		"sprite": preload("res://Images/copper_mine.png"),
 		"card_type": "building",
 		"display_name": "Copper Mine",
 		"value": 5,
@@ -235,7 +246,7 @@ static var card_database = {
 	},
 	"gold_mine": {
 		"card": preload("res://Images/building_card.png"),
-		"sprite": preload("res://Images/quarry.png"),
+		"sprite": preload("res://Images/gold_mine.png"),
 		"card_type": "building",
 		"display_name": "Gold Mine",
 		"value": 5,
@@ -277,6 +288,7 @@ static var card_database = {
 		"card_type": "location",
 		"display_name": "Aquifer",
 		"value": 10,
+		"description": "A large body of water underground.",
 	},
 	"plains": {
 		"card": preload("res://Images/location_card.png"),
@@ -301,7 +313,7 @@ static var card_database = {
 	},
 	"cave": {
 		"card": preload("res://Images/location_card.png"),
-		"sprite": preload("res://Images/mountain.png"),
+		"sprite": preload("res://Images/cave.png"),
 		"card_type": "location",
 		"display_name": "Cave",
 		"value": 10,
