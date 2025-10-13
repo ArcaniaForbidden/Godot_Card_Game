@@ -11,6 +11,7 @@ var target_position: Vector2
 var is_being_dragged: bool = false
 var is_being_simulated_dragged: bool = false
 var card_type: String = ""
+var attack_type: String = ""
 var subtype: String = ""
 var display_name: String = ""
 var value = null
@@ -109,6 +110,10 @@ func setup(subtype_name: String) -> void:
 	# Set textures
 	apply_foil_effect(data.get("rarity", ""))
 	var is_animated = data.get("animated", false)
+	if stats.has("attack_type") or card_type in ["unit", "enemy", "neutral", "building"]:
+		attack_type = stats.get("attack_type", "melee")
+	else:
+		attack_type = ""
 	if card_type == "card_pack":
 		if card_pack_label1:
 			var parts := subtype.split("_")

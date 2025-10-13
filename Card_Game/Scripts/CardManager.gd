@@ -47,6 +47,7 @@ var allowed_stack_types := {
 	"resource": ["unit", "resource", "material", "building"],
 	"material": ["unit", "resource", "material", "building"],
 	"enemy": [],                                                           # enemies cannot stack
+	"neutral": [],
 	"building": ["building", "location"],
 	"location": ["location"],
 	"card_pack": ["card_pack"],
@@ -746,9 +747,6 @@ func handle_enemy_movement(delta: float) -> void:
 		if not is_instance_valid(top_card):
 			continue
 		if top_card.card_type != "enemy":
-			continue
-		# Skip enemies in battles
-		if battle_manager.is_card_in_battle(top_card):
 			continue
 		var enemy = top_card
 		# decrement idle timer

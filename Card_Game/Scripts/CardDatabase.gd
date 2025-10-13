@@ -37,8 +37,10 @@ static var card_database = {
 		"description": "The plains card pack. The starting location pack.",
 		"loot_table": [
 			{"subtype": "plains", "weight": 10},
-			#{"subtype": "plant_fiber", "weight": 45},
-			{"subtype": "soil", "weight": 45},
+			{"subtype": "plant_fiber", "weight": 45},
+			{"subtype": "soil", "weight": 35},
+			#{"subtype": "horse", "weight": 5},
+			#{"subtype": "cow", "weight": 5},
 		]
 	},
 	"forest_card_pack": {
@@ -68,25 +70,6 @@ static var card_database = {
 			{"subtype": "copper_deposit", "weight": 4},
 			{"subtype": "gold_deposit", "weight": 2},
 			{"subtype": "stone", "weight": 65},
-		]
-	},
-	"peasant": {
-		"card": preload("res://Images/unit_card.png"),
-		"sprite": preload("res://Animations/peasant.tres"),
-		"animated": true,
-		"card_type": "unit",
-		"display_name": "Peasant",
-		"stats": {"health": 10, "attack": 0, "armor": 0, "attack_speed": 0.8},
-	},
-	"wolf": {
-		"card": preload("res://Images/enemy_card.png"),
-		"sprite": preload("res://Images/wolf.png"),
-		"card_type": "enemy",
-		"display_name": "Wolf",
-		"stats": {"health": 4, "attack": 1, "armor": 0, "attack_speed": 1.2},
-		"loot_table": [
-			{ "subtype": "wood", "chance": 0.8 },
-			{ "subtype": "tree", "chance": 0.7 }
 		]
 	},
 	"tree": {
@@ -127,7 +110,7 @@ static var card_database = {
 	"soil": { 
 		"card": preload("res://Images/resource_card.png"),
 		"sprite": preload("res://Images/soil.png"),
-		"card_type": "resource",
+		"card_type": "material",
 		"display_name": "Soil",
 		"value": 0,
 	},
@@ -150,6 +133,13 @@ static var card_database = {
 		"sprite": preload("res://Images/water.png"),
 		"card_type": "material",
 		"display_name": "Water",
+		"value": 0,
+	},
+	"plant_fiber": {
+		"card": preload("res://Images/material_card.png"),
+		"sprite": preload("res://Images/plant_fiber.png"),
+		"card_type": "material",
+		"display_name": "Plant Fiber",
 		"value": 0,
 	},
 	"iron_ore": {
@@ -317,5 +307,47 @@ static var card_database = {
 		"card_type": "location",
 		"display_name": "Cave",
 		"value": 10,
+	},
+	"peasant": {
+		"card": preload("res://Images/unit_card.png"),
+		"sprite": preload("res://Animations/peasant.tres"),
+		"animated": true,
+		"card_type": "unit",
+		"attack_type": "ranged",
+		"display_name": "Peasant",
+		"stats": {"health": 10, "attack": 0, "armor": 0, "attack_speed": 0.8},
+	},
+	"wolf": {
+		"card": preload("res://Images/enemy_card.png"),
+		"sprite": preload("res://Images/wolf.png"),
+		"card_type": "enemy",
+		"display_name": "Wolf",
+		"stats": {"health": 4, "attack": 1, "armor": 0, "attack_speed": 1.2},
+		"loot_table": [
+			{ "subtype": "wood", "chance": 0.8 },
+			{ "subtype": "tree", "chance": 0.7 }
+		]
+	},
+	"horse": {
+		"card": preload("res://Images/neutral_card.png"),
+		"sprite": preload("res://Images/horse.png"),
+		"card_type": "neutral",
+		"display_name": "Wolf",
+		"stats": {"health": 5, "attack": 1, "armor": 0, "attack_speed": 1.0},
+		"loot_table": [
+			{ "subtype": "wood", "chance": 0.8 },
+			{ "subtype": "tree", "chance": 0.7 }
+		]
+	},
+	"cow": {
+		"card": preload("res://Images/neutral_card.png"),
+		"sprite": preload("res://Images/wolf.png"),
+		"card_type": "neutral",
+		"display_name": "Wolf",
+		"stats": {"health": 4, "attack": 1, "armor": 0, "attack_speed": 0.8},
+		"loot_table": [
+			{ "subtype": "wood", "chance": 0.8 },
+			{ "subtype": "tree", "chance": 0.7 }
+		]
 	},
 }

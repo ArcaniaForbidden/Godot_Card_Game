@@ -65,7 +65,7 @@ static var recipes = {
 		"loot_table": [
 			{"weight": 1, "outputs": [{"subtype": "aquifer"}]},
 			{"weight": 9, "outputs": [{"subtype": "soil"}]},
-			#{"weight": 5, "outputs": [{"subtype": "plant_fiber"}]},
+			{"weight": 5, "outputs": [{"subtype": "plant_fiber"}]},
 			{"weight": 5, "outputs": [{"subtype": "tree"}]},
 			{"weight": 5, "outputs": [{"subtype": "rock"}]},
 			#{"weight": 5, "outputs": [{"subtype": "cow"}]},

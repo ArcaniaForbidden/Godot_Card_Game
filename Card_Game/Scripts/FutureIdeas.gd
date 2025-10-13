@@ -2,6 +2,12 @@
 #  TODO LIST
 # ==============================
 
+#var enemy_go_attack: bool = false
+#var player_card_alive: bool = true
+#func battle():
+	#if enemy_go_attack:
+		#player_card_alive = false
+		#return
 
 # Recipe Progression
 # Wood x3 -> Plank
