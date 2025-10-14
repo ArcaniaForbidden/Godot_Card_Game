@@ -34,7 +34,6 @@ var last_clicked_card: Card = null
 var all_stacks: Array = []
 var card_scene = preload("res://Scenes/Card.tscn")
 var CardDatabase = preload("res://Scripts/CardDatabase.gd").card_database
-var battle_manager: Node = null
 var crafting_manager: Node = null
 var map_manager: Node = null
 var screen_size: Vector2
@@ -54,7 +53,6 @@ var allowed_stack_types := {
 }
 
 func _ready() -> void:
-	battle_manager = get_parent().get_node("BattleManager")
 	crafting_manager = get_parent().get_node("CraftingManager")
 	map_manager = get_parent().get_node("MapManager")
 	screen_size = get_viewport_rect().size
@@ -90,6 +88,9 @@ func spawn_initial_cards() -> void:
 	spawn_card("leather_chestplate", Vector2(400,900))
 	spawn_card("lumber_camp", Vector2(400,500))
 	spawn_card("house", Vector2(400,500))
+	spawn_card("smeltery", Vector2(400,500))
+	#spawn_card("horse", Vector2(400, 300))
+	#spawn_card("horse", Vector2(400, 300))
 	spawn_card("tree", Vector2(500, 300))
 	spawn_card("rock", Vector2(600, 300))
 	spawn_card("wood", Vector2(700, 300))
@@ -391,9 +392,6 @@ func merge_overlapping_stacks(card: Node2D) -> bool:
 				target_top_card.add_value(c)
 				dragged_substack.remove_at(i)  # remove immediately
 				card_added = true
-		return card_added
-		# Remove only the cards that were accepted
-		dragged_stack = dragged_stack.filter(func(c): return is_instance_valid(c) and c.card_type != "currency")
 		return card_added
 	# --- Skip if top card is being dragged ---
 	if target_bottom_card.is_being_dragged:
@@ -742,19 +740,20 @@ func debug_print_stacks() -> void:
 #  ENEMY MOVEMENT
 # ==============================
 func handle_enemy_movement(delta: float) -> void:
+	var movable_types = ["enemy", "neutral"]
 	for stack in all_stacks:
 		var top_card = stack[-1]
 		if not is_instance_valid(top_card):
 			continue
-		if top_card.card_type != "enemy":
+		if top_card.card_type not in movable_types:
 			continue
 		var enemy = top_card
 		# decrement idle timer
 		enemy.enemy_idle_timer -= delta
 		if enemy.enemy_idle_timer <= 0:
 			# pick random target within distance
-			var range = enemy.enemy_jump_distance
-			var target_pos = enemy.position + Vector2(randf_range(-range, range), randf_range(-range, range))
+			var distance_range = enemy.enemy_jump_distance
+			var target_pos = enemy.position + Vector2(randf_range(-distance_range, distance_range), randf_range(-distance_range, distance_range))
 			# Clamp to play area instead of viewport
 			target_pos.x = clamp(target_pos.x, PLAY_AREA.position.x, PLAY_AREA.position.x + PLAY_AREA.size.x)
 			target_pos.y = clamp(target_pos.y, PLAY_AREA.position.y, PLAY_AREA.position.y + PLAY_AREA.size.y)

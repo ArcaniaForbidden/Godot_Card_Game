@@ -30,7 +30,6 @@ func sell_stack(stack: Array) -> void:
 		{"name": "silver_coin", "value": 10},
 		{"name": "copper_coin", "value": 1},
 	]
-	var spawned_any := false
 	for denom in denominations:
 		while total_value >= denom.value:
 			var spawn_pos = global_position + Vector2(0, -300)  # above SellSlot
@@ -43,7 +42,6 @@ func sell_stack(stack: Array) -> void:
 			# Play coin sound
 			if SoundManager:
 				SoundManager.play("coin", -18.0)
-			spawned_any = true
 			# --- Position tween ---
 			var tween_pos = get_tree().create_tween()
 			tween_pos.tween_property(coin_card, "position", final_pos, 1.0).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)

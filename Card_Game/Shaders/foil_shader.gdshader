@@ -6,8 +6,8 @@ uniform vec2 screen_pos = vec2(0.5, 0.5);       // set by GDScript
 uniform float streak_speed = -0.2;             // speed of streak over time
 uniform bool rainbow_mode = false;
 uniform float hue_speed = 0.3;                 // hue rotation speed for rainbow
-uniform float block_width = 4.0;               // pixel block width
-uniform float block_height = 4.0;              // pixel block height
+uniform float block_width = 1.0;               // pixel block width
+uniform float block_height = 1.0;              // pixel block height
 
 const float CARD_W = 98.0;
 const float CARD_H = 140.0;
@@ -20,14 +20,10 @@ vec3 hsv2rgb(vec3 c) {
 
 void fragment() {
     vec2 uv = UV;
-    // --- Pixelated UV ---
-    vec2 uv_px;
-    uv_px.x = floor(uv.x * CARD_W / block_width) * block_width / CARD_W;
-    uv_px.y = floor(uv.y * CARD_H / block_height) * block_height / CARD_H;
     // --- Sample the card texture ---
     vec4 tex = texture(TEXTURE, uv);
     // --- Diagonal streak ---
-    float diag = uv_px.x + uv_px.y + screen_pos.x + screen_pos.y + TIME * streak_speed;
+    float diag = uv.x + uv.y + screen_pos.x + screen_pos.y + TIME * streak_speed;
     float streak = smoothstep(0.0, streak_width * 0.5, fract(diag)) *
                    smoothstep(1.0, 1.0 - streak_width * 0.5, fract(diag));
     // --- Base color ---

@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dgcfaf2fk8x65" path="res://Scripts/card.gd" id="1_wejov"]
 [ext_resource type="Texture2D" uid="uid://doovqwb6u2y8c" path="res://Images/currency_card.png" id="2_u5wvb"]
 [ext_resource type="SpriteFrames" uid="uid://e55fuhdcrqmo" path="res://Animations/peasant.tres" id="3_xnv4g"]
-[ext_resource type="Texture2D" uid="uid://cjy107yuvngg" path="res://Images/wood.png" id="4_xnv4g"]
+[ext_resource type="Texture2D" uid="uid://bjffoqc4n42b5" path="res://Images/iron_ingot.png" id="4_mm04k"]
 [ext_resource type="Texture2D" uid="uid://codod5tgigybh" path="res://Images/heart_icon.png" id="5_pbuqb"]
 [ext_resource type="LabelSettings" uid="uid://b2udwgke5epkp" path="res://Label_Settings.tres" id="5_xnv4g"]
 [ext_resource type="Texture2D" uid="uid://du8drnsg1cb6r" path="res://Images/gold_coin.png" id="7_mm04k"]
@@ -28,7 +28,7 @@ frame_progress = 0.644132
 [node name="SpriteImage" type="Sprite2D" parent="."]
 position = Vector2(0, 12)
 scale = Vector2(3, 3)
-texture = ExtResource("4_xnv4g")
+texture = ExtResource("4_mm04k")
 
 [node name="CardLabel" type="Label" parent="."]
 offset_left = -41.0

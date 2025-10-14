@@ -64,12 +64,12 @@ static var recipes = {
 		],
 		"loot_table": [
 			{"weight": 1, "outputs": [{"subtype": "aquifer"}]},
-			{"weight": 9, "outputs": [{"subtype": "soil"}]},
-			{"weight": 5, "outputs": [{"subtype": "plant_fiber"}]},
-			{"weight": 5, "outputs": [{"subtype": "tree"}]},
-			{"weight": 5, "outputs": [{"subtype": "rock"}]},
-			#{"weight": 5, "outputs": [{"subtype": "cow"}]},
-			#{"weight": 5, "outputs": [{"subtype": "horse"}]},
+			{"weight": 5, "outputs": [{"subtype": "soil"}]},
+			{"weight": 8, "outputs": [{"subtype": "plant_fiber"}]},
+			{"weight": 4, "outputs": [{"subtype": "tree"}]},
+			{"weight": 4, "outputs": [{"subtype": "rock"}]},
+			#{"weight": 2, "outputs": [{"subtype": "cow"}]},
+			{"weight": 2, "outputs": [{"subtype": "horse"}]},
 		],
 		"work_time": 30.0
 	},
@@ -79,8 +79,9 @@ static var recipes = {
 			{"subtype": "peasant", "consume": false} # unit on top
 		],
 		"loot_table": [
-			{"weight": 50, "outputs": [{"subtype": "tree"}]},
-			{"weight": 45, "outputs": [{"subtype": "wood"}]},
+			{"weight": 10, "outputs": [{"subtype": "plant_fiber"}]},
+			{"weight": 45, "outputs": [{"subtype": "tree"}]},
+			{"weight": 40, "outputs": [{"subtype": "wood"}]},
 			{"weight": 5, "outputs": [{"subtype": "wolf"}], "requirement": {"recipe_name": "Search Forest", "amount": 15}},
 		],
 		"work_time": 30.0
@@ -92,10 +93,25 @@ static var recipes = {
 		],
 		"loot_table": [
 			{"weight": 50, "outputs": [{"subtype": "rock"}]},
-			{"weight": 5, "outputs": [{"subtype": "iron_deposit"}], "requirement": {"recipe_name": "Search Mountain", "amount": 30}},
-			{"weight": 5, "outputs": [{"subtype": "copper_deposit"}], "requirement": {"recipe_name": "Search Mountain", "amount": 30}},
-			{"weight": 5, "outputs": [{"subtype": "gold_deposit"}], "requirement": {"recipe_name": "Search Mountain", "amount": 50}},
-			{"weight": 5, "outputs": [{"subtype": "mountain"}]},
+			{"weight": 35, "outputs": [{"subtype": "stone"}]},
+			{"weight": 5, "outputs": [{"subtype": "cave"}]},
+			{"weight": 4, "outputs": [{"subtype": "iron_deposit"}], "requirement": {"recipe_name": "Search Mountain", "amount": 30}},
+			{"weight": 4, "outputs": [{"subtype": "copper_deposit"}], "requirement": {"recipe_name": "Search Mountain", "amount": 30}},
+			{"weight": 2, "outputs": [{"subtype": "gold_deposit"}], "requirement": {"recipe_name": "Search Mountain", "amount": 50}},
+		],
+		"work_time": 30.0
+	},
+	"Search Cave": {
+		"inputs": [
+			{"subtype": "cave", "consume": false}, # environment card
+			{"subtype": "peasant", "consume": false} # unit on top
+		],
+		"loot_table": [
+			{"weight": 45, "outputs": [{"subtype": "rock"}]},
+			{"weight": 35, "outputs": [{"subtype": "stone"}]},
+			{"weight": 8, "outputs": [{"subtype": "iron_deposit"}], "requirement": {"recipe_name": "Search Mountain", "amount": 30}},
+			{"weight": 8, "outputs": [{"subtype": "copper_deposit"}], "requirement": {"recipe_name": "Search Mountain", "amount": 30}},
+			{"weight": 4, "outputs": [{"subtype": "gold_deposit"}], "requirement": {"recipe_name": "Search Mountain", "amount": 50}},
 		],
 		"work_time": 30.0
 	},
@@ -104,12 +120,120 @@ static var recipes = {
 			{"subtype": "peasant", "consume": false},
 			{"subtype": "wood", "consume": true},
 			{"subtype": "wood", "consume": true}
-			
 		],
 		"outputs": [
 			{"subtype": "wooden_spear"}
 		],
+		"work_time": 15.0
+	},
+	"Craft Leather Helmet": {
+		"inputs": [
+			{"subtype": "peasant", "consume": false},
+			{"subtype": "leather", "consume": true},
+			{"subtype": "leather", "consume": true},
+			{"subtype": "plant_fiber", "consume": true}
+		],
+		"outputs": [
+			{"subtype": "leather_helmet"}
+		],
+		"work_time": 15.0
+	},
+	"Craft Leather Chestplate": {
+		"inputs": [
+			{"subtype": "peasant", "consume": false},
+			{"subtype": "leather", "consume": true},
+			{"subtype": "leather", "consume": true},
+			{"subtype": "leather", "consume": true},
+			{"subtype": "leather", "consume": true},
+			{"subtype": "plant_fiber", "consume": true}
+		],
+		"outputs": [
+			{"subtype": "leather_chestplate"}
+		],
+		"work_time": 15.0
+	},
+	"Craft Leather Leggings": {
+		"inputs": [
+			{"subtype": "peasant", "consume": false},
+			{"subtype": "leather", "consume": true},
+			{"subtype": "leather", "consume": true},
+			{"subtype": "leather", "consume": true},
+			{"subtype": "plant_fiber", "consume": true}
+		],
+		"outputs": [
+			{"subtype": "leather_leggings"}
+		],
+		"work_time": 15.0
+	},
+	"Craft Leather Boots": {
+		"inputs": [
+			{"subtype": "peasant", "consume": false},
+			{"subtype": "leather", "consume": true},
+			{"subtype": "plant_fiber", "consume": true}
+		],
+		"outputs": [
+			{"subtype": "leather_boots"}
+		],
+		"work_time": 15.0
+	},
+	"Craft Plank": {
+		"inputs": [
+			{"subtype": "peasant", "consume": false},
+			{"subtype": "wood", "consume": true},
+			{"subtype": "wood", "consume": true},
+			{"subtype": "wood", "consume": true}
+		],
+		"outputs": [
+			{"subtype": "plank"}
+		],
 		"work_time": 10.0
+	},
+	"Craft Brick": {
+		"inputs": [
+			{"subtype": "peasant", "consume": false},
+			{"subtype": "stone", "consume": true},
+			{"subtype": "stone", "consume": true},
+			{"subtype": "stone", "consume": true}
+		],
+		"outputs": [
+			{"subtype": "brick"}
+		],
+		"work_time": 10.0
+	},
+	"Craft Rope": {
+		"inputs": [
+			{"subtype": "peasant", "consume": false},
+			{"subtype": "plant_fiber", "consume": true},
+			{"subtype": "plant_fiber", "consume": true},
+			{"subtype": "plant_fiber", "consume": true}
+		],
+		"outputs": [
+			{"subtype": "rope"}
+		],
+		"work_time": 10.0
+	},
+	"Cook Raw Meat": {
+		"inputs": [
+			{"subtype": "campfire", "consume": false},
+			{"subtype": "raw_meat", "consume": true}
+		],
+		"outputs": [
+			{"subtype": "cooked_meat"}
+		],
+		"work_time": 10.0
+	},
+	"Build Campfire": {
+		"inputs": [
+			{"subtype": "wood", "consume": true},
+			{"subtype": "wood", "consume": true},
+			{"subtype": "plant_fiber", "consume": true},
+			{"subtype": "plant_fiber", "consume": true},
+			{"subtype": "peasant", "consume": false}
+		],
+		"outputs": [
+			{"subtype": "campfire"}
+		],
+		"work_time": 15.0
 	},
 	"Build House": {
 		"inputs": [
@@ -124,15 +248,72 @@ static var recipes = {
 		],
 		"work_time": 15.0
 	},
-	"Build Well": {
+	"Build Smeltery": {
 		"inputs": [
 			{"subtype": "brick", "consume": true},
 			{"subtype": "brick", "consume": true},
+			{"subtype": "brick", "consume": true},
+			{"subtype": "brick", "consume": true},
+			{"subtype": "peasant", "consume": false}
+		],
+		"outputs": [
+			{"subtype": "smeltery"}
+		],
+		"work_time": 15.0
+	},
+	"Build Forge": {
+		"inputs": [
+			{"subtype": "brick", "consume": true},
+			{"subtype": "brick", "consume": true},
+			{"subtype": "brick", "consume": true},
+			{"subtype": "iron_ingot", "consume": true},
+			{"subtype": "iron_ingot", "consume": true},
+			{"subtype": "iron_ingot", "consume": true},
+			{"subtype": "peasant", "consume": false}
+		],
+		"outputs": [
+			{"subtype": "forge"}
+		],
+		"work_time": 15.0
+	},
+	"Build Barracks": {
+		"inputs": [
+			{"subtype": "plank", "consume": true},
+			{"subtype": "plank", "consume": true},
+			{"subtype": "plank", "consume": true},
+			{"subtype": "iron_ingot", "consume": true},
+			{"subtype": "iron_ingot", "consume": true},
+			{"subtype": "iron_ingot", "consume": true},
+			{"subtype": "peasant", "consume": false}
+		],
+		"outputs": [
+			{"subtype": "barracks"}
+		],
+		"work_time": 15.0
+	},
+	"Build Well": {
+		"inputs": [
+			{"subtype": "brick", "consume": true},
 			{"subtype": "wood", "consume": true},
+			{"subtype": "rope", "consume": true},
 			{"subtype": "peasant", "consume": false}
 		],
 		"outputs": [
 			{"subtype": "well"}
+		],
+		"work_time": 15.0
+	},
+	"Build Wishing Well": {
+		"inputs": [
+			{"subtype": "well", "consume": true},
+			{"subtype": "iron_ingot", "consume": true},
+			{"subtype": "copper_ingot", "consume": true},
+			{"subtype": "gold_ingot", "consume": true},
+			#{"subtype": "gem", "consume": true},
+			{"subtype": "peasant", "consume": false}
+		],
+		"outputs": [
+			{"subtype": "wishing_well"}
 		],
 		"work_time": 15.0
 	},
@@ -281,28 +462,37 @@ static var recipes = {
 		],
 		"work_time": 15.0
 	},
-	"Make Plank": {
+	"Use Smeltery for Iron Ingot": {
 		"inputs": [
+			{"subtype": "smeltery", "consume": false},     
 			{"subtype": "peasant", "consume": false},
-			{"subtype": "wood", "consume": true},
-			{"subtype": "wood", "consume": true},
-			{"subtype": "wood", "consume": true}
+			{"subtype": "iron_ore", "consume": true}, 
 		],
 		"outputs": [
-			{"subtype": "plank"}
+			{"subtype": "iron_ingot"}
 		],
-		"work_time": 10.0
+		"work_time": 15.0
 	},
-	"Make Brick": {
+	"Use Smeltery for Copper Ingot": {
 		"inputs": [
+			{"subtype": "smeltery", "consume": false},     
 			{"subtype": "peasant", "consume": false},
-			{"subtype": "stone", "consume": true},
-			{"subtype": "stone", "consume": true},
-			{"subtype": "stone", "consume": true}
+			{"subtype": "copper_ore", "consume": true}, 
 		],
 		"outputs": [
-			{"subtype": "brick"}
+			{"subtype": "copper_ingot"}
 		],
-		"work_time": 10.0
+		"work_time": 15.0
+	},
+	"Use Smeltery for Gold Ingot": {
+		"inputs": [
+			{"subtype": "smeltery", "consume": false},     
+			{"subtype": "peasant", "consume": false},
+			{"subtype": "gold_ore", "consume": true}, 
+		],
+		"outputs": [
+			{"subtype": "gold_ingot"}
+		],
+		"work_time": 15.0
 	},
 }

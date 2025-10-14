@@ -37,9 +37,9 @@ static var card_database = {
 		"description": "The plains card pack. The starting location pack.",
 		"loot_table": [
 			{"subtype": "plains", "weight": 10},
-			{"subtype": "plant_fiber", "weight": 45},
-			{"subtype": "soil", "weight": 35},
-			#{"subtype": "horse", "weight": 5},
+			{"subtype": "plant_fiber", "weight": 55},
+			{"subtype": "soil", "weight": 25},
+			{"subtype": "horse", "weight": 5},
 			#{"subtype": "cow", "weight": 5},
 		]
 	},
@@ -71,6 +71,42 @@ static var card_database = {
 			{"subtype": "gold_deposit", "weight": 2},
 			{"subtype": "stone", "weight": 65},
 		]
+	},
+	"plains": {
+		"card": preload("res://Images/location_card.png"),
+		"sprite": preload("res://Images/plains.png"),
+		"card_type": "location",
+		"display_name": "Plains",
+		"value": 10,
+	},
+	"forest": {
+		"card": preload("res://Images/location_card.png"),
+		"sprite": preload("res://Images/forest.png"),
+		"card_type": "location",
+		"display_name": "Forest",
+		"value": 10,
+	},
+	"mountain": {
+		"card": preload("res://Images/location_card.png"),
+		"sprite": preload("res://Images/mountain.png"),
+		"card_type": "location",
+		"display_name": "Mountain",
+		"value": 10,
+	},
+	"cave": {
+		"card": preload("res://Images/location_card.png"),
+		"sprite": preload("res://Images/cave.png"),
+		"card_type": "location",
+		"display_name": "Cave",
+		"value": 10,
+	},
+	"aquifer": {
+		"card": preload("res://Images/location_card.png"),
+		"sprite": preload("res://Images/plains.png"),
+		"card_type": "location",
+		"display_name": "Aquifer",
+		"value": 10,
+		"description": "A large body of water underground.",
 	},
 	"tree": {
 		"card": preload("res://Images/resource_card.png"),
@@ -140,7 +176,21 @@ static var card_database = {
 		"sprite": preload("res://Images/plant_fiber.png"),
 		"card_type": "material",
 		"display_name": "Plant Fiber",
-		"value": 0,
+		"value": 1,
+	},
+	"rope": {
+		"card": preload("res://Images/material_card.png"),
+		"sprite": preload("res://Images/rope.png"),
+		"card_type": "material",
+		"display_name": "Rope",
+		"value": 4,
+	},
+	"leather": {
+		"card": preload("res://Images/material_card.png"),
+		"sprite": preload("res://Images/leather.png"),
+		"card_type": "material",
+		"display_name": "Leather",
+		"value": 1,
 	},
 	"iron_ore": {
 		"card": preload("res://Images/material_card.png"),
@@ -163,6 +213,30 @@ static var card_database = {
 		"display_name": "Gold Ore",
 		"value": 1,
 	},
+	"iron_ingot": {
+		"card": preload("res://Images/material_card.png"),
+		"sprite": preload("res://Images/iron_ingot.png"),
+		"card_type": "material",
+		"display_name": "Iron Ingot",
+		"value": 4,
+		"rarity": "silver",
+	},
+	"copper_ingot": {
+		"card": preload("res://Images/material_card.png"),
+		"sprite": preload("res://Images/copper_ingot.png"),
+		"card_type": "material",
+		"display_name": "Copper Ingot",
+		"value": 4,
+		"rarity": "silver",
+	},
+	"gold_ingot": {
+		"card": preload("res://Images/material_card.png"),
+		"sprite": preload("res://Images/gold_ingot.png"),
+		"card_type": "material",
+		"display_name": "Gold Ingot",
+		"value": 5,
+		"rarity": "gold",
+	},
 	"plank": {
 		"card": preload("res://Images/material_card.png"),
 		"sprite": preload("res://Images/plank.png"),
@@ -177,6 +251,30 @@ static var card_database = {
 		"display_name": "Brick",
 		"value": 4,
 	},
+	"raw_meat": { 
+		"card": preload("res://Images/food_card.png"),
+		"sprite": preload("res://Images/raw_meat.png"),
+		"card_type": "food",
+		"display_name": "Raw Meat",
+		"value": 1,
+		"food": 1,
+	},
+	"cooked_meat": { 
+		"card": preload("res://Images/food_card.png"),
+		"sprite": preload("res://Images/cooked_meat.png"),
+		"card_type": "food",
+		"display_name": "Cooked Meat",
+		"value": 1,
+		"food": 2,
+	},
+	"campfire": {
+		"card": preload("res://Images/building_card.png"),
+		"sprite": preload("res://Images/campfire.png"),
+		"card_type": "building",
+		"display_name": "Campfire",
+		"value": 2,
+		"stats": {"health": 10}
+	},
 	"house": {
 		"card": preload("res://Images/building_card.png"),
 		"sprite": preload("res://Images/house.png"),
@@ -185,13 +283,28 @@ static var card_database = {
 		"value": 5,
 		"stats": {"health": 25}
 	},
-	"makeshift_laboratory": {
+	"smeltery": {
 		"card": preload("res://Images/building_card.png"),
-		"sprite": preload("res://Images/well.png"),
+		"sprite": preload("res://Images/house.png"),
 		"card_type": "building",
-		"display_name": "Makeshift Laboratory",
+		"display_name": "Smeltery",
 		"value": 5,
-		"description": "A simple laboratory.",
+		"stats": {"health": 25}
+	},
+	"forge": {
+		"card": preload("res://Images/building_card.png"),
+		"sprite": preload("res://Images/house.png"),
+		"card_type": "building",
+		"display_name": "Forge",
+		"value": 5,
+		"stats": {"health": 25}
+	},
+	"barracks": {
+		"card": preload("res://Images/building_card.png"),
+		"sprite": preload("res://Images/house.png"),
+		"card_type": "building",
+		"display_name": "Barracks",
+		"value": 5,
 		"stats": {"health": 25}
 	},
 	"well": {
@@ -200,6 +313,15 @@ static var card_database = {
 		"card_type": "building",
 		"display_name": "Well",
 		"value": 5,
+		"stats": {"health": 25}
+	},
+	"wishing_well": {
+		"card": preload("res://Images/building_card.png"),
+		"sprite": preload("res://Images/well.png"),
+		"card_type": "building",
+		"display_name": "Wishing Well",
+		"value": 5,
+		"rarity": "silver",
 		"stats": {"health": 25}
 	},
 	"lumber_camp": {
@@ -243,70 +365,64 @@ static var card_database = {
 		"stats": {"health": 25}
 	},
 	"wooden_spear": {
-		"card": preload("res://Images/unit_card.png"),
+		"card": preload("res://Images/equipment_card.png"),
 		"sprite": preload("res://Images/wooden_spear.png"),
 		"card_type": "equipment",
 		"slot": "weapon",
 		"display_name": "Wooden Spear",
-		"value": 1,
-		"description": "A crude spear carved from wood. Increases attack slightly, but attacks slower.",
+		"value": 2,
+		"description": "Basically a sharp stick.",
 		"stats": {"add": {"attack": 1}, "mul": {"attack_speed": 0.9}}
 	},
 	"iron_spear": {
-		"card": preload("res://Images/unit_card.png"),
-		"sprite": preload("res://Images/wolf.png"),
+		"card": preload("res://Images/equipment_card.png"),
+		"sprite": preload("res://Images/iron_spear.png"),
 		"card_type": "equipment",
 		"slot": "weapon",
 		"display_name": "Iron Spear",
-		"value": 1,
-		"description": "A bigger spear",
+		"value": 3,
+		"description": "A better, pointier spear.",
 		"stats": {"add": {"attack": 2}, "mul": {"attack_speed": 1.0}}
 	},
+	"leather_helmet": {
+		"card": preload("res://Images/equipment_card.png"),
+		"sprite": preload("res://Images/leather_helmet.png"),
+		"card_type": "equipment",
+		"slot": "chestplate",
+		"display_name": "Leather Helmet",
+		"value": 2,
+		"description": "A poorly crafted leather helmet.",
+		"stats": {"add": {"health": 2}}
+	},
 	"leather_chestplate": {
-		"card": preload("res://Images/unit_card.png"),
-		"sprite": preload("res://Images/water.png"),
+		"card": preload("res://Images/equipment_card.png"),
+		"sprite": preload("res://Images/leather_chestplate.png"),
 		"card_type": "equipment",
 		"slot": "chestplate",
 		"display_name": "Leather Chestplate",
-		"value": 1,
+		"value": 2,
 		"description": "A poorly crafted leather chestplate.",
+		"stats": {"add": {"health": 3, "armor": 1}}
+	},
+	"leather_leggings": {
+		"card": preload("res://Images/equipment_card.png"),
+		"sprite": preload("res://Images/leather_leggings.png"),
+		"card_type": "equipment",
+		"slot": "chestplate",
+		"display_name": "Leather Leggings",
+		"value": 2,
+		"description": "A poorly crafted leather leggings.",
 		"stats": {"add": {"health": 3}}
 	},
-	"aquifer": {
-		"card": preload("res://Images/location_card.png"),
-		"sprite": preload("res://Images/plains.png"),
-		"card_type": "location",
-		"display_name": "Aquifer",
-		"value": 10,
-		"description": "A large body of water underground.",
-	},
-	"plains": {
-		"card": preload("res://Images/location_card.png"),
-		"sprite": preload("res://Images/plains.png"),
-		"card_type": "location",
-		"display_name": "Plains",
-		"value": 10,
-	},
-	"forest": {
-		"card": preload("res://Images/location_card.png"),
-		"sprite": preload("res://Images/forest.png"),
-		"card_type": "location",
-		"display_name": "Forest",
-		"value": 10,
-	},
-	"mountain": {
-		"card": preload("res://Images/location_card.png"),
-		"sprite": preload("res://Images/mountain.png"),
-		"card_type": "location",
-		"display_name": "Mountain",
-		"value": 10,
-	},
-	"cave": {
-		"card": preload("res://Images/location_card.png"),
-		"sprite": preload("res://Images/cave.png"),
-		"card_type": "location",
-		"display_name": "Cave",
-		"value": 10,
+	"leather_boots": {
+		"card": preload("res://Images/equipment_card.png"),
+		"sprite": preload("res://Images/leather_boots.png"),
+		"card_type": "equipment",
+		"slot": "chestplate",
+		"display_name": "Leather Boots",
+		"value": 2,
+		"description": "A poorly crafted leather boots.",
+		"stats": {"add": {"health": 1}}
 	},
 	"peasant": {
 		"card": preload("res://Images/unit_card.png"),
@@ -324,8 +440,8 @@ static var card_database = {
 		"display_name": "Wolf",
 		"stats": {"health": 4, "attack": 1, "armor": 0, "attack_speed": 1.2},
 		"loot_table": [
-			{ "subtype": "wood", "chance": 0.8 },
-			{ "subtype": "tree", "chance": 0.7 }
+			{ "subtype": "leather", "chance": 0.7 },
+			{ "subtype": "leather", "chance": 0.2 },
 		]
 	},
 	"horse": {
@@ -335,19 +451,27 @@ static var card_database = {
 		"display_name": "Wolf",
 		"stats": {"health": 5, "attack": 1, "armor": 0, "attack_speed": 1.0},
 		"loot_table": [
-			{ "subtype": "wood", "chance": 0.8 },
-			{ "subtype": "tree", "chance": 0.7 }
+			{ "subtype": "leather", "chance": 0.9 },
+			{ "subtype": "leather", "chance": 0.5 },
+			{ "subtype": "leather", "chance": 0.2 },
+			{ "subtype": "raw_meat", "chance": 0.9 },
+			{ "subtype": "raw_meat", "chance": 0.3 },
+			{ "subtype": "raw_meat", "chance": 0.1 },
 		]
 	},
 	"cow": {
 		"card": preload("res://Images/neutral_card.png"),
 		"sprite": preload("res://Images/wolf.png"),
 		"card_type": "neutral",
-		"display_name": "Wolf",
+		"display_name": "Cow",
 		"stats": {"health": 4, "attack": 1, "armor": 0, "attack_speed": 0.8},
 		"loot_table": [
-			{ "subtype": "wood", "chance": 0.8 },
-			{ "subtype": "tree", "chance": 0.7 }
+			{ "subtype": "leather", "chance": 0.9 },
+			{ "subtype": "leather", "chance": 0.5 },
+			{ "subtype": "leather", "chance": 0.2 },
+			{ "subtype": "raw_meat", "chance": 0.9 },
+			{ "subtype": "raw_meat", "chance": 0.3 },
+			{ "subtype": "raw_meat", "chance": 0.1 },
 		]
 	},
 }

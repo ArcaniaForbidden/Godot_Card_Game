@@ -56,7 +56,7 @@ func spawn_card_pack_queue() -> void:
 	if packs_to_spawn <= 0:
 		is_spawning_packs = false
 		return
-	await spawn_card_pack()  # spawn one pack
+	spawn_card_pack()  # spawn one pack
 	packs_to_spawn -= 1
 	# Wait a short time before spawning the next pack
 	await get_tree().create_timer(0.5).timeout

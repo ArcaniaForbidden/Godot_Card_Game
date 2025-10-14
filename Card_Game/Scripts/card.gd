@@ -88,11 +88,12 @@ func apply_foil_effect(rarity: String) -> void:
 			return
 	foil_overlay.material = foil_material
 	# --- Only card packs get the zigzag mask ---
+	if card_type == "currency":
+		foil_overlay.texture = preload("res://Images/foil_mask_coin.png")
 	if card_type == "card_pack":
 		foil_overlay.texture = preload("res://Images/foil_mask_card_pack.png")
-	else:
-		foil_overlay.texture = preload("res://Images/foil_mask_rectangle.png")
-	foil_overlay.visible = true
+	if subtype.ends_with("_ingot"):
+		foil_overlay.texture = preload("res://Images/foil_mask_ingot.png")
 
 func remove_foil_effect() -> void:
 	if foil_overlay:

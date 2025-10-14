@@ -183,7 +183,6 @@ func complete_job(job: CraftingJob) -> void:
 		print("Spawned '%s' at %s" % [subtype, start_pos])
 		# Find nearby stack to merge
 		var target_pos = null
-		var merge_stack = null
 		var search_radius = 400
 		for s in card_manager.all_stacks:
 			if s == stack or s.size() == 0:
@@ -200,7 +199,6 @@ func complete_job(job: CraftingJob) -> void:
 					continue
 				if dist <= search_radius:
 					target_pos = top_card.position
-					merge_stack = s
 					break
 		# Pick random position if no merge stack found
 		if target_pos == null:
