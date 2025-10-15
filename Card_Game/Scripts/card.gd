@@ -106,8 +106,8 @@ func setup(subtype_name: String) -> void:
 	target_position = position 
 	var data = CardDatabase.card_database[subtype]
 	card_type = data.get("card_type", "")
-	print("Setup card '%s': card_type=%s, slot=%s" % [subtype, card_type, data.get("slot","")])
 	display_name = data.get("display_name", subtype)
+	print("Setup card '%s': card_type=%s, slot=%s" % [subtype, card_type, data.get("slot","")])
 	# Set textures
 	apply_foil_effect(data.get("rarity", ""))
 	var is_animated = data.get("animated", false)
@@ -162,7 +162,12 @@ func setup(subtype_name: String) -> void:
 	else:
 		value = null
 	# --- Show/hide value label and icon ---
-	if value != null:
+	if card_type == "card_pack":
+		if value_icon:
+			value_icon.visible = false
+		if value_label:
+			value_label.visible = false
+	elif value != null:
 		if value_icon:
 			value_icon.visible = true
 		if value_label:

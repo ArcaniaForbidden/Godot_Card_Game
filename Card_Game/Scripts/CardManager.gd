@@ -18,8 +18,8 @@ const PUSH_STRENGTH := 1000
 const PUSH_ITERATIONS := 1
 const DOUBLE_CLICK_TIME := 0.3
 const PACK_UNLOCK_CHAIN = {
-	"plains_card_pack": [5, "forest_card_pack", 10, Vector2(240, -300)],
-	"forest_card_pack": [5, "mountain_card_pack", 10, Vector2(360, -300)],
+	"plains_card_pack": [5, "forest_card_pack", Vector2(240, -300)],
+	"forest_card_pack": [5, "mountain_card_pack", Vector2(360, -300)],
 }
 
 # --- Member variables ---
@@ -46,7 +46,7 @@ var allowed_stack_types := {
 	"enemy": [],                                                           # enemies cannot stack
 	"neutral": [],
 	"building": ["building", "location"],
-	"location": [],
+	"location": ["location"],
 	"card_pack": ["card_pack"],
 	"food": ["food"],
 }
@@ -127,9 +127,9 @@ func spawn_card(subtype: String, position: Vector2) -> Card:
 
 func spawn_initial_slots() -> void:
 	spawn_slot("res://Scenes/SellSlot.tscn", Vector2(0,-300))
-	spawn_slot("res://Scenes/PackSlot.tscn", Vector2(120, -300), "plains_card_pack", 10)
+	spawn_slot("res://Scenes/PackSlot.tscn", Vector2(120, -300), "plains_card_pack")
 
-func spawn_slot(slot_scene_path: String, position: Vector2, pack_subtype: String = "", pack_cost: int = 0) -> Node2D:
+func spawn_slot(slot_scene_path: String, position: Vector2, pack_subtype: String = "") -> Node2D:
 	# Load the scene
 	var slot_scene = load(slot_scene_path)
 	if not slot_scene:
@@ -138,12 +138,10 @@ func spawn_slot(slot_scene_path: String, position: Vector2, pack_subtype: String
 	var slot_instance = slot_scene.instantiate() as Node2D
 	slot_instance.position = position
 	add_child(slot_instance)
-	# If the slot is a PackSlot, assign pack type and cost
+	# If the slot is a PackSlot, assign pack type
 	if slot_instance is PackSlot and pack_subtype != "":
 		var pack_slot = slot_instance as PackSlot
-		pack_slot.set_pack_type(pack_subtype, pack_cost)
-		if pack_cost > 0:
-			pack_slot.pack_cost = pack_cost
+		pack_slot.set_pack_type(pack_subtype)
 	# Add to all_stacks so merging/dragging logic works
 	all_stacks.append([slot_instance])
 	return slot_instance
@@ -180,11 +178,10 @@ func handle_mouse_press() -> void:
 			if PACK_UNLOCK_CHAIN.has(clicked_card.subtype):
 				var threshold = PACK_UNLOCK_CHAIN[clicked_card.subtype][0]
 				var next_subtype  = PACK_UNLOCK_CHAIN[clicked_card.subtype][1]
-				var next_card_pack_cost = PACK_UNLOCK_CHAIN[clicked_card.subtype][2]
-				var next_card_pack_position = PACK_UNLOCK_CHAIN[clicked_card.subtype][3]
+				var next_card_pack_position = PACK_UNLOCK_CHAIN[clicked_card.subtype][2]
 				var opened_count = PlayerProgress.card_pack_opened.get(clicked_card.subtype, 0)
 				if opened_count >= threshold:
-					spawn_slot("res://Scenes/PackSlot.tscn", next_card_pack_position, next_subtype, next_card_pack_cost)
+					spawn_slot("res://Scenes/PackSlot.tscn", next_card_pack_position, next_subtype)
 		last_clicked_card = null
 		return
 	else:
@@ -313,6 +310,8 @@ func finish_drag_generic(cards: Array, is_simulated: bool, play_sound: bool = tr
 			if not is_instance_valid(card):
 				continue
 			var target_pos = base_pos + Vector2(0, i * STACK_Y_OFFSET) + Vector2(0, extra_offset_y)
+			target_pos.x = clamp(target_pos.x, map_manager.map_rect.position.x, map_manager.map_rect.position.x + map_manager.map_rect.size.x)
+			target_pos.y = clamp(target_pos.y, map_manager.map_rect.position.y, map_manager.map_rect.position.y + map_manager.map_rect.size.y)
 			if card.is_equipped and card.attached_slot:
 				card.global_position = target_pos
 				card.scale = Vector2(1, 1)
@@ -697,67 +696,93 @@ func get_weighted_loot(loot_table: Array) -> String:
 			return item.subtype
 	return loot_table[-1].subtype # fallback
 
-func open_card_pack(pack_card: Card, num_cards := 5) -> void:
-	if not is_instance_valid(pack_card) or pack_card.card_type != "card_pack":
+func open_card_pack(card_pack: Card, num_cards := 5) -> void:
+	if not is_instance_valid(card_pack) or card_pack.card_type != "card_pack":
 		return
-	if not CardDatabase.has(pack_card.subtype):
+	if not CardDatabase.has(card_pack.subtype):
 		return
-	var pack_data = CardDatabase[pack_card.subtype]
+	var pack_data = CardDatabase[card_pack.subtype]
 	if not pack_data.has("loot_table"):
 		return
 	# --- Disable interactions for the pack only ---
-	pack_card.is_being_dragged = false
-	pack_card.is_being_simulated_dragged = true
-	if pack_card.area:
-		pack_card.area.monitoring = false
-		pack_card.area.monitorable = false
+	card_pack.is_being_dragged = false
+	card_pack.is_being_simulated_dragged = true
+	if card_pack.area:
+		card_pack.area.monitoring = false
+		card_pack.area.monitorable = false
 	if SoundManager:
 		SoundManager.play("card_pack_open", -4.0)
 	# Keep the pack visually above spawned cards
-	pack_card.z_index = 1000
-	pack_card.show()
+	card_pack.z_index = 1000
+	card_pack.show()
 	var arc_angle := deg_to_rad(180)
 	var start_angle := -arc_angle / 2
 	var radius := 250
 	var delay_per_card := 0.1
-	var total_duration := delay_per_card * num_cards + 0.3  # last card tween duration
 	var last_tween: Tween = null
 	# --- Tween the pack scale slightly bigger ---
 	var pack_tween = get_tree().create_tween()
-	pack_tween.tween_property(pack_card, "scale", Vector2(1.1, 1.1), 0.25)\
+	pack_tween.tween_property(card_pack, "scale", Vector2(1.1, 1.1), 0.5)\
 		.set_trans(Tween.TRANS_QUAD)\
 		.set_ease(Tween.EASE_OUT)
+	await pack_tween.finished
+	# --- Spawn each card in an arc with delay ---
 	for i in range(num_cards):
 		var loot_subtype = get_weighted_loot(pack_data["loot_table"])
 		var t: float = 0 if num_cards == 1 else float(i) / float(num_cards - 1)
 		var angle: float = start_angle + t * arc_angle
-		var offset := Vector2(sin(angle), -cos(angle)) * radius
-		# Spawn the card at the pack position
-		var card = spawn_card(loot_subtype, pack_card.global_position)
+		var default_offset := Vector2(sin(angle), -cos(angle)) * radius
+		var default_pos := card_pack.global_position + default_offset
+		# --- Determine target position based on nearby matching cards ---
+		var target_pos: Vector2 = default_pos
+		var search_radius = 300
+		var min_distance_from_pack := 10.0  # ignore cards at the pack's position
+		for s in all_stacks:
+			if s.size() == 0:
+				continue
+			var top_card = s.back()
+			if not is_instance_valid(top_card):
+				continue
+			if top_card.subtype != loot_subtype:
+				continue
+			# Skip cards that are still on the pack
+			if top_card.global_position.distance_to(card_pack.global_position) <= min_distance_from_pack:
+				continue
+			var dist = top_card.global_position.distance_to(default_pos)
+			if dist <= search_radius:
+				target_pos = top_card.global_position
+				break
+		# --- Spawn and tween card ---
+		var card = spawn_card(loot_subtype, card_pack.global_position)
 		card.is_being_simulated_dragged = true
 		var tween = get_tree().create_tween()
 		tween.tween_interval(i * delay_per_card)
-		tween.tween_property(card, "position", pack_card.global_position + offset, 0.3)\
+		tween.tween_callback(func():
+			if SoundManager:
+				SoundManager.play("card_pop", -16.0)
+		)
+		tween.tween_property(card, "position", target_pos, 0.3)\
 			.set_trans(Tween.TRANS_QUAD)\
 			.set_ease(Tween.EASE_OUT)
 		tween.tween_callback(func() -> void:
-			finish_drag_simulated([card])
+			if is_instance_valid(card):
+				finish_drag_simulated([card])
 		)
 		last_tween = tween
-	# Safely remove the pack after all cards have spawned
+	# --- Safely remove the pack after all cards have spawned ---
 	if last_tween:
 		last_tween.tween_callback(func() -> void:
-			if is_instance_valid(pack_card):
-				var stack = find_stack(pack_card)
-				if stack and stack.has(pack_card):
-					stack.erase(pack_card)
+			if is_instance_valid(card_pack):
+				var stack = find_stack(card_pack)
+				if stack and stack.has(card_pack):
+					stack.erase(card_pack)
 					if stack.is_empty():
 						all_stacks.erase(stack)
-				pack_card.queue_free()
+				card_pack.queue_free()
 		)
-	else:
-		if is_instance_valid(pack_card):
-			pack_card.queue_free()
+	await last_tween.finished
+	if is_instance_valid(card_pack):
+		card_pack.queue_free()
 
 func debug_print_stacks() -> void:
 	print("---- All Stacks ----")

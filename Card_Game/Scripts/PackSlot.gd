@@ -9,7 +9,6 @@ const PACK_TEXTURES := {
 
 # --- Properties ---
 var pack_subtype: String = ""   # The type of card pack this slot produces
-var pack_cost: int = 0          # Cost in coins to unlock
 var current_value: int = 0              # Tracks inserted coins
 var packs_to_spawn: int = 0  # tracks packs that still need to be visually spawned
 var is_spawning_packs: bool = false
@@ -17,9 +16,8 @@ var is_spawning_packs: bool = false
 @onready var progress_label: Label = $PackProgressLabel
 @onready var slot_sprite: Sprite2D = $PackSlotSprite  # The texture to display
 
-func set_pack_type(subtype: String, cost: int) -> void:
+func set_pack_type(subtype: String) -> void:
 	pack_subtype = subtype
-	pack_cost = cost
 	update_label()
 	update_texture()
 
@@ -28,7 +26,9 @@ func update_texture() -> void:
 		slot_sprite.texture = PACK_TEXTURES[pack_subtype]
 
 func update_label() -> void:
-	progress_label.text = "%d/%d" % [current_value, pack_cost]
+	if CardDatabase.card_database.has(pack_subtype):
+		var cost = CardDatabase.card_database[pack_subtype]["value"]
+		progress_label.text = "%d/%d" % [current_value, cost]
 
 # --- Accept coins/cards ---
 func add_value(card: Card) -> void:
@@ -44,8 +44,11 @@ func add_value(card: Card) -> void:
 	check_unlock()
 
 func check_unlock() -> void:
-	while current_value >= pack_cost:
-		current_value -= pack_cost
+	if not CardDatabase.card_database.has(pack_subtype):
+		return
+	var cost = CardDatabase.card_database[pack_subtype]["value"]
+	while current_value >= cost:
+		current_value -= cost
 		packs_to_spawn += 1
 		update_label()
 	if not is_spawning_packs and packs_to_spawn > 0:
@@ -81,7 +84,7 @@ func spawn_card_pack() -> void:
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	# --- Scale tween (pop in mid-flight) ---
 	var tween_scale = get_tree().create_tween()
-	tween_scale.tween_property(pack_card, "scale", Vector2(1.25, 1.25), 0.5)\
+	tween_scale.tween_property(pack_card, "scale", Vector2(1.3, 1.3), 0.5)\
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween_scale.tween_property(pack_card, "scale", Vector2(1.1, 1.1), 0.5)\
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)

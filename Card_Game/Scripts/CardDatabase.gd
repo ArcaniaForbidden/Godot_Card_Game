@@ -34,6 +34,7 @@ static var card_database = {
 		"sprite": preload("res://Images/blank.png"),
 		"card_type": "card_pack",
 		"display_name": "",
+		"value": 10,
 		"rarity": "silver",
 		"description": "The plains card pack. The starting location pack.",
 		"loot_table": [
@@ -49,6 +50,7 @@ static var card_database = {
 		"sprite": preload("res://Images/blank.png"),
 		"card_type": "card_pack",
 		"display_name": "",
+		"value": 10,
 		"rarity": "silver",
 		"description": "The forest card pack.",
 		"loot_table": [
@@ -62,6 +64,7 @@ static var card_database = {
 		"sprite": preload("res://Images/blank.png"),
 		"card_type": "card_pack",
 		"display_name": "",
+		"value": 10,
 		"rarity": "silver",
 		"description": "The mountain card pack.",
 		"loot_table": [
