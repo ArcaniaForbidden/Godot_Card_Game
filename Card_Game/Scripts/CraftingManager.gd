@@ -177,8 +177,6 @@ func complete_job(job: CraftingJob) -> void:
 			start_pos = stack[0].position
 		var new_card = card_manager.spawn_card(subtype, start_pos)
 		PlayerProgress.increment_card_count(subtype)
-		if SoundManager:
-			SoundManager.play("card_pop", -4.0)
 		new_card.is_being_simulated_dragged = true
 		print("Spawned '%s' at %s" % [subtype, start_pos])
 		# Find nearby stack to merge
@@ -223,6 +221,8 @@ func complete_job(job: CraftingJob) -> void:
 		))
 	# --- Finish job ---
 	PlayerProgress.increment_recipe(job.recipe_name)
+	if SoundManager:
+		SoundManager.play("card_pop", -4.0)
 	job.is_active = false
 	if job in active_jobs:
 		active_jobs.erase(job)
@@ -235,12 +235,32 @@ func stack_matches_recipe(stack: Array, recipe_inputs: Array) -> Array:
 	if stack.size() < recipe_inputs.size():
 		return []
 	var matched_cards: Array = []
-	for i in range(recipe_inputs.size()):
-		var card = stack[i]
-		var input = recipe_inputs[i]
+	var stack_copy = stack.duplicate()
+	# Step 1: Match non-consumed cards in order
+	var index = 0
+	for input in recipe_inputs:
+		if input.get("consume", false):
+			continue
+		if index >= stack_copy.size():
+			return []
+		var card = stack_copy[index]
 		if not is_instance_valid(card) or card.subtype != input["subtype"]:
-			return []  # mismatch
+			return []  # non-consumed mismatch
 		matched_cards.append(card)
+		stack_copy.remove_at(index)  # remove matched card from copy
+	# Step 2: Match consumed cards anywhere in remaining stack
+	for input in recipe_inputs:
+		if not input.get("consume", false):
+			continue
+		var found = false
+		for card in stack_copy:
+			if is_instance_valid(card) and card.subtype == input["subtype"]:
+				matched_cards.append(card)
+				stack_copy.erase(card)
+				found = true
+				break
+		if not found:
+			return []  # required consumed card not found
 	return matched_cards
 
 # ==============================
