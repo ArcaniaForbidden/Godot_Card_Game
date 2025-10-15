@@ -6,14 +6,7 @@ const COLLISION_MASK_CARD := 1
 const STACK_Y_OFFSET := 30.0            # Vertical spacing between cards in a stack
 const DRAG_Z_INDEX := 1000              # Z-index while dragging
 const OVERLAP_THRESHOLD := 10.0         # Percent overlap for merging stacks
-const ENEMY_STEP_DISTANCE := 150.0      # How far enemies move per step
-const ENEMY_IDLE_MIN := 0.8             # Min wait time before next step
-const ENEMY_IDLE_MAX := 1.5             # Max wait time before next step
-const ENEMY_TWEEN_DURATION := 0.3       # Tween duration for enemy movement
 const STACK_TWEEN_DURATION := 0.2       # Tween duration for stack visuals
-const OUTPUT_MIN_DIST := 100.0
-const OUTPUT_MAX_DIST := 150.0
-const OUTPUT_TWEEN_TIME := 0.3
 const PUSH_STRENGTH := 1000
 const PUSH_ITERATIONS := 1
 const DOUBLE_CLICK_TIME := 0.3
@@ -34,7 +27,6 @@ var card_scene = preload("res://Scenes/Card.tscn")
 var CardDatabase = preload("res://Scripts/CardDatabase.gd").card_database
 var crafting_manager: Node = null
 var map_manager: Node = null
-var screen_size: Vector2
 var cached_rects: Dictionary = {}  # card -> Rect2
 var card_tweens: Dictionary = {}   # card -> SceneTreeTween
 var allowed_stack_types := {
@@ -54,7 +46,6 @@ var allowed_stack_types := {
 func _ready() -> void:
 	crafting_manager = get_parent().get_node("CraftingManager")
 	map_manager = get_parent().get_node("MapManager")
-	screen_size = get_viewport_rect().size
 	spawn_initial_cards()
 	spawn_initial_slots()
 
