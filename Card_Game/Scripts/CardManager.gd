@@ -11,8 +11,6 @@ const ENEMY_IDLE_MIN := 0.8             # Min wait time before next step
 const ENEMY_IDLE_MAX := 1.5             # Max wait time before next step
 const ENEMY_TWEEN_DURATION := 0.3       # Tween duration for enemy movement
 const STACK_TWEEN_DURATION := 0.2       # Tween duration for stack visuals
-const PUSH_TWEEN_DURATION := 0.025
-const PLAY_AREA := Rect2(Vector2(-2000, -1000), Vector2(4000, 2000))
 const OUTPUT_MIN_DIST := 100.0
 const OUTPUT_MAX_DIST := 150.0
 const OUTPUT_TWEEN_TIME := 0.3
@@ -707,38 +705,59 @@ func open_card_pack(pack_card: Card, num_cards := 5) -> void:
 	var pack_data = CardDatabase[pack_card.subtype]
 	if not pack_data.has("loot_table"):
 		return
-	var arc_angle := deg_to_rad(180)  # total arc in radians (180° spread)
-	var start_angle := -arc_angle / 2  # start left
-	var radius := 250  # distance from pack center
+	# --- Disable interactions for the pack only ---
+	pack_card.is_being_dragged = false
+	pack_card.is_being_simulated_dragged = true
+	if pack_card.area:
+		pack_card.area.monitoring = false
+		pack_card.area.monitorable = false
+	if SoundManager:
+		SoundManager.play("card_pack_open", -4.0)
+	# Keep the pack visually above spawned cards
+	pack_card.z_index = 1000
+	pack_card.show()
+	var arc_angle := deg_to_rad(180)
+	var start_angle := -arc_angle / 2
+	var radius := 250
+	var delay_per_card := 0.1
+	var total_duration := delay_per_card * num_cards + 0.3  # last card tween duration
+	var last_tween: Tween = null
+	# --- Tween the pack scale slightly bigger ---
+	var pack_tween = get_tree().create_tween()
+	pack_tween.tween_property(pack_card, "scale", Vector2(1.1, 1.1), 0.25)\
+		.set_trans(Tween.TRANS_QUAD)\
+		.set_ease(Tween.EASE_OUT)
 	for i in range(num_cards):
 		var loot_subtype = get_weighted_loot(pack_data["loot_table"])
-		# Compute angle for this card in the arc
 		var t: float = 0 if num_cards == 1 else float(i) / float(num_cards - 1)
 		var angle: float = start_angle + t * arc_angle
 		var offset := Vector2(sin(angle), -cos(angle)) * radius
-		# Spawn the card at the pack’s position
+		# Spawn the card at the pack position
 		var card = spawn_card(loot_subtype, pack_card.global_position)
-		card.is_being_simulated_dragged = true  # avoid physics interference during tween
-		# Tween the card outward in an arc
+		card.is_being_simulated_dragged = true
 		var tween = get_tree().create_tween()
-		tween.tween_property(
-			card, 
-			"position", 
-			pack_card.global_position + offset, 
-			0.3
-		).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tween.tween_interval(i * delay_per_card)
+		tween.tween_property(card, "position", pack_card.global_position + offset, 0.3)\
+			.set_trans(Tween.TRANS_QUAD)\
+			.set_ease(Tween.EASE_OUT)
 		tween.tween_callback(func() -> void:
 			finish_drag_simulated([card])
 		)
-	# Remove the opened pack
-	var stack = find_stack(pack_card)
-	if stack and stack.has(pack_card):
-		stack.erase(pack_card)
-		if stack.is_empty():
-			all_stacks.erase(stack)
-	if SoundManager:
-		SoundManager.play("card_pack_open", -4.0)
-	pack_card.queue_free()
+		last_tween = tween
+	# Safely remove the pack after all cards have spawned
+	if last_tween:
+		last_tween.tween_callback(func() -> void:
+			if is_instance_valid(pack_card):
+				var stack = find_stack(pack_card)
+				if stack and stack.has(pack_card):
+					stack.erase(pack_card)
+					if stack.is_empty():
+						all_stacks.erase(stack)
+				pack_card.queue_free()
+		)
+	else:
+		if is_instance_valid(pack_card):
+			pack_card.queue_free()
 
 func debug_print_stacks() -> void:
 	print("---- All Stacks ----")
