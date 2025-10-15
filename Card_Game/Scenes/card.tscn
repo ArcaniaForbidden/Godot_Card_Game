@@ -1,13 +1,44 @@
-[gd_scene load_steps=10 format=3 uid="uid://b16dp41rjjkpr"]
+[gd_scene load_steps=14 format=3 uid="uid://b16dp41rjjkpr"]
 
 [ext_resource type="Script" uid="uid://dgcfaf2fk8x65" path="res://Scripts/card.gd" id="1_wejov"]
 [ext_resource type="Texture2D" uid="uid://doovqwb6u2y8c" path="res://Images/currency_card.png" id="2_u5wvb"]
-[ext_resource type="SpriteFrames" uid="uid://e55fuhdcrqmo" path="res://Animations/peasant.tres" id="3_xnv4g"]
 [ext_resource type="Texture2D" uid="uid://bjffoqc4n42b5" path="res://Images/iron_ingot.png" id="4_mm04k"]
 [ext_resource type="Texture2D" uid="uid://codod5tgigybh" path="res://Images/heart_icon.png" id="5_pbuqb"]
 [ext_resource type="LabelSettings" uid="uid://b2udwgke5epkp" path="res://Label_Settings.tres" id="5_xnv4g"]
 [ext_resource type="Texture2D" uid="uid://du8drnsg1cb6r" path="res://Images/gold_coin.png" id="7_mm04k"]
 [ext_resource type="Texture2D" uid="uid://dvwqv1ybhiyut" path="res://Images/foil_mask_rectangle.png" id="8_u5wvb"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_xnv4g"]
+load_path = "res://.godot/imported/house_spritesheet.png-c300a32b9403eb621663edd8a57f044a.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3bh5c"]
+atlas = SubResource("CompressedTexture2D_xnv4g")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4fryq"]
+atlas = SubResource("CompressedTexture2D_xnv4g")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eyq5i"]
+atlas = SubResource("CompressedTexture2D_xnv4g")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_u5wvb"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3bh5c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4fryq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eyq5i")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 6.0
+}]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ig7tw"]
 size = Vector2(98, 140)
@@ -21,9 +52,9 @@ texture = ExtResource("2_u5wvb")
 [node name="SpriteAnimated" type="AnimatedSprite2D" parent="."]
 position = Vector2(-8.34465e-07, 12)
 scale = Vector2(3, 3)
-sprite_frames = ExtResource("3_xnv4g")
+sprite_frames = SubResource("SpriteFrames_u5wvb")
 animation = &"idle"
-frame_progress = 0.644132
+frame_progress = 0.69165
 
 [node name="SpriteImage" type="Sprite2D" parent="."]
 position = Vector2(0, 12)

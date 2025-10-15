@@ -41,8 +41,10 @@ static var card_database = {
 			{"subtype": "plains", "weight": 10},
 			{"subtype": "plant_fiber", "weight": 55},
 			{"subtype": "soil", "weight": 25},
-			{"subtype": "horse", "weight": 5},
-			#{"subtype": "cow", "weight": 5},
+			{"subtype": "horse", "weight": 3},
+			{"subtype": "cow", "weight": 4},
+			{"subtype": "rabbit", "weight": 2},
+			{"subtype": "chicken", "weight": 1},
 		]
 	},
 	"forest_card_pack": {
@@ -55,8 +57,12 @@ static var card_database = {
 		"description": "The forest card pack.",
 		"loot_table": [
 			{"subtype": "forest", "weight": 10},
-			{"subtype": "tree", "weight": 20},
-			{"subtype": "wood", "weight": 70},
+			{"subtype": "tree", "weight": 15},
+			{"subtype": "wood", "weight": 65},
+			{"subtype": "horse", "weight": 2},
+			{"subtype": "cow", "weight": 1},
+			{"subtype": "rabbit", "weight": 4},
+			{"subtype": "chicken", "weight": 3},
 		]
 	},
 	"mountain_card_pack": {
@@ -73,7 +79,11 @@ static var card_database = {
 			{"subtype": "iron_deposit", "weight": 4},
 			{"subtype": "copper_deposit", "weight": 4},
 			{"subtype": "gold_deposit", "weight": 2},
-			{"subtype": "stone", "weight": 65},
+			{"subtype": "stone", "weight": 60},
+			{"subtype": "horse", "weight": 2},
+			{"subtype": "cow", "weight": 1},
+			{"subtype": "rabbit", "weight": 1},
+			{"subtype": "chicken", "weight": 1},
 		]
 	},
 	"plains": {
@@ -287,6 +297,14 @@ static var card_database = {
 		"value": 5,
 		"stats": {"health": 25}
 	},
+	"barn": {
+		"card": preload("res://Images/building_card.png"),
+		"sprite": preload("res://Images/house.png"),
+		"card_type": "building",
+		"display_name": "Barn",
+		"value": 5,
+		"stats": {"health": 25}
+	},
 	"warehouse": {
 		"card": preload("res://Images/building_card.png"),
 		"sprite": preload("res://Images/warehouse.png"),
@@ -479,7 +497,7 @@ static var card_database = {
 	},
 	"cow": {
 		"card": preload("res://Images/neutral_card.png"),
-		"sprite": preload("res://Images/wolf.png"),
+		"sprite": preload("res://Images/cow.png"),
 		"card_type": "neutral",
 		"display_name": "Cow",
 		"stats": {"health": 4, "attack": 1, "armor": 0, "attack_speed": 0.8},
@@ -494,7 +512,7 @@ static var card_database = {
 	},
 	"rabbit": {
 		"card": preload("res://Images/neutral_card.png"),
-		"sprite": preload("res://Images/wolf.png"),
+		"sprite": preload("res://Images/rabbit.png"),
 		"card_type": "neutral",
 		"display_name": "Rabbit",
 		"stats": {"health": 3, "attack": 1, "armor": 0, "attack_speed": 1.2},
@@ -506,7 +524,7 @@ static var card_database = {
 	},
 	"chicken": {
 		"card": preload("res://Images/neutral_card.png"),
-		"sprite": preload("res://Images/wolf.png"),
+		"sprite": preload("res://Images/chicken.png"),
 		"card_type": "neutral",
 		"display_name": "Chicken",
 		"stats": {"health": 2, "attack": 1, "armor": 0, "attack_speed": 1.0},
