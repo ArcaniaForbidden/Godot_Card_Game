@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://lqt2h0ckhgea"
-path="res://.godot/imported/campfire.png-544218f254cea0f4f5b9e3676c2ca236.ctex"
+uid="uid://cpv3orbx5dpts"
+path="res://.godot/imported/warehouse.png-e1c458c50d7eb6d252d26e0d6c952a8c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/campfire.png"
-dest_files=["res://.godot/imported/campfire.png-544218f254cea0f4f5b9e3676c2ca236.ctex"]
+source_file="res://Images/warehouse.png"
+dest_files=["res://.godot/imported/warehouse.png-e1c458c50d7eb6d252d26e0d6c952a8c.ctex"]
 
 [params]
 

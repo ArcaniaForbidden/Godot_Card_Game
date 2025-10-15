@@ -8,6 +8,7 @@ static var card_database = {
 		"card_type": "currency",
 		"display_name": "Copper Coin",
 		"value": 1,
+		"rarity": "silver",
 		"description": "A dull copper coin."
 	},
 	"silver_coin": {
@@ -267,19 +268,27 @@ static var card_database = {
 		"value": 1,
 		"food": 2,
 	},
-	"campfire": {
-		"card": preload("res://Images/building_card.png"),
-		"sprite": preload("res://Images/campfire.png"),
-		"card_type": "building",
-		"display_name": "Campfire",
-		"value": 2,
-		"stats": {"health": 10}
-	},
 	"house": {
 		"card": preload("res://Images/building_card.png"),
 		"sprite": preload("res://Images/house.png"),
 		"card_type": "building",
 		"display_name": "House",
+		"value": 5,
+		"stats": {"health": 25}
+	},
+	"cookhouse": {
+		"card": preload("res://Images/building_card.png"),
+		"sprite": preload("res://Images/house.png"),
+		"card_type": "building",
+		"display_name": "Cookhouse",
+		"value": 5,
+		"stats": {"health": 25}
+	},
+	"warehouse": {
+		"card": preload("res://Images/building_card.png"),
+		"sprite": preload("res://Images/warehouse.png"),
+		"card_type": "building",
+		"display_name": "Warehouse",
 		"value": 5,
 		"stats": {"health": 25}
 	},
@@ -429,9 +438,15 @@ static var card_database = {
 		"sprite": preload("res://Animations/peasant.tres"),
 		"animated": true,
 		"card_type": "unit",
-		"attack_type": "ranged",
 		"display_name": "Peasant",
 		"stats": {"health": 10, "attack": 0, "armor": 0, "attack_speed": 0.8},
+	},
+	"baby_peasant": {
+		"card": preload("res://Images/unit_card.png"),
+		"sprite": preload("res://Images/peasant.png"),
+		"card_type": "unit",
+		"display_name": "Baby Peasant",
+		"stats": {"health": 3},
 	},
 	"wolf": {
 		"card": preload("res://Images/enemy_card.png"),
@@ -448,7 +463,7 @@ static var card_database = {
 		"card": preload("res://Images/neutral_card.png"),
 		"sprite": preload("res://Images/horse.png"),
 		"card_type": "neutral",
-		"display_name": "Wolf",
+		"display_name": "Horse",
 		"stats": {"health": 5, "attack": 1, "armor": 0, "attack_speed": 1.0},
 		"loot_table": [
 			{ "subtype": "leather", "chance": 0.9 },
@@ -471,6 +486,29 @@ static var card_database = {
 			{ "subtype": "leather", "chance": 0.2 },
 			{ "subtype": "raw_meat", "chance": 0.9 },
 			{ "subtype": "raw_meat", "chance": 0.3 },
+			{ "subtype": "raw_meat", "chance": 0.1 },
+		]
+	},
+	"rabbit": {
+		"card": preload("res://Images/neutral_card.png"),
+		"sprite": preload("res://Images/wolf.png"),
+		"card_type": "neutral",
+		"display_name": "Rabbit",
+		"stats": {"health": 3, "attack": 1, "armor": 0, "attack_speed": 1.2},
+		"loot_table": [
+			{ "subtype": "leather", "chance": 0.5 },
+			{ "subtype": "raw_meat", "chance": 0.5 },
+			{ "subtype": "raw_meat", "chance": 0.2 },
+		]
+	},
+	"chicken": {
+		"card": preload("res://Images/neutral_card.png"),
+		"sprite": preload("res://Images/wolf.png"),
+		"card_type": "neutral",
+		"display_name": "Chicken",
+		"stats": {"health": 2, "attack": 1, "armor": 0, "attack_speed": 1.0},
+		"loot_table": [
+			{ "subtype": "raw_meat", "chance": 0.7 },
 			{ "subtype": "raw_meat", "chance": 0.1 },
 		]
 	},

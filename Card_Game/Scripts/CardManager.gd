@@ -48,8 +48,9 @@ var allowed_stack_types := {
 	"enemy": [],                                                           # enemies cannot stack
 	"neutral": [],
 	"building": ["building", "location"],
-	"location": ["location"],
+	"location": [],
 	"card_pack": ["card_pack"],
+	"food": ["food"],
 }
 
 func _ready() -> void:
@@ -101,16 +102,20 @@ func spawn_initial_cards() -> void:
 	spawn_card("plank", Vector2(800, 300))
 	spawn_card("water", Vector2(800, 300))
 	spawn_card("gold_coin", Vector2(900, 300))
+	spawn_card("gold_coin", Vector2(900, 300))
+	spawn_card("gold_coin", Vector2(900, 300))
+	spawn_card("gold_coin", Vector2(900, 300))
+	spawn_card("gold_coin", Vector2(900, 300))
 	spawn_card("iron_deposit", Vector2(800, 300))
 	spawn_card("copper_deposit", Vector2(800, 300))
 	spawn_card("gold_deposit", Vector2(800, 300))
-	spawn_card("wolf", Vector2(800, 600))
-	spawn_card("wolf", Vector2(900, 600))
-	spawn_card("wolf", Vector2(1800, 600))
-	spawn_card("forest", Vector2(0, 100))
-	spawn_card("plains", Vector2(0, 200))
-	spawn_card("mountain", Vector2(0, 300))
-	spawn_card("cave", Vector2(0, 400))
+	#spawn_card("wolf", Vector2(800, 600))
+	#spawn_card("wolf", Vector2(900, 600))
+	#spawn_card("wolf", Vector2(1800, 600))
+	#spawn_card("forest", Vector2(0, 100))
+	#spawn_card("plains", Vector2(0, 200))
+	#spawn_card("mountain", Vector2(0, 300))
+	#spawn_card("cave", Vector2(0, 400))
 
 func spawn_card(subtype: String, position: Vector2) -> Card:
 	var card: Card = card_scene.instantiate() as Card
@@ -451,7 +456,7 @@ func push_apart_cards() -> void:
 		if stack.is_empty() or not is_instance_valid(stack[0]) \
 			or stack.has(card_being_dragged) or stack[0].card_type == "enemy" \
 			or stack[0] is InventorySlot  or stack[0] is SellSlot or stack[0] is PackSlot\
-			or stack_has_simulated_dragged(stack) \
+			or stack_has_simulated_dragged(stack)\
 			or stack.any(func(c): return c.is_equipped if is_instance_valid(c) else false):
 			stack_bounds.append(null)
 			stack_card_centers.append(null)
@@ -702,18 +707,30 @@ func open_card_pack(pack_card: Card, num_cards := 5) -> void:
 	var pack_data = CardDatabase[pack_card.subtype]
 	if not pack_data.has("loot_table"):
 		return
-	var arc_angle := deg_to_rad(90)  # total arc in radians (90 degrees here)
+	var arc_angle := deg_to_rad(180)  # total arc in radians (180° spread)
 	var start_angle := -arc_angle / 2  # start left
-	var radius := 150  # distance from pack center
+	var radius := 250  # distance from pack center
 	for i in range(num_cards):
 		var loot_subtype = get_weighted_loot(pack_data["loot_table"])
-		# Compute angle for this card
+		# Compute angle for this card in the arc
 		var t: float = 0 if num_cards == 1 else float(i) / float(num_cards - 1)
 		var angle: float = start_angle + t * arc_angle
-		# Compute position offset
 		var offset := Vector2(sin(angle), -cos(angle)) * radius
-		# Spawn the card at the calculated position
-		spawn_card(loot_subtype, pack_card.global_position + offset)
+		# Spawn the card at the pack’s position
+		var card = spawn_card(loot_subtype, pack_card.global_position)
+		card.is_being_simulated_dragged = true  # avoid physics interference during tween
+		# Tween the card outward in an arc
+		var tween = get_tree().create_tween()
+		tween.tween_property(
+			card, 
+			"position", 
+			pack_card.global_position + offset, 
+			0.3
+		).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tween.tween_callback(func() -> void:
+			finish_drag_simulated([card])
+		)
+	# Remove the opened pack
 	var stack = find_stack(pack_card)
 	if stack and stack.has(pack_card):
 		stack.erase(pack_card)
@@ -741,24 +758,34 @@ func debug_print_stacks() -> void:
 # ==============================
 func handle_enemy_movement(delta: float) -> void:
 	var movable_types = ["enemy", "neutral"]
+	# Get the map rect from MapManager
+	var map_manager = get_tree().root.get_node("Main/MapManager")
+	var map_rect: Rect2 = map_manager.map_rect if map_manager else Rect2(Vector2.ZERO, Vector2(3000, 3000))
 	for stack in all_stacks:
+		if stack.size() == 0:
+			continue
 		var top_card = stack[-1]
 		if not is_instance_valid(top_card):
 			continue
 		if top_card.card_type not in movable_types:
 			continue
 		var enemy = top_card
-		# decrement idle timer
+		# Decrement idle timer
 		enemy.enemy_idle_timer -= delta
 		if enemy.enemy_idle_timer <= 0:
-			# pick random target within distance
+			# Pick random target within jump range
 			var distance_range = enemy.enemy_jump_distance
-			var target_pos = enemy.position + Vector2(randf_range(-distance_range, distance_range), randf_range(-distance_range, distance_range))
-			# Clamp to play area instead of viewport
-			target_pos.x = clamp(target_pos.x, PLAY_AREA.position.x, PLAY_AREA.position.x + PLAY_AREA.size.x)
-			target_pos.y = clamp(target_pos.y, PLAY_AREA.position.y, PLAY_AREA.position.y + PLAY_AREA.size.y)
-			# jump tween
+			var target_pos = enemy.position + Vector2(
+				randf_range(-distance_range, distance_range),
+				randf_range(-distance_range, distance_range)
+			)
+			# Clamp to map area
+			target_pos.x = clamp(target_pos.x, map_rect.position.x, map_rect.position.x + map_rect.size.x)
+			target_pos.y = clamp(target_pos.y, map_rect.position.y, map_rect.position.y + map_rect.size.y)
+			# Tween jump movement
 			var tween = get_tree().create_tween()
-			tween.tween_property(enemy, "position", target_pos, 0.25).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-			# reset idle timer randomly
+			tween.tween_property(enemy, "position", target_pos, 0.25)\
+				.set_trans(Tween.TRANS_QUAD)\
+				.set_ease(Tween.EASE_OUT)
+			# Reset idle timer
 			enemy.enemy_idle_timer = randf_range(enemy.enemy_min_jump_time, enemy.enemy_max_jump_time)

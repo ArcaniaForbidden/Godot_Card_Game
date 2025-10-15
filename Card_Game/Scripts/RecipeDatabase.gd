@@ -126,6 +126,18 @@ static var recipes = {
 		],
 		"work_time": 15.0
 	},
+	"Craft Iron Spear": {
+		"inputs": [
+			{"subtype": "forge", "consume": false},
+			{"subtype": "peasant", "consume": false},
+			{"subtype": "wood", "consume": true},
+			{"subtype": "iron_ingot", "consume": true}
+		],
+		"outputs": [
+			{"subtype": "iron_spear"}
+		],
+		"work_time": 15.0
+	},
 	"Craft Leather Helmet": {
 		"inputs": [
 			{"subtype": "peasant", "consume": false},
@@ -212,39 +224,42 @@ static var recipes = {
 		],
 		"work_time": 10.0
 	},
-	"Cook Raw Meat": {
-		"inputs": [
-			{"subtype": "campfire", "consume": false},
-			{"subtype": "raw_meat", "consume": true}
-		],
-		"outputs": [
-			{"subtype": "cooked_meat"}
-		],
-		"work_time": 10.0
-	},
-	"Build Campfire": {
-		"inputs": [
-			{"subtype": "wood", "consume": true},
-			{"subtype": "wood", "consume": true},
-			{"subtype": "plant_fiber", "consume": true},
-			{"subtype": "plant_fiber", "consume": true},
-			{"subtype": "peasant", "consume": false}
-		],
-		"outputs": [
-			{"subtype": "campfire"}
-		],
-		"work_time": 15.0
-	},
 	"Build House": {
 		"inputs": [
+			{"subtype": "wood", "consume": true},
+			{"subtype": "wood", "consume": true},
 			{"subtype": "plank", "consume": true},
 			{"subtype": "plank", "consume": true},
-			{"subtype": "brick", "consume": true},
-			{"subtype": "brick", "consume": true},
 			{"subtype": "peasant", "consume": false}
 		],
 		"outputs": [
 			{"subtype": "house"}
+		],
+		"work_time": 15.0
+	},
+	"Build Cookhouse": {
+		"inputs": [
+			{"subtype": "wood", "consume": true},
+			{"subtype": "wood", "consume": true},
+			{"subtype": "brick", "consume": true},
+			{"subtype": "brick", "consume": true},
+			{"subtype": "peasant", "consume": false}
+		],
+		"outputs": [
+			{"subtype": "cookhouse"}
+		],
+		"work_time": 15.0
+	},
+	"Build Warehouse": {
+		"inputs": [
+			{"subtype": "plank", "consume": true},
+			{"subtype": "plank", "consume": true},
+			{"subtype": "plank", "consume": true},
+			{"subtype": "plank", "consume": true},
+			{"subtype": "peasant", "consume": false}
+		],
+		"outputs": [
+			{"subtype": "warehouse"}
 		],
 		"work_time": 15.0
 	},
