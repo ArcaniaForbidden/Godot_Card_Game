@@ -54,7 +54,7 @@ position = Vector2(-8.34465e-07, 12)
 scale = Vector2(3, 3)
 sprite_frames = SubResource("SpriteFrames_u5wvb")
 animation = &"idle"
-frame_progress = 0.69165
+frame_progress = 0.902066
 
 [node name="SpriteImage" type="Sprite2D" parent="."]
 position = Vector2(0, 12)

@@ -192,6 +192,13 @@ static var card_database = {
 		"display_name": "Plant Fiber",
 		"value": 1,
 	},
+	"wheat": {
+		"card": preload("res://Images/material_card.png"),
+		"sprite": preload("res://Images/plant_fiber.png"),
+		"card_type": "material",
+		"display_name": "Wheat",
+		"value": 1,
+	},
 	"rope": {
 		"card": preload("res://Images/material_card.png"),
 		"sprite": preload("res://Images/rope.png"),
@@ -299,7 +306,7 @@ static var card_database = {
 	},
 	"barn": {
 		"card": preload("res://Images/building_card.png"),
-		"sprite": preload("res://Images/house.png"),
+		"sprite": preload("res://Images/barn.png"),
 		"card_type": "building",
 		"display_name": "Barn",
 		"value": 5,

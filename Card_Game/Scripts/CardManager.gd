@@ -723,26 +723,7 @@ func open_card_pack(card_pack: Card, num_cards := 5) -> void:
 		var t: float = 0 if num_cards == 1 else float(i) / float(num_cards - 1)
 		var angle: float = start_angle + t * arc_angle
 		var default_offset := Vector2(sin(angle), -cos(angle)) * radius
-		var default_pos := card_pack.global_position + default_offset
-		# --- Determine target position based on nearby matching cards ---
-		var target_pos: Vector2 = default_pos
-		var search_radius = 300
-		var min_distance_from_pack := 10.0  # ignore cards at the pack's position
-		for s in all_stacks:
-			if s.size() == 0:
-				continue
-			var top_card = s.back()
-			if not is_instance_valid(top_card):
-				continue
-			if top_card.subtype != loot_subtype:
-				continue
-			# Skip cards that are still on the pack
-			if top_card.global_position.distance_to(card_pack.global_position) <= min_distance_from_pack:
-				continue
-			var dist = top_card.global_position.distance_to(default_pos)
-			if dist <= search_radius:
-				target_pos = top_card.global_position
-				break
+		var target_pos := card_pack.global_position + default_offset
 		# --- Spawn and tween card ---
 		var card = spawn_card(loot_subtype, card_pack.global_position)
 		card.is_being_simulated_dragged = true

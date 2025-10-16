@@ -224,6 +224,27 @@ static var recipes = {
 		],
 		"work_time": 10.0
 	},
+	"Make Baby Peasant": {
+		"inputs": [
+			{"subtype": "house", "consume": false},
+			{"subtype": "peasant", "consume": false},
+			{"subtype": "peasant", "consume": false},
+		],
+		"outputs": [
+			{"subtype": "baby_peasant"}
+		],
+		"work_time": 30.0
+	},
+	"Grow Baby Peasant": {
+		"inputs": [
+			{"subtype": "house", "consume": false},
+			{"subtype": "baby_peasant", "consume": true},
+		],
+		"outputs": [
+			{"subtype": "peasant"}
+		],
+		"work_time": 300.0
+	},
 	"Build House": {
 		"inputs": [
 			{"subtype": "wood", "consume": true},
@@ -247,6 +268,21 @@ static var recipes = {
 		],
 		"outputs": [
 			{"subtype": "cookhouse"}
+		],
+		"work_time": 15.0
+	},
+	"Build Barn": {
+		"inputs": [
+			{"subtype": "wheat", "consume": true},
+			{"subtype": "wheat", "consume": true},
+			{"subtype": "wheat", "consume": true},
+			{"subtype": "plank", "consume": true},
+			{"subtype": "plank", "consume": true},
+			{"subtype": "plank", "consume": true},
+			{"subtype": "peasant", "consume": false}
+		],
+		"outputs": [
+			{"subtype": "barn"}
 		],
 		"work_time": 15.0
 	},
@@ -335,9 +371,9 @@ static var recipes = {
 	},
 	"Build Lumber Camp": {
 		"inputs": [
-			{"subtype": "brick", "consume": true},
-			{"subtype": "brick", "consume": true},
-			{"subtype": "brick", "consume": true},
+			{"subtype": "plank", "consume": true},
+			{"subtype": "plank", "consume": true},
+			{"subtype": "plank", "consume": true},
 			{"subtype": "forest", "consume": true},
 			{"subtype": "peasant", "consume": false}
 		],
