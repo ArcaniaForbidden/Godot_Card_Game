@@ -9,7 +9,6 @@
 [ext_resource type="Texture2D" uid="uid://dvwqv1ybhiyut" path="res://Images/foil_mask_rectangle.png" id="8_u5wvb"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_xnv4g"]
-load_path = "res://.godot/imported/house_spritesheet.png-c300a32b9403eb621663edd8a57f044a.ctex"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3bh5c"]
 atlas = SubResource("CompressedTexture2D_xnv4g")
@@ -54,7 +53,7 @@ position = Vector2(-8.34465e-07, 12)
 scale = Vector2(3, 3)
 sprite_frames = SubResource("SpriteFrames_u5wvb")
 animation = &"idle"
-frame_progress = 0.902066
+frame_progress = 0.225222
 
 [node name="SpriteImage" type="Sprite2D" parent="."]
 position = Vector2(0, 12)

@@ -11,6 +11,7 @@ var target_position: Vector2
 var is_being_dragged: bool = false
 var is_being_simulated_dragged: bool = false
 var card_type: String = ""
+var tags: Array = []
 var attack_type: String = ""
 var subtype: String = ""
 var display_name: String = ""
@@ -161,6 +162,8 @@ func setup(subtype_name: String) -> void:
 		value = int(data["value"])
 	else:
 		value = null
+	# --- Set tags from card data ---
+	self.tags = data.get("tags", [])
 	# --- Show/hide value label and icon ---
 	if card_type == "card_pack":
 		if value_icon:

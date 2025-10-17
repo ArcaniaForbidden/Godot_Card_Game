@@ -1,9 +1,12 @@
-[gd_scene load_steps=5 format=3 uid="uid://dhtophpde4mim"]
+[gd_scene load_steps=8 format=3 uid="uid://dhtophpde4mim"]
 
 [ext_resource type="Script" uid="uid://dasf3ndleqhxy" path="res://Scripts/PeasantInventory.gd" id="1_5ytgu"]
 [ext_resource type="Texture2D" uid="uid://cbfxqhsoyeyym" path="res://Images/unit_card_button.png" id="1_86x2w"]
 [ext_resource type="PackedScene" uid="uid://bwvammu487klk" path="res://Scenes/InventorySlot.tscn" id="3_b4jdk"]
+[ext_resource type="Texture2D" uid="uid://cbodk60bpvy7j" path="res://Images/slot_helmet.png" id="4_iw1fe"]
 [ext_resource type="Texture2D" uid="uid://da5cfkgdutycr" path="res://Images/slot_chestplate.png" id="5_iw1fe"]
+[ext_resource type="Texture2D" uid="uid://bv42uohqcydlj" path="res://Images/slot_leggings.png" id="6_mcd6n"]
+[ext_resource type="Texture2D" uid="uid://e0plg5pn1ibd" path="res://Images/slot_boots.png" id="7_t3nbv"]
 
 [node name="PeasantInventory" type="Control"]
 layout_mode = 3
@@ -22,15 +25,39 @@ texture_normal = ExtResource("1_86x2w")
 anchors_preset = 0
 
 [node name="WeaponSlot" parent="InventoryContainer" instance=ExtResource("3_b4jdk")]
-position = Vector2(100, 0)
+position = Vector2(0, 100)
 slot_type = "weapon"
 
+[node name="HelmetSlot" parent="InventoryContainer" instance=ExtResource("3_b4jdk")]
+position = Vector2(-100, -150)
+slot_type = "helmet"
+
+[node name="SlotIcon" parent="InventoryContainer/HelmetSlot" index="0"]
+texture = ExtResource("4_iw1fe")
+
 [node name="ChestplateSlot" parent="InventoryContainer" instance=ExtResource("3_b4jdk")]
-position = Vector2(-100, 0)
+position = Vector2(-100, -10)
 slot_type = "chestplate"
 
 [node name="SlotIcon" parent="InventoryContainer/ChestplateSlot" index="0"]
 texture = ExtResource("5_iw1fe")
 
+[node name="LeggingsSlot" parent="InventoryContainer" instance=ExtResource("3_b4jdk")]
+position = Vector2(100, -150)
+slot_type = "leggings"
+
+[node name="SlotIcon" parent="InventoryContainer/LeggingsSlot" index="0"]
+texture = ExtResource("6_mcd6n")
+
+[node name="BootsSlot" parent="InventoryContainer" instance=ExtResource("3_b4jdk")]
+position = Vector2(100, -10)
+slot_type = "boots"
+
+[node name="SlotIcon" parent="InventoryContainer/BootsSlot" index="0"]
+texture = ExtResource("7_t3nbv")
+
 [editable path="InventoryContainer/WeaponSlot"]
+[editable path="InventoryContainer/HelmetSlot"]
 [editable path="InventoryContainer/ChestplateSlot"]
+[editable path="InventoryContainer/LeggingsSlot"]
+[editable path="InventoryContainer/BootsSlot"]

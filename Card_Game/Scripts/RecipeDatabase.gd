@@ -243,7 +243,42 @@ static var recipes = {
 		"outputs": [
 			{"subtype": "peasant"}
 		],
-		"work_time": 300.0
+		"work_time": 700.0
+	},
+	"Grow Wheat on Farm": {
+		"inputs": [
+			{"subtype": "farm", "consume": false},
+			{"subtype": "wheat", "consume": true},
+		],
+		"outputs": [
+			{"subtype": "wheat"},
+			{"subtype": "wheat"},
+		],
+		"work_time": 180.0
+	},
+	"Grow Wheat on Farm with Water": {
+		"inputs": [
+			{"subtype": "farm", "consume": false},
+			{"subtype": "water", "consume": true},
+			{"subtype": "wheat", "consume": true},
+		],
+		"outputs": [
+			{"subtype": "wheat"},
+			{"subtype": "wheat"},
+		],
+		"work_time": 120.0
+	},
+	"Cook Bread": {
+		"inputs": [
+			{"subtype": "cookhouse", "consume": false},
+			{"subtype": "peasant", "consume": false},
+			{"subtype": "water", "consume": true},
+			{"subtype": "wheat", "consume": true},
+		],
+		"outputs": [
+			{"subtype": "bread"},
+		],
+		"work_time": 20.0
 	},
 	"Build House": {
 		"inputs": [
@@ -268,6 +303,21 @@ static var recipes = {
 		],
 		"outputs": [
 			{"subtype": "cookhouse"}
+		],
+		"work_time": 15.0
+	},
+	"Build Farm": {
+		"inputs": [
+			{"subtype": "soil", "consume": true},
+			{"subtype": "soil", "consume": true},
+			{"subtype": "soil", "consume": true},
+			{"subtype": "water", "consume": true},
+			{"subtype": "water", "consume": true},
+			{"subtype": "water", "consume": true},
+			{"subtype": "peasant", "consume": false}
+		],
+		"outputs": [
+			{"subtype": "farm"}
 		],
 		"work_time": 15.0
 	},
