@@ -194,7 +194,7 @@ static var card_database = {
 	},
 	"wheat": {
 		"card": preload("res://Images/material_card.png"),
-		"sprite": preload("res://Images/plant_fiber.png"),
+		"sprite": preload("res://Images/wheat.png"),
 		"card_type": "material",
 		"display_name": "Wheat",
 		"value": 1,
@@ -290,7 +290,7 @@ static var card_database = {
 	},
 	"bread": { 
 		"card": preload("res://Images/food_card.png"),
-		"sprite": preload("res://Images/cooked_meat.png"),
+		"sprite": preload("res://Images/bread.png"),
 		"card_type": "food",
 		"display_name": "Cooked Meat",
 		"value": 1,
