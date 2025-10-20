@@ -116,7 +116,7 @@ static var card_database = {
 	},
 	"aquifer": {
 		"card": preload("res://Images/location_card.png"),
-		"sprite": preload("res://Images/plains.png"),
+		"sprite": preload("res://Images/aquifer.png"),
 		"card_type": "location",
 		"display_name": "Aquifer",
 		"value": 5,
@@ -306,7 +306,7 @@ static var card_database = {
 	},
 	"cookhouse": {
 		"card": preload("res://Images/building_card.png"),
-		"sprite": preload("res://Images/house.png"),
+		"sprite": preload("res://Images/cookhouse.png"),
 		"card_type": "building",
 		"display_name": "Cookhouse",
 		"value": 5,
@@ -314,7 +314,7 @@ static var card_database = {
 	},
 	"farm": {
 		"card": preload("res://Images/building_card.png"),
-		"sprite": preload("res://Images/barn.png"),
+		"sprite": preload("res://Images/farm.png"),
 		"card_type": "building",
 		"display_name": "Farm",
 		"value": 5,
@@ -354,7 +354,7 @@ static var card_database = {
 	},
 	"barracks": {
 		"card": preload("res://Images/building_card.png"),
-		"sprite": preload("res://Images/house.png"),
+		"sprite": preload("res://Images/barracks.png"),
 		"card_type": "building",
 		"display_name": "Barracks",
 		"value": 5,
@@ -366,15 +366,6 @@ static var card_database = {
 		"card_type": "building",
 		"display_name": "Well",
 		"value": 5,
-		"stats": {"health": 25}
-	},
-	"wishing_well": {
-		"card": preload("res://Images/building_card.png"),
-		"sprite": preload("res://Images/well.png"),
-		"card_type": "building",
-		"display_name": "Wishing Well",
-		"value": 5,
-		"rarity": "silver",
 		"stats": {"health": 25}
 	},
 	"lumber_camp": {

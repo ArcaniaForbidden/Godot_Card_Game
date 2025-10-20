@@ -248,10 +248,9 @@ static var recipes = {
 	"Grow Wheat on Farm": {
 		"inputs": [
 			{"subtype": "farm", "consume": false},
-			{"subtype": "wheat", "consume": true},
+			{"subtype": "wheat", "consume": false},
 		],
 		"outputs": [
-			{"subtype": "wheat"},
 			{"subtype": "wheat"},
 		],
 		"work_time": 180.0
@@ -259,11 +258,10 @@ static var recipes = {
 	"Grow Wheat on Farm with Water": {
 		"inputs": [
 			{"subtype": "farm", "consume": false},
+			{"subtype": "wheat", "consume": false},
 			{"subtype": "water", "consume": true},
-			{"subtype": "wheat", "consume": true},
 		],
 		"outputs": [
-			{"subtype": "wheat"},
 			{"subtype": "wheat"},
 		],
 		"work_time": 120.0
@@ -402,20 +400,6 @@ static var recipes = {
 		],
 		"outputs": [
 			{"subtype": "well"}
-		],
-		"work_time": 15.0
-	},
-	"Build Wishing Well": {
-		"inputs": [
-			{"subtype": "well", "consume": true},
-			{"subtype": "iron_ingot", "consume": true},
-			{"subtype": "copper_ingot", "consume": true},
-			{"subtype": "gold_ingot", "consume": true},
-			#{"subtype": "gem", "consume": true},
-			{"subtype": "peasant", "consume": false}
-		],
-		"outputs": [
-			{"subtype": "wishing_well"}
 		],
 		"work_time": 15.0
 	},
