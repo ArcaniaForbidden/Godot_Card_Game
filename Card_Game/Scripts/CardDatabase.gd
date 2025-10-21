@@ -39,8 +39,9 @@ static var card_database = {
 		"description": "The plains card pack. The starting location pack.",
 		"loot_table": [
 			{"subtype": "plains", "weight": 10},
-			{"subtype": "plant_fiber", "weight": 55},
-			{"subtype": "soil", "weight": 25},
+			{"subtype": "plant_fiber", "weight": 45},
+			{"subtype": "wheat", "weight": 15},
+			{"subtype": "soil", "weight": 20},
 			{"subtype": "horse", "weight": 3},
 			{"subtype": "cow", "weight": 4},
 			{"subtype": "rabbit", "weight": 2},
@@ -411,22 +412,32 @@ static var card_database = {
 	"wooden_spear": {
 		"card": preload("res://Images/equipment_card.png"),
 		"sprite": preload("res://Images/wooden_spear.png"),
+		"sprite_rotation_offset": deg_to_rad(0),
+		"weapon_polygon": [
+			Vector2(1, 0), Vector2(4, 3), Vector2(5, 8), Vector2(2, 11), Vector2(0, 11), Vector2(-3, 8), Vector2(-2, 3)
+		],
+		"polygon_offset": Vector2(-1, -17),
 		"card_type": "equipment",
 		"slot": "weapon",
 		"display_name": "Wooden Spear",
 		"value": 2,
 		"description": "Basically a sharp stick.",
-		"stats": {"add": {"attack": 1}, "mul": {"attack_speed": 0.9}}
+		"stats": {"add": {"attack": 1, "attack_range": 300}, "mul": {"attack_speed": 0.9}}
 	},
 	"iron_spear": {
 		"card": preload("res://Images/equipment_card.png"),
 		"sprite": preload("res://Images/iron_spear.png"),
+		"sprite_rotation_offset": deg_to_rad(0),
+		"weapon_polygon": [
+			Vector2(1, 0), Vector2(5, 4), Vector2(5, 8), Vector2(2, 12), Vector2(0, 12), Vector2(-3, 8), Vector2(-3, 4)
+		],
+		"polygon_offset": Vector2(-1, -17),
 		"card_type": "equipment",
 		"slot": "weapon",
 		"display_name": "Iron Spear",
 		"value": 3,
 		"description": "A better, pointier spear.",
-		"stats": {"add": {"attack": 2}, "mul": {"attack_speed": 1.0}}
+		"stats": {"add": {"attack": 2, "attack_range": 300}, "mul": {"attack_speed": 1.0}}
 	},
 	"leather_helmet": {
 		"card": preload("res://Images/equipment_card.png"),
@@ -474,7 +485,7 @@ static var card_database = {
 		"animated": true,
 		"card_type": "unit",
 		"display_name": "Peasant",
-		"stats": {"health": 10, "attack": 0, "armor": 0, "attack_speed": 0.8},
+		"stats": {"health": 10, "attack": 0, "armor": 0, "attack_speed": 0.8, "attack_range": 0},
 	},
 	"baby_peasant": {
 		"card": preload("res://Images/unit_card.png"),
@@ -488,7 +499,7 @@ static var card_database = {
 		"sprite": preload("res://Images/wolf.png"),
 		"card_type": "enemy",
 		"display_name": "Wolf",
-		"stats": {"health": 4, "attack": 1, "armor": 0, "attack_speed": 1.2},
+		"stats": {"health": 4, "attack": 1, "armor": 0, "attack_speed": 1.2, "attack_range": 200},
 		"loot_table": [
 			{ "subtype": "leather", "chance": 0.7 },
 			{ "subtype": "leather", "chance": 0.2 },
@@ -499,7 +510,7 @@ static var card_database = {
 		"sprite": preload("res://Images/horse.png"),
 		"card_type": "neutral",
 		"display_name": "Horse",
-		"stats": {"health": 5, "attack": 1, "armor": 0, "attack_speed": 1.0},
+		"stats": {"health": 5, "attack": 1, "armor": 0, "attack_speed": 1.0, "attack_range": 200},
 		"loot_table": [
 			{ "subtype": "leather", "chance": 0.9 },
 			{ "subtype": "leather", "chance": 0.5 },
@@ -514,7 +525,7 @@ static var card_database = {
 		"sprite": preload("res://Images/cow.png"),
 		"card_type": "neutral",
 		"display_name": "Cow",
-		"stats": {"health": 4, "attack": 1, "armor": 0, "attack_speed": 0.8},
+		"stats": {"health": 4, "attack": 1, "armor": 0, "attack_speed": 0.8, "attack_range": 200},
 		"loot_table": [
 			{ "subtype": "leather", "chance": 0.9 },
 			{ "subtype": "leather", "chance": 0.5 },
@@ -529,7 +540,7 @@ static var card_database = {
 		"sprite": preload("res://Images/rabbit.png"),
 		"card_type": "neutral",
 		"display_name": "Rabbit",
-		"stats": {"health": 3, "attack": 1, "armor": 0, "attack_speed": 1.2},
+		"stats": {"health": 3, "attack": 1, "armor": 0, "attack_speed": 1.2, "attack_range": 200},
 		"loot_table": [
 			{ "subtype": "leather", "chance": 0.5 },
 			{ "subtype": "raw_meat", "chance": 0.5 },
@@ -541,7 +552,7 @@ static var card_database = {
 		"sprite": preload("res://Images/chicken.png"),
 		"card_type": "neutral",
 		"display_name": "Chicken",
-		"stats": {"health": 2, "attack": 1, "armor": 0, "attack_speed": 1.0},
+		"stats": {"health": 2, "attack": 1, "armor": 0, "attack_speed": 1.0, "attack_range": 200},
 		"loot_table": [
 			{ "subtype": "raw_meat", "chance": 0.7 },
 			{ "subtype": "raw_meat", "chance": 0.1 },

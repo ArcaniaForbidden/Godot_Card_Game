@@ -5,7 +5,7 @@ class_name CardManager
 const COLLISION_MASK_CARD := 1
 const STACK_Y_OFFSET := 30.0            # Vertical spacing between cards in a stack
 const DRAG_Z_INDEX := 1000              # Z-index while dragging
-const OVERLAP_THRESHOLD := 10.0         # Percent overlap for merging stacks
+const OVERLAP_THRESHOLD := 0.01         # Percent overlap for merging stacks
 const STACK_TWEEN_DURATION := 0.2       # Tween duration for stack visuals
 const PUSH_STRENGTH := 1000
 const PUSH_ITERATIONS := 1
@@ -145,7 +145,7 @@ func spawn_slot(slot_scene_path: String, position: Vector2, pack_subtype: String
 # ==============================
 func handle_mouse_press() -> void:
 	var clicked_card = raycast_check_for_card()
-	if not clicked_card:
+	if not (clicked_card is Card):
 		return
 	if clicked_card is InventorySlot:
 		print("Cannot drag inventory slot:", clicked_card.name)
@@ -155,9 +155,6 @@ func handle_mouse_press() -> void:
 		return
 	if clicked_card is PackSlot:
 		print("Cannot drag pack slot:", clicked_card.name)
-		return
-	if clicked_card.in_battle:
-		print("Cannot drag card in battle:", clicked_card.subtype)
 		return
 	if clicked_card.card_type == "enemy":
 		print("Cannot drag enemy card:", clicked_card.subtype)

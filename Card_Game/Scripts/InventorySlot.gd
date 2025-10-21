@@ -33,24 +33,44 @@ func equip_card(card: Card) -> bool:
 	if not can_accept_card(card):
 		return false
 	var card_manager = get_tree().root.get_node("Main/CardManager")
-	card_manager.kill_card_tween(card)  # remove any ongoing tween
+	card_manager.kill_card_tween(card)
 	card.is_being_dragged = false
-	# --- Attach immediately (logical, no reparent) ---
 	attached_card = card
 	card.attached_slot = self
 	card.is_equipped = true
-	card.is_equipping = true  # prevent snapping
+	card.is_equipping = true
 	var owner_card = get_owner_card()
 	if owner_card:
 		modify_stats(owner_card, card, true)
+		# --- Spawn weapon visual if equipping into weapon slot ---
+		if slot_type == "weapon":
+			var peasant_card = get_owner_card()  # This gets the Peasant card
+			if peasant_card.has_node("EquippedWeapon"):
+				peasant_card.get_node("EquippedWeapon").queue_free()
+			var weapon_scene = preload("res://Scenes/Weapon.tscn")
+			var weapon_instance = weapon_scene.instantiate()
+			weapon_instance.scale = Vector2(3, 3)
+			weapon_instance.name = "EquippedWeapon"
+			# Add weapon as a child of the Peasant card so it can orbit
+			peasant_card.add_child(weapon_instance)
+			weapon_instance.position = Vector2(50, -100)
+			print(peasant_card)
+			# Load sprite + collision
+			var weapon_data = CardDatabase.card_database.get(card.subtype, {})
+			if weapon_data.has("sprite"):
+				weapon_instance.get_node("Sprite2D").texture = weapon_data["sprite"]
+			if weapon_data.has("weapon_polygon"):
+				weapon_instance.get_node("Area2D/CollisionPolygon2D").polygon = weapon_data["weapon_polygon"]
+			if weapon_data.has("polygon_offset"):
+				weapon_instance.get_node("Area2D/CollisionPolygon2D").position = weapon_data["polygon_offset"]
 	var tween = get_tree().create_tween()
 	tween.tween_property(card, "global_position", global_position, card_manager.STACK_TWEEN_DURATION)\
 		 .set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.parallel().tween_property(card, "scale", Vector2(1, 1), card_manager.STACK_TWEEN_DURATION)\
 		 .set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.finished.connect(func() -> void:
-		card.is_equipping = false  # allow _process() to follow the slot now
-		visible = false  # hide the slot visually
+		card.is_equipping = false
+		visible = false
 	)
 	card_manager.card_tweens[card] = tween
 	return true
@@ -65,6 +85,11 @@ func unequip_card():
 		var owner_card = get_owner_card()
 		if owner_card:
 			modify_stats(owner_card, attached_card, false)
+			# --- Remove spawned weapon if unequipping from weapon slot ---
+			if slot_type == "weapon" and owner_card.has_node("EquippedWeapon"):
+				var weapon = owner_card.get_node("EquippedWeapon")
+				if is_instance_valid(weapon):
+					weapon.queue_free()
 		card_manager.all_stacks.append([attached_card])
 		attached_card.attached_slot = null
 		attached_card.is_equipped = false
