@@ -1,19 +1,18 @@
 [gd_scene load_steps=3 format=3 uid="uid://dnitkkjhhm5df"]
 
-[ext_resource type="Texture2D" uid="uid://dvfdupd8akr04" path="res://Images/wooden_spear.png" id="1_m5ws0"]
-[ext_resource type="Script" uid="uid://bp5oxsvq0kbk4" path="res://Scripts/Weapon.gd" id="1_sw2lr"]
+[ext_resource type="Script" uid="uid://bp5oxsvq0kbk4" path="res://Scripts/UnitWeapon.gd" id="1_xgos6"]
+[ext_resource type="Texture2D" uid="uid://dvfdupd8akr04" path="res://Images/wooden_spear.png" id="2_l534q"]
 
 [node name="Weapon" type="Node2D"]
-script = ExtResource("1_sw2lr")
+script = ExtResource("1_xgos6")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 rotation = -0.785398
-texture = ExtResource("1_m5ws0")
+texture = ExtResource("2_l534q")
 
 [node name="Area2D" type="Area2D" parent="."]
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area2D"]
 position = Vector2(-1, -17)
-scale = Vector2(1, 1)
 polygon = PackedVector2Array(1, 0, 4, 3, 5, 8, 2, 11, 0, 11, -3, 8, -2, 3)
 one_way_collision_margin = 0.0

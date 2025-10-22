@@ -412,32 +412,48 @@ static var card_database = {
 	"wooden_spear": {
 		"card": preload("res://Images/equipment_card.png"),
 		"sprite": preload("res://Images/wooden_spear.png"),
-		"sprite_rotation_offset": deg_to_rad(0),
 		"weapon_polygon": [
 			Vector2(1, 0), Vector2(4, 3), Vector2(5, 8), Vector2(2, 11), Vector2(0, 11), Vector2(-3, 8), Vector2(-2, 3)
 		],
 		"polygon_offset": Vector2(-1, -17),
 		"card_type": "equipment",
 		"slot": "weapon",
+		"weapon_type": "melee",
 		"display_name": "Wooden Spear",
 		"value": 2,
 		"description": "Basically a sharp stick.",
-		"stats": {"add": {"attack": 1, "attack_range": 300}, "mul": {"attack_speed": 0.9}}
+		"stats": {"add": {"attack": 1, "attack_range": 250, "attack_speed": 1.0}}
+	},
+	"bow": {
+		"card": preload("res://Images/equipment_card.png"),
+		"sprite": preload("res://Images/bow.png"),
+		"sprite_rotation_offset": deg_to_rad(45),
+		"card_type": "equipment",
+		"slot": "weapon",
+		"weapon_type": "ranged",
+		"display_name": "Bow",
+		"value": 2,
+		"description": "A weak bow, with greater range than a wooden spear, but low attack speed.",
+		"stats": {"add": {"attack": 1, "attack_range": 750, "attack_speed": 0.75}},
+		"projectile_sprite": preload("res://Images/arrow.png"),
+		"projectile_polygon": [Vector2(6, -2), Vector2(7, -2), Vector2(9, 0), Vector2(9, 1), Vector2(7, 3), Vector2(6, 3)],
+		"projectile_speed": 1500.0,
+		"projectile_lifetime": 0.5
 	},
 	"iron_spear": {
 		"card": preload("res://Images/equipment_card.png"),
 		"sprite": preload("res://Images/iron_spear.png"),
-		"sprite_rotation_offset": deg_to_rad(0),
 		"weapon_polygon": [
 			Vector2(1, 0), Vector2(5, 4), Vector2(5, 8), Vector2(2, 12), Vector2(0, 12), Vector2(-3, 8), Vector2(-3, 4)
 		],
 		"polygon_offset": Vector2(-1, -17),
 		"card_type": "equipment",
 		"slot": "weapon",
+		"weapon_type": "melee",
 		"display_name": "Iron Spear",
 		"value": 3,
 		"description": "A better, pointier spear.",
-		"stats": {"add": {"attack": 2, "attack_range": 300}, "mul": {"attack_speed": 1.0}}
+		"stats": {"add": {"attack": 2, "attack_range": 250, "attack_speed": 1.0}}
 	},
 	"leather_helmet": {
 		"card": preload("res://Images/equipment_card.png"),
@@ -485,7 +501,7 @@ static var card_database = {
 		"animated": true,
 		"card_type": "unit",
 		"display_name": "Peasant",
-		"stats": {"health": 10, "attack": 0, "armor": 0, "attack_speed": 0.8, "attack_range": 0},
+		"stats": {"health": 10, "attack": 0, "armor": 0, "attack_speed": 0.0, "attack_range": 0},
 	},
 	"baby_peasant": {
 		"card": preload("res://Images/unit_card.png"),

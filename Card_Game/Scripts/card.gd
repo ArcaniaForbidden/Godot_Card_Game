@@ -12,9 +12,9 @@ var is_being_dragged: bool = false
 var is_being_simulated_dragged: bool = false
 var card_type: String = ""
 var tags: Array = []
-var attack_type: String = ""
 var subtype: String = ""
 var display_name: String = ""
+var weapon_type: String = ""
 var value = null
 var slot: String = ""
 var stats: Dictionary = {}
@@ -28,6 +28,7 @@ var enemy_min_jump_time: float = 0.8
 var enemy_max_jump_time: float = 1.5
 var enemy_jump_distance: float = 150.0
 var in_battle: bool = false
+var is_dead: bool = false
 var is_equipped: bool = false
 var is_equipping: bool = false
 var attached_slot: InventorySlot = null
@@ -101,6 +102,24 @@ func remove_foil_effect() -> void:
 		foil_overlay.visible = false
 		foil_overlay.material = null
 
+func take_damage(amount: int):
+	if is_dead:
+		return
+	# Subtract health and clamp
+	health = clamp(health - amount, 0, max_health)
+	# Update the label like set_health
+	if health_label:
+		health_label.text = "%d/%d" % [health, max_health]
+		health_label.self_modulate = LABEL_COLOR
+	# Make sure icon is visible
+	if health_icon:
+		health_icon.visible = true
+	print("%s took %d damage, remaining HP: %d" % [name, amount, health])
+	if health <= 0:
+		is_dead = true
+		print("%s died!" % name)
+		queue_free()
+
 # --- Setup function ---
 func setup(subtype_name: String) -> void:
 	subtype = subtype_name
@@ -108,14 +127,11 @@ func setup(subtype_name: String) -> void:
 	var data = CardDatabase.card_database[subtype]
 	card_type = data.get("card_type", "")
 	display_name = data.get("display_name", subtype)
+	weapon_type = data.get("weapon_type", "")
 	print("Setup card '%s': card_type=%s, slot=%s" % [subtype, card_type, data.get("slot","")])
 	# Set textures
 	apply_foil_effect(data.get("rarity", ""))
 	var is_animated = data.get("animated", false)
-	if stats.has("attack_type") or card_type in ["unit", "enemy", "neutral", "building"]:
-		attack_type = stats.get("attack_type", "melee")
-	else:
-		attack_type = ""
 	if card_type == "card_pack":
 		if card_pack_label1:
 			var parts := subtype.split("_")

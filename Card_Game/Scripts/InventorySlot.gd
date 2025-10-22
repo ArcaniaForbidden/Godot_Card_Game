@@ -47,7 +47,7 @@ func equip_card(card: Card) -> bool:
 			var peasant_card = get_owner_card()  # This gets the Peasant card
 			if peasant_card.has_node("EquippedWeapon"):
 				peasant_card.get_node("EquippedWeapon").queue_free()
-			var weapon_scene = preload("res://Scenes/Weapon.tscn")
+			var weapon_scene = preload("res://Scenes/UnitWeapon.tscn")
 			var weapon_instance = weapon_scene.instantiate()
 			weapon_instance.scale = Vector2(3, 3)
 			weapon_instance.name = "EquippedWeapon"
@@ -63,6 +63,22 @@ func equip_card(card: Card) -> bool:
 				weapon_instance.get_node("Area2D/CollisionPolygon2D").polygon = weapon_data["weapon_polygon"]
 			if weapon_data.has("polygon_offset"):
 				weapon_instance.get_node("Area2D/CollisionPolygon2D").position = weapon_data["polygon_offset"]
+			if weapon_data.has("sprite_rotation_offset"):
+				weapon_instance.rotation = weapon_data["sprite_rotation_offset"]
+			if weapon_data.stats.has("add"):
+				var add_stats = weapon_data.stats["add"]
+				if add_stats.has("attack"):
+					weapon_instance.damage = add_stats["attack"]
+				if add_stats.has("attack_speed"):
+					weapon_instance.attack_cooldown = 1.0 / add_stats["attack_speed"]
+				if add_stats.has("attack_range"):
+					weapon_instance.attack_range = add_stats["attack_range"]
+			weapon_instance.weapon_type = weapon_data.get("weapon_type", "melee")
+			if weapon_data.has("projectile_sprite"):
+				weapon_instance.projectile_sprite = weapon_data["projectile_sprite"]
+			weapon_instance.projectile_speed = weapon_data.get("projectile_speed", 500.0)
+			weapon_instance.projectile_lifetime = weapon_data.get("projectile_lifetime", 1.0)
+			weapon_instance.projectile_polygon = weapon_data.get("projectile_polygon", [])
 	var tween = get_tree().create_tween()
 	tween.tween_property(card, "global_position", global_position, card_manager.STACK_TWEEN_DURATION)\
 		 .set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
