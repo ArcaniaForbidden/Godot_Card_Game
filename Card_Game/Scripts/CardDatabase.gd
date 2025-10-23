@@ -419,25 +419,26 @@ static var card_database = {
 		"card_type": "equipment",
 		"slot": "weapon",
 		"weapon_type": "melee",
+		"melee_type": "lunge",
 		"display_name": "Wooden Spear",
 		"value": 2,
 		"description": "Basically a sharp stick.",
-		"stats": {"add": {"attack": 1, "attack_range": 250, "attack_speed": 1.0}}
+		"stats": {"add": {"attack": 1, "attack_range": 300, "attack_speed": 1.0}}
 	},
 	"bow": {
 		"card": preload("res://Images/equipment_card.png"),
 		"sprite": preload("res://Images/bow.png"),
-		"sprite_rotation_offset": deg_to_rad(45),
+		"sprite_rotation_offset": deg_to_rad(90),
 		"card_type": "equipment",
 		"slot": "weapon",
 		"weapon_type": "ranged",
 		"display_name": "Bow",
 		"value": 2,
 		"description": "A weak bow, with greater range than a wooden spear, but low attack speed.",
-		"stats": {"add": {"attack": 1, "attack_range": 750, "attack_speed": 0.75}},
+		"stats": {"add": {"attack": 1, "attack_range": 600, "attack_speed": 0.75}},
 		"projectile_sprite": preload("res://Images/arrow.png"),
-		"projectile_polygon": [Vector2(6, -2), Vector2(7, -2), Vector2(9, 0), Vector2(9, 1), Vector2(7, 3), Vector2(6, 3)],
-		"projectile_speed": 1500.0,
+		"projectile_polygon": [Vector2(5, -4), Vector2(6, -4), Vector2(10, 0), Vector2(10, 1), Vector2(6, 5), Vector2(5, 5)],
+		"projectile_speed": 1200.0,
 		"projectile_lifetime": 0.5
 	},
 	"iron_spear": {
@@ -450,10 +451,44 @@ static var card_database = {
 		"card_type": "equipment",
 		"slot": "weapon",
 		"weapon_type": "melee",
+		"melee_type": "lunge",
 		"display_name": "Iron Spear",
 		"value": 3,
 		"description": "A better, pointier spear.",
-		"stats": {"add": {"attack": 2, "attack_range": 250, "attack_speed": 1.0}}
+		"stats": {"add": {"attack": 2, "attack_range": 300, "attack_speed": 1.0}}
+	},
+	"iron_sword": {
+		"card": preload("res://Images/equipment_card.png"),
+		"sprite": preload("res://Images/iron_sword.png"),
+		"weapon_polygon": [
+			Vector2(1, 0), Vector2(-1, 2), Vector2(-1, 21), Vector2(3, 21), Vector2(3, 2)
+		],
+		"polygon_offset": Vector2(-1, -17),
+		"card_type": "equipment",
+		"slot": "weapon",
+		"weapon_type": "melee",
+		"melee_type": "slash",
+		"display_name": "Iron Sword",
+		"value": 3,
+		"description": "A basic iron sword.",
+		"stats": {"add": {"attack": 2, "attack_range": 150, "attack_speed": 0.8}}
+	},
+	"iron_greatsword": {
+		"card": preload("res://Images/equipment_card.png"),
+		"sprite": preload("res://Images/iron_greatsword.png"),
+		"weapon_polygon": [
+			Vector2(1, 0), Vector2(-2, 3), Vector2(-2, 21), Vector2(4, 21), Vector2(4, 3)
+		],
+		"polygon_offset": Vector2(-1, -17),
+		"weapon_scale": Vector2(4, 4),
+		"card_type": "equipment",
+		"slot": "weapon",
+		"weapon_type": "melee",
+		"melee_type": "slash",
+		"display_name": "Iron Greatsword",
+		"value": 5,
+		"description": "A large iron greatsword.",
+		"stats": {"add": {"attack": 4, "attack_range": 200, "attack_speed": 0.6}}
 	},
 	"leather_helmet": {
 		"card": preload("res://Images/equipment_card.png"),
@@ -515,7 +550,8 @@ static var card_database = {
 		"sprite": preload("res://Images/wolf.png"),
 		"card_type": "enemy",
 		"display_name": "Wolf",
-		"stats": {"health": 4, "attack": 1, "armor": 0, "attack_speed": 1.2, "attack_range": 200},
+		"stats": {"health": 100, "attack": 1, "armor": 0, "attack_speed": 1.2, "attack_range": 200},
+		#health 4
 		"loot_table": [
 			{ "subtype": "leather", "chance": 0.7 },
 			{ "subtype": "leather", "chance": 0.2 },

@@ -126,6 +126,17 @@ static var recipes = {
 		],
 		"work_time": 15.0
 	},
+	"Craft Bow": {
+		"inputs": [
+			{"subtype": "peasant", "consume": false},
+			{"subtype": "wood", "consume": true},
+			{"subtype": "rope", "consume": true}
+		],
+		"outputs": [
+			{"subtype": "bow"}
+		],
+		"work_time": 15.0
+	},
 	"Craft Iron Spear": {
 		"inputs": [
 			{"subtype": "forge", "consume": false},
@@ -137,6 +148,32 @@ static var recipes = {
 			{"subtype": "iron_spear"}
 		],
 		"work_time": 15.0
+	},
+	"Craft Iron Sword": {
+		"inputs": [
+			{"subtype": "forge", "consume": false},
+			{"subtype": "peasant", "consume": false},
+			{"subtype": "plank", "consume": true},
+			{"subtype": "iron_ingot", "consume": true}
+		],
+		"outputs": [
+			{"subtype": "iron_sword"}
+		],
+		"work_time": 15.0
+	},
+	"Craft Iron Greatsword": {
+		"inputs": [
+			{"subtype": "forge", "consume": false},
+			{"subtype": "peasant", "consume": false},
+			{"subtype": "plank", "consume": true},
+			{"subtype": "iron_ingot", "consume": true},
+			{"subtype": "iron_ingot", "consume": true},
+			{"subtype": "iron_ingot", "consume": true},
+		],
+		"outputs": [
+			{"subtype": "iron_greatspear"}
+		],
+		"work_time": 30.0
 	},
 	"Craft Leather Helmet": {
 		"inputs": [
