@@ -7,10 +7,12 @@ var attack_range: float = 100.0
 var attack_cooldown: float = 1.0
 var time_since_attack: float = 0.0
 var weapon_type: String = "melee" # "melee" or "ranged"
+var melee_type: String = "lunge"  # "lunge" or "slash"
 var is_attacking: bool = false
 var base_position: Vector2 = Vector2.ZERO
 var has_dealt_damage_this_attack: bool = false
 var checking_lunge: bool = false
+var hit_targets: Array = []
 
 # --- Projectile properties for ranged weapons ---
 var projectile_scene = preload("res://Scenes/Projectile.tscn")
@@ -70,13 +72,75 @@ func get_nearest_enemy_in_range(origin: Vector2, range: float) -> Node2D:
 # --- Melee attack logic ---
 func melee_attack(target: Node2D):
 	if weapon_type != "melee":
-		return # Safety: ranged weapons do not lunge
+		return
 	is_attacking = true
 	has_dealt_damage_this_attack = false
+	hit_targets.clear()
 	var parent_card = get_parent()
 	if not parent_card:
 		is_attacking = false
 		return
+	if melee_type == "lunge":
+		lunge_attack(target)
+	elif melee_type == "slash":
+		slash_attack(target)
+
+func slash_attack(target: Node2D):
+	if weapon_type != "melee" or melee_type != "slash":
+		return
+	is_attacking = true
+	has_dealt_damage_this_attack = false
+	hit_targets.clear()
+	var parent_card = get_parent()
+	if not parent_card:
+		is_attacking = false
+		return
+	# --- Calculate geometry ---
+	var to_target = (target.global_position - parent_card.global_position).normalized()
+	var target_angle = to_target.angle()
+	var start_angle = target_angle + deg_to_rad(60)
+	var end_angle = target_angle - deg_to_rad(60)
+	var distance_to_target = (target.global_position - parent_card.global_position).length()
+	var offset = area2d.global_position - global_position
+	var radius = max(distance_to_target - offset.length(), 0)
+	var base_position = position
+	var base_rotation = rotation  # store for restoration later
+	var total_time = attack_cooldown
+	# --- Phase 1: Aim at target ---
+	rotation = target_angle + deg_to_rad(90)
+	# --- Define callables ---
+	var do_sweep = func(angle: float):
+		rotation = angle + deg_to_rad(90)
+		position = Vector2(cos(angle), sin(angle)) * radius
+		check_collision_for_damage()
+	var on_return_finished = func():
+		# Smoothly rotate back to idle orientation
+		var reset_tween = get_tree().create_tween()
+		reset_tween.tween_property(self, "rotation", base_rotation, total_time * 0.25).set_ease(Tween.EASE_IN_OUT)
+		reset_tween.finished.connect(func():
+			is_attacking = false
+			has_dealt_damage_this_attack = false
+			hit_targets.clear()
+		)
+	var return_to_base = func():
+		var return_tween = get_tree().create_tween()
+		return_tween.set_parallel(true)
+		return_tween.tween_property(self, "rotation", target_angle + deg_to_rad(90), total_time * 0.25).set_ease(Tween.EASE_OUT)
+		return_tween.tween_property(self, "position", base_position, total_time * 0.25).set_ease(Tween.EASE_IN_OUT)
+		return_tween.finished.connect(on_return_finished)
+	var start_sweep = func():
+		var sweep_tween = get_tree().create_tween()
+		sweep_tween.tween_method(do_sweep, start_angle, end_angle, total_time * 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		sweep_tween.finished.connect(return_to_base)
+	var on_windup_finished = func():
+		start_sweep.call()
+	var windup_tween = get_tree().create_tween()
+	windup_tween.set_parallel(true)
+	windup_tween.tween_property(self, "rotation", start_angle + deg_to_rad(90), total_time * 0.25).set_ease(Tween.EASE_IN_OUT)
+	windup_tween.tween_property(self, "position", Vector2(cos(start_angle), sin(start_angle)) * radius, total_time * 0.25).set_ease(Tween.EASE_OUT)
+	windup_tween.finished.connect(on_windup_finished)
+
+func lunge_attack(target: Node2D):
 	base_position = position
 	var to_target_global = target.global_position - global_position
 	var distance_to_target = to_target_global.length()
@@ -95,8 +159,9 @@ func melee_attack(target: Node2D):
 	tween.tween_property(self, "rotation", deg_to_rad(360), total_time * 0.2)
 	tween.finished.connect(func():
 		is_attacking = false
-		has_dealt_damage_this_attack = false
 		checking_lunge = false
+		has_dealt_damage_this_attack = false
+		hit_targets.clear()
 	)
 
 # --- Fire projectile for ranged weapons ---
@@ -106,7 +171,7 @@ func ranged_attack(card: Card, target: Node2D):
 	is_attacking = true  # prevent orbit logic from interfering
 	# Rotate bow to aim at target first
 	var to_target = (target.global_position - global_position).normalized()
-	var target_angle = to_target.angle() + deg_to_rad(45)
+	var target_angle = to_target.angle() + deg_to_rad(90)
 	var original_rotation = rotation  # store current rotation (includes sprite_rotation_offset)
 	var tween = get_tree().create_tween()
 	tween.tween_property(self, "rotation", target_angle, 0.2)
@@ -134,7 +199,7 @@ func ranged_attack(card: Card, target: Node2D):
 		is_attacking = false
 	)
 
-# --- Check melee collisions ---
+# --- Check for damage collisions ---
 func check_collision_for_damage():
 	if not area2d:
 		return
@@ -142,6 +207,6 @@ func check_collision_for_damage():
 		var card = area.get_parent()
 		if card and card.is_inside_tree() and card is Card:
 			if card.card_type == "enemy" and card.has_method("take_damage"):
-				card.take_damage(damage)
-				has_dealt_damage_this_attack = true
-				break
+				if card not in hit_targets:
+					card.take_damage(damage)
+					hit_targets.append(card)

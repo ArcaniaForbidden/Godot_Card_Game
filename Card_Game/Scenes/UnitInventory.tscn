@@ -1,0 +1,63 @@
+[gd_scene load_steps=8 format=3 uid="uid://dhtophpde4mim"]
+
+[ext_resource type="Script" uid="uid://dasf3ndleqhxy" path="res://Scripts/UnitInventory.gd" id="1_0yt1e"]
+[ext_resource type="Texture2D" uid="uid://cbfxqhsoyeyym" path="res://Images/unit_card_button.png" id="2_r1fn6"]
+[ext_resource type="PackedScene" uid="uid://bwvammu487klk" path="res://Scenes/InventorySlot.tscn" id="3_a4hqa"]
+[ext_resource type="Texture2D" uid="uid://cbodk60bpvy7j" path="res://Images/slot_helmet.png" id="4_ved6d"]
+[ext_resource type="Texture2D" uid="uid://da5cfkgdutycr" path="res://Images/slot_chestplate.png" id="5_j2ifh"]
+[ext_resource type="Texture2D" uid="uid://bv42uohqcydlj" path="res://Images/slot_leggings.png" id="6_q6cu3"]
+[ext_resource type="Texture2D" uid="uid://e0plg5pn1ibd" path="res://Images/slot_boots.png" id="7_8venh"]
+
+[node name="PeasantInventory" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_0yt1e")
+
+[node name="InventoryButton" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 10.0
+texture_normal = ExtResource("2_r1fn6")
+
+[node name="InventoryContainer" type="Control" parent="."]
+anchors_preset = 0
+
+[node name="WeaponSlot" parent="InventoryContainer" instance=ExtResource("3_a4hqa")]
+position = Vector2(0, 100)
+slot_type = "weapon"
+
+[node name="HelmetSlot" parent="InventoryContainer" instance=ExtResource("3_a4hqa")]
+position = Vector2(-100, -150)
+slot_type = "helmet"
+
+[node name="SlotIcon" parent="InventoryContainer/HelmetSlot" index="0"]
+texture = ExtResource("4_ved6d")
+
+[node name="ChestplateSlot" parent="InventoryContainer" instance=ExtResource("3_a4hqa")]
+position = Vector2(-100, -10)
+slot_type = "chestplate"
+
+[node name="SlotIcon" parent="InventoryContainer/ChestplateSlot" index="0"]
+texture = ExtResource("5_j2ifh")
+
+[node name="LeggingsSlot" parent="InventoryContainer" instance=ExtResource("3_a4hqa")]
+position = Vector2(100, -150)
+slot_type = "leggings"
+
+[node name="SlotIcon" parent="InventoryContainer/LeggingsSlot" index="0"]
+texture = ExtResource("6_q6cu3")
+
+[node name="BootsSlot" parent="InventoryContainer" instance=ExtResource("3_a4hqa")]
+position = Vector2(100, -10)
+slot_type = "boots"
+
+[node name="SlotIcon" parent="InventoryContainer/BootsSlot" index="0"]
+texture = ExtResource("7_8venh")
+
+[editable path="InventoryContainer/WeaponSlot"]
+[editable path="InventoryContainer/HelmetSlot"]
+[editable path="InventoryContainer/ChestplateSlot"]
+[editable path="InventoryContainer/LeggingsSlot"]
+[editable path="InventoryContainer/BootsSlot"]

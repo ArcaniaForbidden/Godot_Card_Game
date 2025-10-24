@@ -219,7 +219,7 @@ func setup(subtype_name: String) -> void:
 	attack_speed = float(stats.get("attack_speed", 0))
 	if subtype == "peasant":
 		if not has_node("PeasantInventory"):
-			var inventory_scene = preload("res://Scenes/PeasantInventory.tscn")
+			var inventory_scene = preload("res://Scenes/UnitInventory.tscn")
 			var inventory_instance = inventory_scene.instantiate()
 			add_child(inventory_instance)
 			inventory_instance.position = Vector2(0, 80)

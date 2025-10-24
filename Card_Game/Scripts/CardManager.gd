@@ -75,6 +75,8 @@ func spawn_initial_cards() -> void:
 	spawn_card("wooden_spear", Vector2(400,600))
 	spawn_card("bow", Vector2(400,700))
 	spawn_card("iron_spear", Vector2(400,800))
+	spawn_card("iron_sword", Vector2(400,800))
+	spawn_card("iron_greatsword", Vector2(400,800))
 	spawn_card("leather_helmet", Vector2(400,900))
 	spawn_card("leather_chestplate", Vector2(400,900))
 	spawn_card("leather_leggings", Vector2(400,900))
@@ -156,9 +158,9 @@ func handle_mouse_press() -> void:
 	if clicked_card is PackSlot:
 		print("Cannot drag pack slot:", clicked_card.name)
 		return
-	if clicked_card.card_type == "enemy":
-		print("Cannot drag enemy card:", clicked_card.subtype)
-		return
+	#if clicked_card.card_type == "enemy":
+		#print("Cannot drag enemy card:", clicked_card.subtype)
+		#return
 	if clicked_card.is_being_simulated_dragged:
 		return
 	var current_time = Time.get_ticks_msec() / 1000.0
@@ -773,35 +775,36 @@ func debug_print_stacks() -> void:
 #  ENEMY MOVEMENT
 # ==============================
 func handle_enemy_movement(delta: float) -> void:
-	var movable_types = ["enemy", "neutral"]
-	# Get the map rect from MapManager
-	var map_manager = get_tree().root.get_node("Main/MapManager")
-	var map_rect: Rect2 = map_manager.map_rect if map_manager else Rect2(Vector2.ZERO, Vector2(3000, 3000))
-	for stack in all_stacks:
-		if stack.size() == 0:
-			continue
-		var top_card = stack[-1]
-		if not is_instance_valid(top_card):
-			continue
-		if top_card.card_type not in movable_types:
-			continue
-		var enemy = top_card
-		# Decrement idle timer
-		enemy.enemy_idle_timer -= delta
-		if enemy.enemy_idle_timer <= 0:
-			# Pick random target within jump range
-			var distance_range = enemy.enemy_jump_distance
-			var target_pos = enemy.position + Vector2(
-				randf_range(-distance_range, distance_range),
-				randf_range(-distance_range, distance_range)
-			)
-			# Clamp to map area
-			target_pos.x = clamp(target_pos.x, map_rect.position.x, map_rect.position.x + map_rect.size.x)
-			target_pos.y = clamp(target_pos.y, map_rect.position.y, map_rect.position.y + map_rect.size.y)
-			# Tween jump movement
-			var tween = get_tree().create_tween()
-			tween.tween_property(enemy, "position", target_pos, 0.25)\
-				.set_trans(Tween.TRANS_QUAD)\
-				.set_ease(Tween.EASE_OUT)
-			# Reset idle timer
-			enemy.enemy_idle_timer = randf_range(enemy.enemy_min_jump_time, enemy.enemy_max_jump_time)
+	return
+	#var movable_types = ["enemy", "neutral"]
+	## Get the map rect from MapManager
+	#var map_manager = get_tree().root.get_node("Main/MapManager")
+	#var map_rect: Rect2 = map_manager.map_rect if map_manager else Rect2(Vector2.ZERO, Vector2(3000, 3000))
+	#for stack in all_stacks:
+		#if stack.size() == 0:
+			#continue
+		#var top_card = stack[-1]
+		#if not is_instance_valid(top_card):
+			#continue
+		#if top_card.card_type not in movable_types:
+			#continue
+		#var enemy = top_card
+		## Decrement idle timer
+		#enemy.enemy_idle_timer -= delta
+		#if enemy.enemy_idle_timer <= 0:
+			## Pick random target within jump range
+			#var distance_range = enemy.enemy_jump_distance
+			#var target_pos = enemy.position + Vector2(
+				#randf_range(-distance_range, distance_range),
+				#randf_range(-distance_range, distance_range)
+			#)
+			## Clamp to map area
+			#target_pos.x = clamp(target_pos.x, map_rect.position.x, map_rect.position.x + map_rect.size.x)
+			#target_pos.y = clamp(target_pos.y, map_rect.position.y, map_rect.position.y + map_rect.size.y)
+			## Tween jump movement
+			#var tween = get_tree().create_tween()
+			#tween.tween_property(enemy, "position", target_pos, 0.25)\
+				#.set_trans(Tween.TRANS_QUAD)\
+				#.set_ease(Tween.EASE_OUT)
+			## Reset idle timer
+			#enemy.enemy_idle_timer = randf_range(enemy.enemy_min_jump_time, enemy.enemy_max_jump_time)

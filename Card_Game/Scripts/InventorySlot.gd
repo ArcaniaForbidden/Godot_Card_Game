@@ -65,6 +65,10 @@ func equip_card(card: Card) -> bool:
 				weapon_instance.get_node("Area2D/CollisionPolygon2D").position = weapon_data["polygon_offset"]
 			if weapon_data.has("sprite_rotation_offset"):
 				weapon_instance.rotation = weapon_data["sprite_rotation_offset"]
+			if weapon_data.has("melee_type"):
+				weapon_instance.melee_type = weapon_data["melee_type"]
+			if weapon_data.has("weapon_scale"):
+				weapon_instance.scale = weapon_data["weapon_scale"]
 			if weapon_data.stats.has("add"):
 				var add_stats = weapon_data.stats["add"]
 				if add_stats.has("attack"):
