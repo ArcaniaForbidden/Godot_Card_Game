@@ -12,6 +12,7 @@ var is_attacking: bool = false
 var base_position: Vector2 = Vector2.ZERO
 var has_dealt_damage_this_attack: bool = false
 var checking_lunge: bool = false
+var owner_card: Card = null
 var hit_targets: Array = []
 
 # --- Projectile properties for ranged weapons ---
@@ -29,6 +30,11 @@ var orbit_angle: float = 0.0
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var area2d: Area2D = $Area2D
+
+func _ready():
+	var parent = get_parent()
+	if parent is Card:
+		owner_card = parent
 
 func _process(delta):
 	# --- Check melee lunge collisions ---
@@ -56,17 +62,27 @@ func _process(delta):
 # --- Get closest enemy in range ---
 func get_nearest_enemy_in_range(origin: Vector2, range: float) -> Node2D:
 	var card_manager = get_tree().root.get_node("Main/CardManager")
-	var nearest_target = null
+	var nearest_target: Card = null
 	var nearest_dist = range
+	if not owner_card:
+		return null
 	for stack in card_manager.all_stacks:
 		if stack.size() == 0:
 			continue
 		var card = stack[0]
-		if card.card_type == "enemy":
-			var dist = origin.distance_to(card.global_position)
-			if dist < nearest_dist:
-				nearest_dist = dist
-				nearest_target = card
+		if not card or not card.is_inside_tree():
+			continue
+		# --- Target filtering ---
+		if not can_damage(owner_card, card):
+			continue
+		# --- Range and distance check ---
+		var dist = origin.distance_to(card.global_position)
+		if dist > range:
+			continue
+		# --- Deterministic tie-breaking ---
+		if nearest_target == null or dist < nearest_dist or (is_equal_approx(dist, nearest_dist) and card.name < nearest_target.name):
+			nearest_dist = dist
+			nearest_target = card
 	return nearest_target
 
 # --- Melee attack logic ---
@@ -181,6 +197,7 @@ func ranged_attack(card: Card, target: Node2D):
 		projectile.global_position = global_position
 		projectile.damage = damage
 		projectile.scale = Vector2(3, 3)
+		projectile.owner_card = card
 		var sprite_node = projectile.get_node_or_null("Sprite2D")
 		if sprite_node and projectile_sprite:
 			sprite_node.texture = projectile_sprite
@@ -199,14 +216,30 @@ func ranged_attack(card: Card, target: Node2D):
 		is_attacking = false
 	)
 
+func can_damage(attacker: Card, target: Card) -> bool:
+	if not attacker or not target:
+		return false
+	match attacker.card_type:
+		"enemy":
+			return target.card_type in ["unit", "building"]
+		"unit":
+			return target.card_type in ["enemy", "neutral"]
+		"building":
+			return target.card_type == "enemy"
+		_:
+			return false
+
 # --- Check for damage collisions ---
 func check_collision_for_damage():
 	if not area2d:
 		return
+	var parent_card = get_parent()
+	if not parent_card or not (parent_card is Card):
+		return
 	for area in area2d.get_overlapping_areas():
 		var card = area.get_parent()
-		if card and card.is_inside_tree() and card is Card:
-			if card.card_type == "enemy" and card.has_method("take_damage"):
+		if card and card.is_inside_tree() and card is Card and card.has_method("take_damage"):
+			if can_damage(parent_card, card):
 				if card not in hit_targets:
 					card.take_damage(damage)
 					hit_targets.append(card)

@@ -47,7 +47,7 @@ func equip_card(card: Card) -> bool:
 			var peasant_card = get_owner_card()  # This gets the Peasant card
 			if peasant_card.has_node("EquippedWeapon"):
 				peasant_card.get_node("EquippedWeapon").queue_free()
-			var weapon_scene = preload("res://Scenes/UnitWeapon.tscn")
+			var weapon_scene = preload("res://Scenes/Weapon.tscn")
 			var weapon_instance = weapon_scene.instantiate()
 			weapon_instance.scale = Vector2(3, 3)
 			weapon_instance.name = "EquippedWeapon"

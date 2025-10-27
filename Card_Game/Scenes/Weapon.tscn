@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://dnitkkjhhm5df"]
 
-[ext_resource type="Script" uid="uid://bp5oxsvq0kbk4" path="res://Scripts/UnitWeapon.gd" id="1_xgos6"]
+[ext_resource type="Script" uid="uid://bp5oxsvq0kbk4" path="res://Scripts/Weapon.gd" id="1_xgos6"]
 [ext_resource type="Texture2D" uid="uid://dm52amg4t8m8j" path="res://Images/iron_greatsword.png" id="2_xgos6"]
 
 [node name="Weapon" type="Node2D"]

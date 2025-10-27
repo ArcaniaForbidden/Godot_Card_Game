@@ -550,7 +550,16 @@ static var card_database = {
 		"sprite": preload("res://Images/wolf.png"),
 		"card_type": "enemy",
 		"display_name": "Wolf",
-		"stats": {"health": 100, "attack": 1, "armor": 0, "attack_speed": 1.2, "attack_range": 200},
+		"stats": {"health": 100, "attack": 0, "armor": 0, "attack_speed": 0.0, "attack_range": 0},
+		"weapon_sprite": preload("res://Images/iron_sword.png"),
+		"weapon_polygon": [
+			Vector2(1, 0), Vector2(-1, 2), Vector2(-1, 21), Vector2(3, 21), Vector2(3, 2)
+		],
+		"polygon_offset": Vector2(-1, -17),
+		"slot": "weapon",
+		"weapon_type": "melee",
+		"melee_type": "slash",
+		"weapon_stats": {"add": {"attack": 1, "attack_range": 150, "attack_speed": 1.0}},
 		#health 4
 		"loot_table": [
 			{ "subtype": "leather", "chance": 0.7 },

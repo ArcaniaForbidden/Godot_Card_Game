@@ -218,11 +218,39 @@ func setup(subtype_name: String) -> void:
 	armor = int(stats.get("armor", 0))
 	attack_speed = float(stats.get("attack_speed", 0))
 	if subtype == "peasant":
-		if not has_node("PeasantInventory"):
-			var inventory_scene = preload("res://Scenes/UnitInventory.tscn")
-			var inventory_instance = inventory_scene.instantiate()
-			add_child(inventory_instance)
-			inventory_instance.position = Vector2(0, 80)
+		var inventory_scene = preload("res://Scenes/UnitInventory.tscn")
+		var inventory_instance = inventory_scene.instantiate()
+		add_child(inventory_instance)
+		inventory_instance.position = Vector2(0, 80)
+	# --- Enemy Weapon Setup ---
+	if card_type == "enemy" and data.has("weapon_sprite"):
+		var weapon_scene = preload("res://Scenes/Weapon.tscn")
+		var enemy_weapon_instance = weapon_scene.instantiate()
+		enemy_weapon_instance.name = "EnemyWeapon"
+		enemy_weapon_instance.owner_card = self
+		enemy_weapon_instance.scale = Vector2(3, 3)
+		add_child(enemy_weapon_instance)
+		if data.has("weapon_sprite"):
+			enemy_weapon_instance.get_node("Sprite2D").texture = data["weapon_sprite"]
+		if data.has("weapon_polygon"):
+			enemy_weapon_instance.get_node("Area2D/CollisionPolygon2D").polygon = data["weapon_polygon"]
+		if data.has("polygon_offset"):
+			enemy_weapon_instance.get_node("Area2D/CollisionPolygon2D").position = data["polygon_offset"]
+		if data.has("weapon_type"):
+			enemy_weapon_instance.weapon_type = data["weapon_type"]
+		if data.has("melee_type"):
+			enemy_weapon_instance.melee_type = data["melee_type"]
+		if data.has("weapon_stats"):
+			var weapon_stats = data["weapon_stats"]
+			if weapon_stats.has("add"):
+				var add_stats = weapon_stats["add"]
+				if add_stats.has("attack"):
+					enemy_weapon_instance.damage = add_stats["attack"]
+				if add_stats.has("attack_speed"):
+					enemy_weapon_instance.attack_cooldown = 1.0 / add_stats["attack_speed"]
+				if add_stats.has("attack_range"):
+					enemy_weapon_instance.attack_range = add_stats["attack_range"]
+		enemy_weapon_instance.position = Vector2(40, -40)
 
 # --- Hover signals ---
 func _on_area_input_event(viewport: Object, event: InputEvent, shape_idx: int) -> void:
