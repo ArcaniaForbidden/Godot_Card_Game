@@ -4,6 +4,7 @@ class_name Card
 signal hovered
 signal hovered_off
 signal ui_zoom_update(card: Card)
+signal died(card: Card)
 
 const LABEL_COLOR := Color.BLACK
 
@@ -118,6 +119,7 @@ func take_damage(amount: int):
 	if health <= 0:
 		is_dead = true
 		print("%s died!" % name)
+		emit_signal("died", self)
 		queue_free()
 
 # --- Setup function ---
@@ -178,7 +180,6 @@ func setup(subtype_name: String) -> void:
 		value = int(data["value"])
 	else:
 		value = null
-	# --- Set tags from card data ---
 	self.tags = data.get("tags", [])
 	# --- Show/hide value label and icon ---
 	if card_type == "card_pack":
@@ -228,8 +229,11 @@ func setup(subtype_name: String) -> void:
 		var enemy_weapon_instance = weapon_scene.instantiate()
 		enemy_weapon_instance.name = "EnemyWeapon"
 		enemy_weapon_instance.owner_card = self
-		enemy_weapon_instance.scale = Vector2(3, 3)
 		add_child(enemy_weapon_instance)
+		if data.has("weapon_scale"):
+			enemy_weapon_instance.scale = data["weapon_scale"]
+		else:
+			enemy_weapon_instance.scale = Vector2(3, 3)
 		if data.has("weapon_sprite"):
 			enemy_weapon_instance.get_node("Sprite2D").texture = data["weapon_sprite"]
 		if data.has("weapon_polygon"):
@@ -240,16 +244,19 @@ func setup(subtype_name: String) -> void:
 			enemy_weapon_instance.weapon_type = data["weapon_type"]
 		if data.has("melee_type"):
 			enemy_weapon_instance.melee_type = data["melee_type"]
-		if data.has("weapon_stats"):
-			var weapon_stats = data["weapon_stats"]
-			if weapon_stats.has("add"):
-				var add_stats = weapon_stats["add"]
-				if add_stats.has("attack"):
-					enemy_weapon_instance.damage = add_stats["attack"]
-				if add_stats.has("attack_speed"):
-					enemy_weapon_instance.attack_cooldown = 1.0 / add_stats["attack_speed"]
-				if add_stats.has("attack_range"):
-					enemy_weapon_instance.attack_range = add_stats["attack_range"]
+		if data.has("stats"):
+			var weapon_stats = data["stats"]
+			if weapon_stats.has("attack"):
+				enemy_weapon_instance.damage = weapon_stats["attack"]
+			if weapon_stats.has("attack_speed"):
+				enemy_weapon_instance.attack_cooldown = 1.0 / weapon_stats["attack_speed"]
+			if weapon_stats.has("attack_range"):
+				enemy_weapon_instance.attack_range = weapon_stats["attack_range"]
+		if data.has("projectile_sprite"):
+			enemy_weapon_instance.projectile_sprite = data["projectile_sprite"]
+			enemy_weapon_instance.projectile_speed = data.get("projectile_speed", 500.0)
+			enemy_weapon_instance.projectile_lifetime = data.get("projectile_lifetime", 1.0)
+			enemy_weapon_instance.projectile_polygon = data.get("projectile_polygon", [])
 		enemy_weapon_instance.position = Vector2(40, -40)
 
 # --- Hover signals ---

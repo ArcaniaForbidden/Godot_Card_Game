@@ -84,8 +84,8 @@ func spawn_initial_cards() -> void:
 	spawn_card("lumber_camp", Vector2(400,500))
 	spawn_card("house", Vector2(400,500))
 	spawn_card("smeltery", Vector2(400,500))
-	#spawn_card("horse", Vector2(400, 300))
-	#spawn_card("horse", Vector2(400, 300))
+	spawn_card("horse", Vector2(400, 300))
+	spawn_card("horse", Vector2(400, 300))
 	spawn_card("tree", Vector2(500, 300))
 	spawn_card("rock", Vector2(600, 300))
 	spawn_card("wood", Vector2(700, 300))
@@ -119,6 +119,9 @@ func spawn_card(subtype: String, position: Vector2) -> Card:
 	card.is_being_dragged = false
 	card.target_position = position
 	all_stacks.append([card])
+	if CardDatabase.has(subtype) and CardDatabase[subtype].has("loot_table"):
+		if card.has_signal("died"):
+			card.connect("died", Callable(self, "_on_card_died"))
 	return card
 
 func spawn_initial_slots() -> void:
@@ -680,14 +683,14 @@ func kill_card_tween(card: Node2D) -> void:
 func get_weighted_loot(loot_table: Array) -> String:
 	var total_weight := 0
 	for item in loot_table:
-		total_weight += item.weight
+		total_weight += item.get("weight", 1)  # default to 1 if missing
 	var r = randf() * total_weight
 	var accum = 0.0
 	for item in loot_table:
-		accum += item.weight
+		accum += item.get("weight", 1)
 		if r <= accum:
-			return item.subtype
-	return loot_table[-1].subtype # fallback
+			return item.get("subtype", "")
+	return loot_table[-1].get("subtype", "")
 
 func open_card_pack(card_pack: Card, num_cards := 5) -> void:
 	if not is_instance_valid(card_pack) or card_pack.card_type != "card_pack":
@@ -757,6 +760,36 @@ func open_card_pack(card_pack: Card, num_cards := 5) -> void:
 	await last_tween.finished
 	if is_instance_valid(card_pack):
 		card_pack.queue_free()
+
+func _on_card_died(card: Card) -> void:
+	if not is_instance_valid(card):
+		return
+	if not CardDatabase.has(card.subtype):
+		return
+	var loot := roll_loot(card.loot_table)
+	if loot.size() == 0:
+		return
+	var spawn_pos := card.global_position
+	for drop_subtype in loot:
+		var offset := Vector2(randf_range(-10, 10), randf_range(-10, 10))
+		var spawned_card = spawn_card(drop_subtype, spawn_pos + offset)
+		spawned_card.is_being_simulated_dragged = true
+		finish_drag_simulated([spawned_card])
+	# Remove the dead enemy card from its stack
+	var stack = find_stack(card)
+	if stack and stack.has(card):
+		stack.erase(card)
+		if stack.is_empty():
+			all_stacks.erase(stack)
+	card.queue_free()
+
+func roll_loot(loot_table: Array) -> Array:
+	var dropped: Array = []
+	for item in loot_table:
+		var chance: float = float(item.get("chance", 0.0))
+		if randf() <= chance:
+			dropped.append(str(item.get("subtype", "")))
+	return dropped
 
 func debug_print_stacks() -> void:
 	print("---- All Stacks ----")

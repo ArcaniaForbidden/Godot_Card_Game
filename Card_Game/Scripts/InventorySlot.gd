@@ -80,9 +80,9 @@ func equip_card(card: Card) -> bool:
 			weapon_instance.weapon_type = weapon_data.get("weapon_type", "melee")
 			if weapon_data.has("projectile_sprite"):
 				weapon_instance.projectile_sprite = weapon_data["projectile_sprite"]
-			weapon_instance.projectile_speed = weapon_data.get("projectile_speed", 500.0)
-			weapon_instance.projectile_lifetime = weapon_data.get("projectile_lifetime", 1.0)
-			weapon_instance.projectile_polygon = weapon_data.get("projectile_polygon", [])
+				weapon_instance.projectile_speed = weapon_data.get("projectile_speed", 500.0)
+				weapon_instance.projectile_lifetime = weapon_data.get("projectile_lifetime", 1.0)
+				weapon_instance.projectile_polygon = weapon_data.get("projectile_polygon", [])
 	var tween = get_tree().create_tween()
 	tween.tween_property(card, "global_position", global_position, card_manager.STACK_TWEEN_DURATION)\
 		 .set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)

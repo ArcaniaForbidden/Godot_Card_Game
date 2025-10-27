@@ -416,6 +416,7 @@ static var card_database = {
 			Vector2(1, 0), Vector2(4, 3), Vector2(5, 8), Vector2(2, 11), Vector2(0, 11), Vector2(-3, 8), Vector2(-2, 3)
 		],
 		"polygon_offset": Vector2(-1, -17),
+		"weapon_scale": Vector2(2, 2),
 		"card_type": "equipment",
 		"slot": "weapon",
 		"weapon_type": "melee",
@@ -429,6 +430,7 @@ static var card_database = {
 		"card": preload("res://Images/equipment_card.png"),
 		"sprite": preload("res://Images/bow.png"),
 		"sprite_rotation_offset": deg_to_rad(90),
+		"weapon_scale": Vector2(2, 2),
 		"card_type": "equipment",
 		"slot": "weapon",
 		"weapon_type": "ranged",
@@ -448,6 +450,7 @@ static var card_database = {
 			Vector2(1, 0), Vector2(5, 4), Vector2(5, 8), Vector2(2, 12), Vector2(0, 12), Vector2(-3, 8), Vector2(-3, 4)
 		],
 		"polygon_offset": Vector2(-1, -17),
+		"weapon_scale": Vector2(2, 2),
 		"card_type": "equipment",
 		"slot": "weapon",
 		"weapon_type": "melee",
@@ -464,6 +467,7 @@ static var card_database = {
 			Vector2(1, 0), Vector2(-1, 2), Vector2(-1, 21), Vector2(3, 21), Vector2(3, 2)
 		],
 		"polygon_offset": Vector2(-1, -17),
+		"weapon_scale": Vector2(2, 2),
 		"card_type": "equipment",
 		"slot": "weapon",
 		"weapon_type": "melee",
@@ -480,7 +484,7 @@ static var card_database = {
 			Vector2(1, 0), Vector2(-2, 3), Vector2(-2, 21), Vector2(4, 21), Vector2(4, 3)
 		],
 		"polygon_offset": Vector2(-1, -17),
-		"weapon_scale": Vector2(4, 4),
+		"weapon_scale": Vector2(3, 3),
 		"card_type": "equipment",
 		"slot": "weapon",
 		"weapon_type": "melee",
@@ -550,20 +554,20 @@ static var card_database = {
 		"sprite": preload("res://Images/wolf.png"),
 		"card_type": "enemy",
 		"display_name": "Wolf",
-		"stats": {"health": 100, "attack": 0, "armor": 0, "attack_speed": 0.0, "attack_range": 0},
-		"weapon_sprite": preload("res://Images/iron_sword.png"),
+		"stats": {"health": 4, "attack": 1, "armor": 0, "attack_speed": 1.0, "attack_range": 150},
+		"weapon_sprite": preload("res://Images/claw.png"),
 		"weapon_polygon": [
-			Vector2(1, 0), Vector2(-1, 2), Vector2(-1, 21), Vector2(3, 21), Vector2(3, 2)
+			Vector2(-2, 12), Vector2(-5, 15), Vector2(-3, 22), Vector2(0, 19)
 		],
 		"polygon_offset": Vector2(-1, -17),
+		"weapon_scale": Vector2(2, 2),
 		"slot": "weapon",
 		"weapon_type": "melee",
 		"melee_type": "slash",
 		"weapon_stats": {"add": {"attack": 1, "attack_range": 150, "attack_speed": 1.0}},
-		#health 4
 		"loot_table": [
 			{ "subtype": "leather", "chance": 0.7 },
-			{ "subtype": "leather", "chance": 0.2 },
+			{ "subtype": "raw_meat", "chance": 0.5 },
 		]
 	},
 	"horse": {
@@ -575,10 +579,7 @@ static var card_database = {
 		"loot_table": [
 			{ "subtype": "leather", "chance": 0.9 },
 			{ "subtype": "leather", "chance": 0.5 },
-			{ "subtype": "leather", "chance": 0.2 },
 			{ "subtype": "raw_meat", "chance": 0.9 },
-			{ "subtype": "raw_meat", "chance": 0.3 },
-			{ "subtype": "raw_meat", "chance": 0.1 },
 		]
 	},
 	"cow": {
@@ -590,10 +591,8 @@ static var card_database = {
 		"loot_table": [
 			{ "subtype": "leather", "chance": 0.9 },
 			{ "subtype": "leather", "chance": 0.5 },
-			{ "subtype": "leather", "chance": 0.2 },
 			{ "subtype": "raw_meat", "chance": 0.9 },
 			{ "subtype": "raw_meat", "chance": 0.3 },
-			{ "subtype": "raw_meat", "chance": 0.1 },
 		]
 	},
 	"rabbit": {
@@ -605,7 +604,6 @@ static var card_database = {
 		"loot_table": [
 			{ "subtype": "leather", "chance": 0.5 },
 			{ "subtype": "raw_meat", "chance": 0.5 },
-			{ "subtype": "raw_meat", "chance": 0.2 },
 		]
 	},
 	"chicken": {
@@ -615,7 +613,7 @@ static var card_database = {
 		"display_name": "Chicken",
 		"stats": {"health": 2, "attack": 1, "armor": 0, "attack_speed": 1.0, "attack_range": 200},
 		"loot_table": [
-			{ "subtype": "raw_meat", "chance": 0.7 },
+			{ "subtype": "raw_meat", "chance": 0.5 },
 			{ "subtype": "raw_meat", "chance": 0.1 },
 		]
 	},
