@@ -24,10 +24,10 @@ var max_health: int = 0
 var attack: int = 0
 var armor: int = 0
 var attack_speed: float = 1.0          # default attacks per second
-var enemy_idle_timer: float = 0.0
-var enemy_min_jump_time: float = 0.8
-var enemy_max_jump_time: float = 1.5
-var enemy_jump_distance: float = 150.0
+var idle_timer: float = 0.0
+var min_jump_time: float = 1.5
+var max_jump_time: float = 2.5
+var jump_distance: float = 150.0
 var in_battle: bool = false
 var is_dead: bool = false
 var is_equipped: bool = false
@@ -67,7 +67,7 @@ func _process(delta: float) -> void:
 func set_health(value: int) -> void:
 	health = clamp(value, 0, max_health)
 	if health_label:
-		health_label.text = "%d/%d" % [health, max_health]
+		health_label.text = "%d" % [health]
 		health_label.self_modulate = LABEL_COLOR
 	if health_icon:
 		health_icon.visible = true
@@ -112,7 +112,7 @@ func take_damage(amount: int):
 		SoundManager.play("damage", -20.0)
 	# Update the label like set_health
 	if health_label:
-		health_label.text = "%d/%d" % [health, max_health]
+		health_label.text = "%d" % [health]
 		health_label.self_modulate = LABEL_COLOR
 	# Make sure icon is visible
 	if health_icon:
@@ -220,6 +220,9 @@ func setup(subtype_name: String) -> void:
 	attack = int(stats.get("attack", 0))
 	armor = int(stats.get("armor", 0))
 	attack_speed = float(stats.get("attack_speed", 0))
+	min_jump_time = data.get("min_jump_time", 1.5)
+	max_jump_time = data.get("max_jump_time", 2.5)
+	jump_distance = data.get("jump_distance", 150.0)
 	if subtype == "peasant":
 		var inventory_scene = preload("res://Scenes/UnitInventory.tscn")
 		var inventory_instance = inventory_scene.instantiate()

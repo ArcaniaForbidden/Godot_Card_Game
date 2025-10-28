@@ -31,16 +31,16 @@ var cached_rects: Dictionary = {}  # card -> Rect2
 var card_tweens: Dictionary = {}   # card -> SceneTreeTween
 var allowed_stack_types := {
 	"currency": ["currency"],
-	"unit": ["unit", "resource", "material", "building", "location"],      # units can stack with other units and equipment
+	"unit": ["unit", "resource", "material", "building", "food", "location"],      # units can stack with other units and equipment
 	"equipment": ["unit", "equipment"],                                    # equipment only stacks on equipment or units
-	"resource": ["unit", "resource", "material", "building"],
-	"material": ["unit", "resource", "material", "building"],
+	"resource": ["unit", "resource", "material", "building", "food"],
+	"material": ["unit", "resource", "material", "building", "food"],
+	"food": ["unit", "resource", "material", "building", "food"],
 	"enemy": [],                                                           # enemies cannot stack
 	"neutral": [],
 	"building": ["building", "location"],
 	"location": ["location"],
 	"card_pack": ["card_pack"],
-	"food": ["food"],
 }
 
 func _ready() -> void:
@@ -86,6 +86,12 @@ func spawn_initial_cards() -> void:
 	spawn_card("smeltery", Vector2(400,500))
 	spawn_card("horse", Vector2(400, 300))
 	spawn_card("horse", Vector2(400, 300))
+	spawn_card("chicken", Vector2(400, 300))
+	spawn_card("chicken", Vector2(400, 300))
+	spawn_card("cow", Vector2(400, 300))
+	spawn_card("cow", Vector2(400, 300))
+	spawn_card("rabbit", Vector2(400, 300))
+	spawn_card("rabbit", Vector2(400, 300))
 	spawn_card("tree", Vector2(500, 300))
 	spawn_card("rock", Vector2(600, 300))
 	spawn_card("wood", Vector2(700, 300))
@@ -447,7 +453,7 @@ func push_apart_cards() -> void:
 	var card_rects := {}  # cache rects for this frame
 	for stack in all_stacks:
 		if stack.is_empty() or not is_instance_valid(stack[0]) \
-			or stack.has(card_being_dragged) or stack[0].card_type == "enemy" \
+			or stack.has(card_being_dragged) or stack[0].card_type == "enemy"\
 			or stack[0] is InventorySlot  or stack[0] is SellSlot or stack[0] is PackSlot\
 			or stack_has_simulated_dragged(stack)\
 			or stack.any(func(c): return c.is_equipped if is_instance_valid(c) else false):
@@ -808,36 +814,62 @@ func debug_print_stacks() -> void:
 #  ENEMY MOVEMENT
 # ==============================
 func handle_enemy_movement(delta: float) -> void:
-	return
-	#var movable_types = ["enemy", "neutral"]
-	## Get the map rect from MapManager
-	#var map_manager = get_tree().root.get_node("Main/MapManager")
-	#var map_rect: Rect2 = map_manager.map_rect if map_manager else Rect2(Vector2.ZERO, Vector2(3000, 3000))
-	#for stack in all_stacks:
-		#if stack.size() == 0:
-			#continue
-		#var top_card = stack[-1]
-		#if not is_instance_valid(top_card):
-			#continue
-		#if top_card.card_type not in movable_types:
-			#continue
-		#var enemy = top_card
-		## Decrement idle timer
-		#enemy.enemy_idle_timer -= delta
-		#if enemy.enemy_idle_timer <= 0:
-			## Pick random target within jump range
-			#var distance_range = enemy.enemy_jump_distance
-			#var target_pos = enemy.position + Vector2(
-				#randf_range(-distance_range, distance_range),
-				#randf_range(-distance_range, distance_range)
-			#)
-			## Clamp to map area
-			#target_pos.x = clamp(target_pos.x, map_rect.position.x, map_rect.position.x + map_rect.size.x)
-			#target_pos.y = clamp(target_pos.y, map_rect.position.y, map_rect.position.y + map_rect.size.y)
-			## Tween jump movement
-			#var tween = get_tree().create_tween()
-			#tween.tween_property(enemy, "position", target_pos, 0.25)\
-				#.set_trans(Tween.TRANS_QUAD)\
-				#.set_ease(Tween.EASE_OUT)
-			## Reset idle timer
-			#enemy.enemy_idle_timer = randf_range(enemy.enemy_min_jump_time, enemy.enemy_max_jump_time)
+	var movable_types = ["enemy", "neutral"]
+	var map_manager = get_tree().root.get_node("Main/MapManager")
+	var map_rect: Rect2 = map_manager.map_rect if map_manager else Rect2(Vector2.ZERO, Vector2(3000, 3000))
+	var card_manager = get_tree().root.get_node("Main/CardManager")
+	for stack in all_stacks:
+		if stack.size() == 0:
+			continue
+		var enemy = stack[-1]
+		if not is_instance_valid(enemy) or enemy.card_type not in movable_types:
+			continue
+		# Skip if any weapon is currently attacking
+		var is_attacking = false
+		for child in enemy.get_children():
+			if child is Weapon and child.is_attacking:
+				is_attacking = true
+				break
+		# Optional: add a short delay after attacking before moving again
+		if is_attacking:
+			enemy.idle_timer = 0.4  # waits a moment after attacking
+			continue
+		# Decrement idle timer and check if it's time to move
+		enemy.idle_timer -= delta
+		if enemy.idle_timer > 0:
+			continue
+		var hop_range = enemy.jump_distance
+		var random_offset = Vector2(randf_range(-hop_range, hop_range), randf_range(-hop_range, hop_range))
+		var direction_to_target = Vector2.ZERO
+		if enemy.card_type == "enemy":
+			# Find nearest unit/building
+			var nearest_target: Card = null
+			var nearest_dist = INF
+			for stack2 in card_manager.all_stacks:
+				if stack2.size() == 0:
+					continue
+				var card = stack2[0]
+				if not card or card == enemy:
+					continue
+				if card.card_type in ["unit", "building"]:
+					var dist = enemy.global_position.distance_to(card.global_position)
+					if dist < nearest_dist:
+						nearest_dist = dist
+						nearest_target = card
+			# Move somewhat toward the nearest target
+			if nearest_target:
+				direction_to_target = (nearest_target.global_position - enemy.global_position).normalized() * hop_range * 0.5
+		elif enemy.card_type == "neutral":
+			# Neutrals move randomly (ignore nearest targets)
+			direction_to_target = Vector2.ZERO
+		# Apply random + directional hop
+		var target_pos = enemy.global_position + random_offset * 0.6 + direction_to_target * 0.4
+		# Clamp to map area
+		target_pos.x = clamp(target_pos.x, map_rect.position.x, map_rect.position.x + map_rect.size.x)
+		target_pos.y = clamp(target_pos.y, map_rect.position.y, map_rect.position.y + map_rect.size.y)
+		# Tween jump movement
+		var move_duration = 0.25
+		var tween = get_tree().create_tween()
+		tween.tween_property(enemy, "global_position", target_pos, move_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		# Reset idle timer
+		enemy.idle_timer = randf_range(enemy.min_jump_time, enemy.max_jump_time)
