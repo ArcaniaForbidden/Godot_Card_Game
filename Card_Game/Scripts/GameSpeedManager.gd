@@ -9,6 +9,7 @@ func _ready():
 	# Make sure we can handle input even if the game is paused
 	set_process_input(true)
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	Engine.time_scale = current_speed
 
 func _input(event):
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -23,11 +24,14 @@ func _input(event):
 				toggle_pause()
 
 func set_speed(speed: float) -> void:
-	if current_speed != speed:
-		if speed == 0.0:
-			prev_speed = current_speed
-		current_speed = speed
-		emit_signal("speed_changed", current_speed)
+	speed = max(speed, 0)
+	if current_speed == speed:
+		return
+	if speed == 0.0:
+		prev_speed = current_speed
+	current_speed = speed
+	Engine.time_scale = current_speed  # <-- Automatically scales everything
+	emit_signal("speed_changed", current_speed)
 
 func toggle_pause() -> void:
 	if current_speed == 0.0:
@@ -35,4 +39,5 @@ func toggle_pause() -> void:
 	else:
 		prev_speed = current_speed
 		current_speed = 0.0
+	Engine.time_scale = current_speed
 	emit_signal("speed_changed", current_speed)
