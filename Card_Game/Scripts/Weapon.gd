@@ -8,6 +8,7 @@ var attack_cooldown: float = 1.0
 var time_since_attack: float = 0.0
 var weapon_type: String = "melee" # "melee" or "ranged"
 var melee_type: String = "lunge"  # "lunge" or "slash"
+var weapon_attack_sound: Dictionary = {}
 var is_attacking: bool = false
 var base_position: Vector2 = Vector2.ZERO
 var has_dealt_damage_this_attack: bool = false
@@ -18,6 +19,7 @@ var hit_targets: Array = []
 # --- Projectile properties for ranged weapons ---
 var projectile_scene = preload("res://Scenes/Projectile.tscn")
 var projectile_sprite: Texture2D
+var projectile_sound: Dictionary = {}
 var projectile_speed: float = 500.0
 var projectile_lifetime: float = 2.0
 var projectile_polygon: Array = []
@@ -42,20 +44,32 @@ func _process(delta):
 	if is_attacking:
 		return
 	time_since_attack += delta
-	orbit_angle += orbit_speed * delta
-	var parent_card = get_parent() as Card
-	if not parent_card:
-		return
+	# Orbit logic with multiple weapons
+	if owner_card:
+		var weapons: Array = []
+		for child in owner_card.get_children():
+			if child is Weapon:
+				weapons.append(child)
+		var total_weapons = weapons.size()
+		if total_weapons > 0:
+			var index = weapons.find(self)
+			var angle_offset = (2 * PI / total_weapons) * index
+			orbit_angle += orbit_speed * delta
+			position = Vector2(
+				orbit_radius_x * cos(orbit_angle + angle_offset),
+				orbit_radius_y * sin(orbit_angle + angle_offset)
+			)
+		else:
+			position = Vector2(orbit_radius_x * cos(orbit_angle), orbit_radius_y * sin(orbit_angle))
+	# Attack logic
 	if time_since_attack >= attack_cooldown:
-		var target = get_nearest_enemy_in_range(parent_card.global_position, attack_range)
+		var target = get_nearest_enemy_in_range(owner_card.global_position, attack_range)
 		if target:
 			if weapon_type == "ranged":
-				ranged_attack(parent_card, target)
+				ranged_attack(owner_card, target)
 			elif weapon_type == "melee":
 				melee_attack(target)
 			time_since_attack = 0.0
-	# Simple orbit
-	position = Vector2(orbit_radius_x * cos(orbit_angle), orbit_radius_y * sin(orbit_angle))
 
 func get_nearest_enemy_in_range(origin: Vector2, range: float) -> Node2D:
 	var card_manager = get_tree().root.get_node("Main/CardManager")
@@ -147,6 +161,8 @@ func slash_attack(target: Node2D):
 		var sweep_tween = get_tree().create_tween()
 		sweep_tween.tween_method(do_sweep, start_angle, end_angle, total_time * 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 		sweep_tween.finished.connect(return_to_base)
+		if weapon_attack_sound and SoundManager:
+			SoundManager.play(weapon_attack_sound["name"], weapon_attack_sound.get("volume_db", 0.0))
 	var on_windup_finished = func():
 		if is_instance_valid(self):
 			start_sweep.call()
@@ -172,8 +188,10 @@ func lunge_attack(target: Node2D):
 	tween.tween_property(self, "rotation", target_angle, total_time * 0.2)
 	tween.tween_callback(func():
 		if is_instance_valid(self):
+			if SoundManager and weapon_attack_sound:
+				SoundManager.play(weapon_attack_sound["name"], weapon_attack_sound.get("volume_db", 0.0))
 			checking_lunge = true
-		)
+	)
 	tween.tween_property(self, "position", final_position, total_time * 0.2)
 	tween.tween_callback(func():
 		if is_instance_valid(self):
@@ -217,6 +235,8 @@ func ranged_attack(card: Card, target: Node2D):
 		projectile.z_index = get_parent().z_index
 		projectile.speed = projectile_speed
 		projectile.lifetime = projectile_lifetime
+		if projectile_sound and SoundManager:
+			SoundManager.play(projectile_sound["name"], projectile_sound.get("volume_db", 0.0))
 		get_tree().root.add_child(projectile)
 	)
 	tween.tween_interval(0.5)

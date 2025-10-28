@@ -417,6 +417,7 @@ static var card_database = {
 		],
 		"polygon_offset": Vector2(-1, -17),
 		"weapon_scale": Vector2(2, 2),
+		"weapon_attack_sound": {"name": "spear_thrust", "volume_db": -5.0},
 		"card_type": "equipment",
 		"slot": "weapon",
 		"weapon_type": "melee",
@@ -437,8 +438,9 @@ static var card_database = {
 		"display_name": "Bow",
 		"value": 2,
 		"description": "A weak bow, with greater range than a wooden spear, but low attack speed.",
-		"stats": {"add": {"attack": 1, "attack_range": 600, "attack_speed": 0.75}},
+		"stats": {"add": {"attack": 1, "attack_range": 500, "attack_speed": 0.75}},
 		"projectile_sprite": preload("res://Images/arrow.png"),
+		"projectile_sound": {"name": "arrow", "volume_db": -8.0},
 		"projectile_polygon": [Vector2(5, -4), Vector2(6, -4), Vector2(10, 0), Vector2(10, 1), Vector2(6, 5), Vector2(5, 5)],
 		"projectile_speed": 1200.0,
 		"projectile_lifetime": 0.5
@@ -451,6 +453,7 @@ static var card_database = {
 		],
 		"polygon_offset": Vector2(-1, -17),
 		"weapon_scale": Vector2(2, 2),
+		"weapon_attack_sound": {"name": "spear_thrust", "volume_db": -5.0},
 		"card_type": "equipment",
 		"slot": "weapon",
 		"weapon_type": "melee",
@@ -468,6 +471,7 @@ static var card_database = {
 		],
 		"polygon_offset": Vector2(-1, -17),
 		"weapon_scale": Vector2(2, 2),
+		"weapon_attack_sound": {"name": "sword_slash", "volume_db": -5.0},
 		"card_type": "equipment",
 		"slot": "weapon",
 		"weapon_type": "melee",
@@ -485,6 +489,7 @@ static var card_database = {
 		],
 		"polygon_offset": Vector2(-1, -17),
 		"weapon_scale": Vector2(3, 3),
+		"weapon_attack_sound": {"name": "sword_slash", "volume_db": -4.0},
 		"card_type": "equipment",
 		"slot": "weapon",
 		"weapon_type": "melee",
@@ -554,20 +559,38 @@ static var card_database = {
 		"sprite": preload("res://Images/wolf.png"),
 		"card_type": "enemy",
 		"display_name": "Wolf",
-		"stats": {"health": 4, "attack": 1, "armor": 0, "attack_speed": 1.0, "attack_range": 150},
-		"weapon_sprite": preload("res://Images/claw.png"),
-		"weapon_polygon": [
-			Vector2(-2, 12), Vector2(-5, 15), Vector2(-3, 22), Vector2(0, 19)
+		"stats": {"health": 5, "attack": 0, "armor": 0, "attack_speed": 0.0, "attack_range": 0},
+		"weapons": [
+			{
+				"name": "wolf_claw",
+				"sprite": preload("res://Images/wolf_claw.png"),
+				"weapon_polygon": [Vector2(-2,12), Vector2(-5,15), Vector2(-3,22), Vector2(0,19)],
+				"polygon_offset": Vector2(-1,-17),
+				"weapon_scale": Vector2(2,2),
+				"weapon_attack_sound": {"name": "claw_slash", "volume_db": -10.0},
+				"slot": "weapon",
+				"weapon_type": "melee",
+				"melee_type": "slash",
+				"weapon_stats": {"add": {"attack": 1, "attack_range": 150, "attack_speed": 0.75}},
+				"display_name": "Wolf Claw"
+			},
+			{
+				"name": "wolf_claw_2",
+				"sprite": preload("res://Images/wolf_claw.png"),
+				"weapon_polygon": [Vector2(-2,12), Vector2(-5,15), Vector2(-3,22), Vector2(0,19)],
+				"polygon_offset": Vector2(-1,-17),
+				"weapon_scale": Vector2(2,2),
+				"weapon_attack_sound": {"name": "claw_slash", "volume_db": -10.0},
+				"slot": "weapon",
+				"weapon_type": "melee",
+				"melee_type": "slash",
+				"weapon_stats": {"add": {"attack": 1, "attack_range": 150, "attack_speed": 0.75}},
+				"display_name": "Wolf Claw"
+			}
 		],
-		"polygon_offset": Vector2(-1, -17),
-		"weapon_scale": Vector2(2, 2),
-		"slot": "weapon",
-		"weapon_type": "melee",
-		"melee_type": "slash",
-		"weapon_stats": {"add": {"attack": 1, "attack_range": 150, "attack_speed": 1.0}},
 		"loot_table": [
-			{ "subtype": "leather", "chance": 0.7 },
-			{ "subtype": "raw_meat", "chance": 0.5 },
+			{"subtype": "leather", "chance": 0.7},
+			{"subtype": "raw_meat", "chance": 0.5}
 		]
 	},
 	"horse": {

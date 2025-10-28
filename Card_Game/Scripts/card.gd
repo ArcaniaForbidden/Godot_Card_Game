@@ -223,41 +223,51 @@ func setup(subtype_name: String) -> void:
 		var inventory_instance = inventory_scene.instantiate()
 		add_child(inventory_instance)
 		inventory_instance.position = Vector2(0, 80)
-	# --- Enemy Weapon Setup ---
-	if card_type == "enemy" and data.has("weapon_sprite"):
-		var weapon_scene = preload("res://Scenes/Weapon.tscn")
-		var enemy_weapon_instance = weapon_scene.instantiate()
-		enemy_weapon_instance.name = "EnemyWeapon"
-		enemy_weapon_instance.owner_card = self
-		add_child(enemy_weapon_instance)
-		if data.has("weapon_scale"):
-			enemy_weapon_instance.scale = data["weapon_scale"]
-		else:
-			enemy_weapon_instance.scale = Vector2(3, 3)
-		if data.has("weapon_sprite"):
-			enemy_weapon_instance.get_node("Sprite2D").texture = data["weapon_sprite"]
-		if data.has("weapon_polygon"):
-			enemy_weapon_instance.get_node("Area2D/CollisionPolygon2D").polygon = data["weapon_polygon"]
-		if data.has("polygon_offset"):
-			enemy_weapon_instance.get_node("Area2D/CollisionPolygon2D").position = data["polygon_offset"]
-		if data.has("weapon_type"):
-			enemy_weapon_instance.weapon_type = data["weapon_type"]
-		if data.has("melee_type"):
-			enemy_weapon_instance.melee_type = data["melee_type"]
-		if data.has("stats"):
-			var weapon_stats = data["stats"]
-			if weapon_stats.has("attack"):
-				enemy_weapon_instance.damage = weapon_stats["attack"]
-			if weapon_stats.has("attack_speed"):
-				enemy_weapon_instance.attack_cooldown = 1.0 / weapon_stats["attack_speed"]
-			if weapon_stats.has("attack_range"):
-				enemy_weapon_instance.attack_range = weapon_stats["attack_range"]
-		if data.has("projectile_sprite"):
-			enemy_weapon_instance.projectile_sprite = data["projectile_sprite"]
-			enemy_weapon_instance.projectile_speed = data.get("projectile_speed", 500.0)
-			enemy_weapon_instance.projectile_lifetime = data.get("projectile_lifetime", 1.0)
-			enemy_weapon_instance.projectile_polygon = data.get("projectile_polygon", [])
-		enemy_weapon_instance.position = Vector2(40, -40)
+	# --- Enemy Weapon Setup (multiple weapons) ---
+	if card_type == "enemy" and data.has("weapons"):
+		for weapon_entry in data["weapons"]:
+			var weapon_data: Dictionary = {}
+			if typeof(weapon_entry) == TYPE_STRING:
+				# If it's a string, fetch weapon info from database
+				weapon_data = CardDatabase.card_database.get(weapon_entry, {})
+			elif typeof(weapon_entry) == TYPE_DICTIONARY:
+				# Inline weapon definition
+				weapon_data = weapon_entry.duplicate(true)
+			else:
+				continue
+			var weapon_scene = preload("res://Scenes/Weapon.tscn")
+			var weapon_instance = weapon_scene.instantiate()
+			weapon_instance.name = "EnemyWeapon_" + weapon_data.get("name", str(randi()))
+			weapon_instance.owner_card = self
+			add_child(weapon_instance)
+			# --- Transform / Visual ---
+			weapon_instance.position = weapon_data.get("position", Vector2(40, -40))
+			weapon_instance.scale = weapon_data.get("weapon_scale", Vector2(3, 3))
+			if weapon_data.has("sprite"):
+				weapon_instance.get_node("Sprite2D").texture = weapon_data["sprite"]
+			if weapon_data.has("weapon_polygon"):
+				weapon_instance.get_node("Area2D/CollisionPolygon2D").polygon = weapon_data["weapon_polygon"]
+			if weapon_data.has("polygon_offset"):
+				weapon_instance.get_node("Area2D/CollisionPolygon2D").position = weapon_data["polygon_offset"]
+			# --- Weapon mechanics ---
+			weapon_instance.weapon_type = weapon_data.get("weapon_type", "melee")
+			weapon_instance.melee_type = weapon_data.get("melee_type", "lunge")
+			weapon_instance.weapon_attack_sound = weapon_data.get("weapon_attack_sound", {})
+			if weapon_data.has("weapon_stats") or weapon_data.has("stats"):
+				var w_stats = weapon_data.get("weapon_stats", weapon_data.get("stats", {}))
+				var add_stats = w_stats.get("add", {})
+				if add_stats.has("attack"):
+					weapon_instance.damage = add_stats["attack"]
+				if add_stats.has("attack_speed"):
+					weapon_instance.attack_cooldown = 1.0 / add_stats["attack_speed"]
+				if add_stats.has("attack_range"):
+					weapon_instance.attack_range = add_stats["attack_range"]
+			if weapon_data.has("projectile_sprite"):
+				weapon_instance.projectile_sprite = weapon_data["projectile_sprite"]
+				weapon_instance.projectile_sound = weapon_data["projectile_sound"]
+				weapon_instance.projectile_speed = weapon_data.get("projectile_speed", 500.0)
+				weapon_instance.projectile_lifetime = weapon_data.get("projectile_lifetime", 1.0)
+				weapon_instance.projectile_polygon = weapon_data.get("projectile_polygon", [])
 
 # --- Hover signals ---
 func _on_area_input_event(viewport: Object, event: InputEvent, shape_idx: int) -> void:

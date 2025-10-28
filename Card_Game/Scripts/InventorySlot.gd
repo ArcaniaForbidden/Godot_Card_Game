@@ -69,6 +69,8 @@ func equip_card(card: Card) -> bool:
 				weapon_instance.melee_type = weapon_data["melee_type"]
 			if weapon_data.has("weapon_scale"):
 				weapon_instance.scale = weapon_data["weapon_scale"]
+			if weapon_data.has("weapon_attack_sound"):
+				weapon_instance.weapon_attack_sound = weapon_data["weapon_attack_sound"]
 			if weapon_data.stats.has("add"):
 				var add_stats = weapon_data.stats["add"]
 				if add_stats.has("attack"):
@@ -80,6 +82,7 @@ func equip_card(card: Card) -> bool:
 			weapon_instance.weapon_type = weapon_data.get("weapon_type", "melee")
 			if weapon_data.has("projectile_sprite"):
 				weapon_instance.projectile_sprite = weapon_data["projectile_sprite"]
+				weapon_instance.projectile_sound = weapon_data["projectile_sound"]
 				weapon_instance.projectile_speed = weapon_data.get("projectile_speed", 500.0)
 				weapon_instance.projectile_lifetime = weapon_data.get("projectile_lifetime", 1.0)
 				weapon_instance.projectile_polygon = weapon_data.get("projectile_polygon", [])

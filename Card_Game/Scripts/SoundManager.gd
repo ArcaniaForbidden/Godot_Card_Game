@@ -6,6 +6,10 @@ var sounds = {
 	"card_pop": preload("res://Sounds/card_pop.wav"),
 	"card_pack_open": preload("res://Sounds/card_pack_open.wav"),
 	"coin": preload("res://Sounds/coin.wav"),
+	"sword_slash": preload("res://Sounds/sword_slash.wav"),
+	"spear_thrust": preload("res://Sounds/spear_thrust.wav"),
+	"claw_slash": preload("res://Sounds/claw_slash.wav"),
+	"arrow": preload("res://Sounds/arrow.wav"),
 }
 
 func play(sound_name: String, volume_db: float = 0.0) -> void:
