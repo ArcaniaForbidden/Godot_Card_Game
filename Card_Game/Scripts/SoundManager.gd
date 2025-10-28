@@ -6,6 +6,7 @@ var sounds = {
 	"card_pop": preload("res://Sounds/card_pop.wav"),
 	"card_pack_open": preload("res://Sounds/card_pack_open.wav"),
 	"coin": preload("res://Sounds/coin.wav"),
+	"damage": preload("res://Sounds/damage.wav"),
 	"sword_slash": preload("res://Sounds/sword_slash.wav"),
 	"spear_thrust": preload("res://Sounds/spear_thrust.wav"),
 	"claw_slash": preload("res://Sounds/claw_slash.wav"),

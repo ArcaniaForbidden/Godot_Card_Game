@@ -108,6 +108,8 @@ func take_damage(amount: int):
 		return
 	# Subtract health and clamp
 	health = clamp(health - amount, 0, max_health)
+	if SoundManager:
+		SoundManager.play("damage", -20.0)
 	# Update the label like set_health
 	if health_label:
 		health_label.text = "%d/%d" % [health, max_health]
