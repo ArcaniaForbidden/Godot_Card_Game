@@ -14,13 +14,10 @@ var speed3_active = preload("res://Images/3x_speed_button_active.png")
 var speed3_inactive = preload("res://Images/3x_speed_button_inactive.png")
 
 func _ready():
-	# connect button signals
 	play_pause_button.pressed.connect(_on_play_pause_pressed)
 	speed2_button.pressed.connect(_on_speed2_pressed)
 	speed3_button.pressed.connect(_on_speed3_pressed)
-	# connect to manager signal
 	GameSpeedManager.connect("speed_changed", Callable(self, "_update_ui"))
-	# initial UI update
 	_update_ui()
 
 func _update_ui(new_speed: float = -1):

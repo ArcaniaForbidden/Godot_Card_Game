@@ -549,7 +549,7 @@ static var card_database = {
 	},
 	"baby_peasant": {
 		"card": preload("res://Images/unit_card.png"),
-		"sprite": preload("res://Images/peasant.png"),
+		"sprite": preload("res://Images/baby_peasant.png"),
 		"card_type": "unit",
 		"display_name": "Baby Peasant",
 		"stats": {"health": 3},

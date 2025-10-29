@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://doovqwb6u2y8c" path="res://Images/currency_card.png" id="2_u5wvb"]
 [ext_resource type="Texture2D" uid="uid://bjffoqc4n42b5" path="res://Images/iron_ingot.png" id="4_mm04k"]
 [ext_resource type="Texture2D" uid="uid://codod5tgigybh" path="res://Images/heart_icon.png" id="5_pbuqb"]
-[ext_resource type="LabelSettings" uid="uid://b2udwgke5epkp" path="res://Label_Settings.tres" id="5_xnv4g"]
+[ext_resource type="LabelSettings" uid="uid://b2udwgke5epkp" path="res://Themes/label_settings.tres" id="5_xnv4g"]
 [ext_resource type="Texture2D" uid="uid://du8drnsg1cb6r" path="res://Images/gold_coin.png" id="7_mm04k"]
 [ext_resource type="Texture2D" uid="uid://dvwqv1ybhiyut" path="res://Images/foil_mask_rectangle.png" id="8_u5wvb"]
 

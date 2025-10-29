@@ -17,6 +17,7 @@ const PACK_UNLOCK_CHAIN = {
 
 # --- Member variables ---
 var card_being_dragged: Node2D = null
+var drag_released_for_pause := false
 var dragged_substack: Array = []
 var drag_offset: Vector2 = Vector2.ZERO
 var drag_lift_y: float = -20.0
@@ -27,6 +28,7 @@ var card_scene = preload("res://Scenes/Card.tscn")
 var CardDatabase = preload("res://Scripts/CardDatabase.gd").card_database
 var crafting_manager: Node = null
 var map_manager: Node = null
+var ui_manager: Node = null
 var cached_rects: Dictionary = {}  # card -> Rect2
 var card_tweens: Dictionary = {}   # card -> SceneTreeTween
 var allowed_stack_types := {
@@ -46,16 +48,26 @@ var allowed_stack_types := {
 func _ready() -> void:
 	crafting_manager = get_parent().get_node("CraftingManager")
 	map_manager = get_parent().get_node("MapManager")
+	ui_manager = get_parent().get_node("UIManager")
 	spawn_initial_cards()
 	spawn_initial_slots()
 
 func _process(delta: float) -> void:
+	if ui_manager.pause_menu_panel.visible:
+		if not drag_released_for_pause and card_being_dragged:
+			handle_mouse_release()
+			drag_released_for_pause = true
+		return
+	else:
+		drag_released_for_pause = false
 	handle_dragging()
 	push_apart_cards()
 	update_cached_rects()
 	handle_enemy_movement(delta * GameSpeedManager.current_speed)
 
 func _input(event):
+	if ui_manager.pause_menu_panel.visible:
+		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
 			handle_mouse_press()

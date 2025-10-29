@@ -1,7 +1,7 @@
 [gd_scene load_steps=15 format=3 uid="uid://b2fdxhbriuaol"]
 
 [ext_resource type="Texture2D" uid="uid://bxtfs3gr3c4t7" path="res://SpriteSheets/progress_bar_spritesheet.png" id="1_ax88c"]
-[ext_resource type="LabelSettings" uid="uid://b2udwgke5epkp" path="res://Label_Settings.tres" id="2_046cr"]
+[ext_resource type="LabelSettings" uid="uid://b2udwgke5epkp" path="res://Themes/label_settings.tres" id="2_046cr"]
 [ext_resource type="Texture2D" uid="uid://dfemgnwfar7n3" path="res://Images/progress_bar_label.png" id="2_wt5b5"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_046cr"]

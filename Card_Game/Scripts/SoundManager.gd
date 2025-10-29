@@ -1,4 +1,4 @@
-extends Node
+extends Node2D
 
 var sounds = {
 	"card_pickup": preload("res://Sounds/card_pickup.wav"),
@@ -11,6 +11,7 @@ var sounds = {
 	"spear_thrust": preload("res://Sounds/spear_thrust.wav"),
 	"claw_slash": preload("res://Sounds/claw_slash.wav"),
 	"arrow": preload("res://Sounds/arrow.wav"),
+	"ui_hover": preload("res://Sounds/ui_hover.wav"),
 }
 
 func play(sound_name: String, volume_db: float = 0.0) -> void:

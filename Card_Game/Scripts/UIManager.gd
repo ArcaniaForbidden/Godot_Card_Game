@@ -9,12 +9,14 @@ class_name UIManager
 @onready var card_zoom_label: Label = $CardZoomPanel/CardZoomContainer/CardZoomLabel
 @onready var stats_panel: Panel = $StatsPanel
 @onready var stats_vbox_container: VBoxContainer = $StatsPanel/StatsVBoxContainer
+@onready var pause_menu_panel: Panel = $PauseMenuPanel
 
 var current_card: Node = null
 
 func _ready() -> void:
 	card_zoom_panel.hide()
 	stats_panel.hide()
+	pause_menu_panel.hide()
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
@@ -24,6 +26,8 @@ func _input(event: InputEvent) -> void:
 			return
 		if card:
 			open_card_ui(card)
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == Key.KEY_ESCAPE:
+		toggle_pause_menu()
 
 func open_card_ui(card: Node) -> void:
 	if not is_instance_valid(card):
@@ -94,3 +98,17 @@ func open_card_ui(card: Node) -> void:
 				var label = Label.new()
 				label.text = "%s: x%s" % [key.capitalize(), str(card.stats["mul"][key])]
 				stats_vbox_container.add_child(label)
+
+func toggle_pause_menu() -> void:
+	if pause_menu_panel.visible:
+		hide_pause_menu()
+		GameSpeedManager.set_speed(GameSpeedManager.prev_speed)  # Resume
+	else:
+		show_pause_menu()
+		GameSpeedManager.set_speed(0.0)  # Pause
+
+func show_pause_menu() -> void:
+	pause_menu_panel.show()
+
+func hide_pause_menu() -> void:
+	pause_menu_panel.hide()

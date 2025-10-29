@@ -5,11 +5,6 @@ signal speed_changed(new_speed: float)
 var current_speed: float = 1.0
 var prev_speed: float = 1.0
 
-func _ready():
-	# Make sure we can handle input even if the game is paused
-	set_process_input(true)
-	process_mode = Node.PROCESS_MODE_ALWAYS
-
 func _input(event):
 	if event is InputEventKey and event.pressed and not event.echo:
 		match event.keycode:

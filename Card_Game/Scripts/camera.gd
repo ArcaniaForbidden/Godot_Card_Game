@@ -7,9 +7,14 @@ var zoom_speed: float = 0.1
 var dragging: bool = false
 var drag_start: Vector2
 var camera_start: Vector2
+var ui_manager: Node = null
+
+func _ready():
+	ui_manager = get_parent().get_node("UIManager")
 
 func _process(delta):
-	# Optional keyboard pan
+	if ui_manager.pause_menu_panel.visible:
+		return
 	var dir = Vector2.ZERO
 	if Input.is_action_pressed("ui_up"):
 		dir.y -= 1
@@ -23,7 +28,8 @@ func _process(delta):
 		global_position += dir.normalized() * pan_speed * delta
 
 func _input(event):
-	# Mouse drag to pan
+	if ui_manager.pause_menu_panel.visible:
+		return
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_MIDDLE:
 			if event.pressed:
