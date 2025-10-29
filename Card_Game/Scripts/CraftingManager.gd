@@ -31,7 +31,7 @@ func _ready() -> void:
 	card_manager = get_parent().get_node("CardManager") as CardManager
 
 func _process(delta: float) -> void:
-	update_jobs(delta)
+	update_jobs(delta * GameSpeedManager.current_speed)
 	check_all_stacks_for_recipes()
 
 # ==============================

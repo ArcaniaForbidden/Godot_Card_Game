@@ -43,7 +43,10 @@ func _process(delta):
 		check_collision_for_damage()
 	if is_attacking:
 		return
-	time_since_attack += delta
+	if GameSpeedManager.current_speed == 0.0:
+		return
+	var scaled_delta = delta * GameSpeedManager.current_speed
+	time_since_attack += scaled_delta
 	# Orbit logic with multiple weapons
 	if owner_card:
 		var weapons: Array = []
@@ -54,7 +57,7 @@ func _process(delta):
 		if total_weapons > 0:
 			var index = weapons.find(self)
 			var angle_offset = (2 * PI / total_weapons) * index
-			orbit_angle += orbit_speed * delta
+			orbit_angle += orbit_speed * scaled_delta
 			position = Vector2(
 				orbit_radius_x * cos(orbit_angle + angle_offset),
 				orbit_radius_y * sin(orbit_angle + angle_offset)

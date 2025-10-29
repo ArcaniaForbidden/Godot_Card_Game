@@ -53,7 +53,7 @@ func _process(delta: float) -> void:
 	handle_dragging()
 	push_apart_cards()
 	update_cached_rects()
-	handle_enemy_movement(delta)
+	handle_enemy_movement(delta * GameSpeedManager.current_speed)
 
 func _input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
