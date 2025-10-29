@@ -824,17 +824,14 @@ func handle_enemy_movement(delta: float) -> void:
 		var enemy = stack[-1]
 		if not is_instance_valid(enemy) or enemy.card_type not in movable_types:
 			continue
-		# Skip if any weapon is currently attacking
 		var is_attacking = false
 		for child in enemy.get_children():
 			if child is Weapon and child.is_attacking:
 				is_attacking = true
 				break
-		# Optional: add a short delay after attacking before moving again
 		if is_attacking:
-			enemy.idle_timer = 0.4  # waits a moment after attacking
+			enemy.idle_timer = 0.4
 			continue
-		# Decrement idle timer and check if it's time to move
 		enemy.idle_timer -= delta
 		if enemy.idle_timer > 0:
 			continue
@@ -842,7 +839,6 @@ func handle_enemy_movement(delta: float) -> void:
 		var random_offset = Vector2(randf_range(-hop_range, hop_range), randf_range(-hop_range, hop_range))
 		var direction_to_target = Vector2.ZERO
 		if enemy.card_type == "enemy":
-			# Find nearest unit/building
 			var nearest_target: Card = null
 			var nearest_dist = INF
 			for stack2 in card_manager.all_stacks:
@@ -856,20 +852,14 @@ func handle_enemy_movement(delta: float) -> void:
 					if dist < nearest_dist:
 						nearest_dist = dist
 						nearest_target = card
-			# Move somewhat toward the nearest target
 			if nearest_target:
 				direction_to_target = (nearest_target.global_position - enemy.global_position).normalized() * hop_range * 0.5
 		elif enemy.card_type == "neutral":
-			# Neutrals move randomly (ignore nearest targets)
 			direction_to_target = Vector2.ZERO
-		# Apply random + directional hop
 		var target_pos = enemy.global_position + random_offset * 0.6 + direction_to_target * 0.4
-		# Clamp to map area
 		target_pos.x = clamp(target_pos.x, map_rect.position.x, map_rect.position.x + map_rect.size.x)
 		target_pos.y = clamp(target_pos.y, map_rect.position.y, map_rect.position.y + map_rect.size.y)
-		# Tween jump movement
 		var move_duration = 0.25
 		var tween = get_tree().create_tween()
 		tween.tween_property(enemy, "global_position", target_pos, move_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-		# Reset idle timer
 		enemy.idle_timer = randf_range(enemy.min_jump_time, enemy.max_jump_time)

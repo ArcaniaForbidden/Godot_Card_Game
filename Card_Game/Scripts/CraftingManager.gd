@@ -10,6 +10,9 @@ class CraftingJob:
 	var progress: float = 0.0
 	var is_active: bool = true
 	var input_cards: Array = []
+	var progress_bar: Control = null
+	var progress_bar_sprite: AnimatedSprite2D = null
+	var progress_bar_label: Label = null
 	var debug_timer: float = 0.0
 
 # ==============================
@@ -35,26 +38,53 @@ func _process(delta: float) -> void:
 #  Job Management
 # ==============================
 func start_job(stack: Array, recipe_name: String) -> void:
-	# --- Check if this stack already has an active job ---
+	# prevent duplicate jobs
 	for job in active_jobs:
 		if job.stack == stack and job.is_active:
 			return
 	var recipe = RecipeDatabase.recipes.get(recipe_name, null)
 	if not recipe:
+		print("❌ Recipe not found:", recipe_name)
 		return
 	var matched_cards = stack_matches_recipe(stack, recipe.inputs)
-	if matched_cards.size() == 0:
+	if matched_cards.is_empty():
+		print("❌ No matched cards for recipe:", recipe_name)
 		return
-	# --- Create the new job ---
 	var job = CraftingJob.new()
 	job.stack = stack
 	job.recipe_name = recipe_name
 	job.input_cards = matched_cards
 	active_jobs.append(job)
+	# --- Instantiate progress bar Control ---
+	var progress_scene = preload("res://Scenes/ProgressBar.tscn")
+	var progress_bar = progress_scene.instantiate() as Control
+	job.progress_bar = progress_bar
+	# Parent to top card if available, else self
+	var parent_node: Node
+	if stack.size() > 0 and is_instance_valid(stack[0]):
+		parent_node = stack[0]
+	else:
+		parent_node = self
+	parent_node.add_child(progress_bar)
+	progress_bar.position = Vector2(0, -80)
+	progress_bar.z_index = stack.size() > 0 and stack[0].z_index or 0
+	progress_bar.visible = true
+	# Grab children nodes
+	job.progress_bar_sprite = progress_bar.get_node("AnimatedSprite2D") as AnimatedSprite2D
+	job.progress_bar_label = progress_bar.get_node("Label") as Label
+	# Initialize visuals
+	if job.progress_bar_sprite:
+		job.progress_bar_sprite.frame = 0
+	if job.progress_bar_label:
+		job.progress_bar_label.text = str(int(ceil(recipe.work_time))) + "s"
+		job.progress_bar_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		job.progress_bar_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	print("✅ Started job:", recipe_name)
 
 func update_jobs(delta: float) -> void:
 	var remaining_jobs: Array = []
 	var jobs_to_complete: Array = []
+	var jobs_to_cancel: Array = []
 	for job in active_jobs:
 		if not job.is_active:
 			continue
@@ -65,7 +95,7 @@ func update_jobs(delta: float) -> void:
 				dragging = true
 				break
 		if dragging:
-			cancel_job(job)
+			jobs_to_cancel.append(job)
 			continue 
 		# Validate stack still has all input cards
 		var stack_found := false
@@ -80,7 +110,7 @@ func update_jobs(delta: float) -> void:
 				job.stack = s
 				break
 		if not stack_found:
-			cancel_job(job)
+			jobs_to_cancel.append(job)
 			continue
 		# Progress crafting
 		job.progress += delta
@@ -92,12 +122,18 @@ func update_jobs(delta: float) -> void:
 				RecipeDatabase.recipes[job.recipe_name].work_time
 			])
 			job.debug_timer = 0.0
+		if job.progress_bar and is_instance_valid(job.progress_bar):
+			update_job_progress_bar(job)
 		var recipe_time = RecipeDatabase.recipes[job.recipe_name].work_time
 		if job.progress >= recipe_time:
 			jobs_to_complete.append(job)
 		else:
 			remaining_jobs.append(job)
+	# Cancel jobs safely
+	for job in jobs_to_cancel:
+		cancel_job(job)
 	active_jobs = remaining_jobs
+	# Complete jobs
 	for job in jobs_to_complete:
 		complete_job(job)
 
@@ -107,7 +143,14 @@ func cancel_job(job: CraftingJob) -> void:
 	job.is_active = false
 	if job in active_jobs:
 		active_jobs.erase(job)
-	print("Crafting Cancelled: %s" % job.recipe_name)
+	# Remove progress bar safely
+	if job.progress_bar:
+		if is_instance_valid(job.progress_bar):
+			job.progress_bar.queue_free()
+	job.progress_bar = null
+	job.progress_bar_sprite = null
+	job.progress_bar_label = null
+	print("❌ Crafting Cancelled: %s" % job.recipe_name)
 
 func complete_job(job: CraftingJob) -> void:
 	var stack = job.stack
@@ -224,7 +267,16 @@ func complete_job(job: CraftingJob) -> void:
 	job.is_active = false
 	if job in active_jobs:
 		active_jobs.erase(job)
-	print("Job completed: %s" % job.recipe_name)
+	if job.progress_bar:
+		if is_instance_valid(job.progress_bar):
+			job.progress_bar.queue_free()
+	job.progress_bar = null
+	job.progress_bar_sprite = null
+	job.progress_bar_label = null
+	job.is_active = false
+	if job in active_jobs:
+		active_jobs.erase(job)
+	print("✅ Job completed: %s" % job.recipe_name)
 
 # ==============================
 #  Recipe Matching Helper
@@ -294,3 +346,20 @@ func is_stack_crafting(stack: Array) -> bool:
 		if job.stack == stack and job.is_active:
 			return true
 	return false
+
+func update_job_progress_bar(job: CraftingJob) -> void:
+	if not job.progress_bar or not is_instance_valid(job.progress_bar):
+		return
+	var recipe_time = RecipeDatabase.recipes[job.recipe_name].work_time
+	var remaining_time = max(recipe_time - job.progress, 0.0)
+	var fraction = clamp(job.progress / recipe_time, 0.0, 1.0)
+	# --- Update sprite frame ---
+	var total_frames = 10
+	var frame = int(floor(fraction * (total_frames - 1)))
+	var sprite = job.progress_bar.get_node("AnimatedSprite2D") as AnimatedSprite2D
+	if sprite:
+		sprite.frame = frame
+	# --- Update label text ---
+	var label = job.progress_bar.get_node("Label") as Label
+	if label:
+		label.text = str(int(ceil(remaining_time))) + "s"

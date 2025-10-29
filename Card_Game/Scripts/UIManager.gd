@@ -24,7 +24,7 @@ func _input(event: InputEvent) -> void:
 			return
 		if card:
 			open_card_ui(card)
-		
+
 func open_card_ui(card: Node) -> void:
 	if not is_instance_valid(card):
 		print("Card is invalid!")
