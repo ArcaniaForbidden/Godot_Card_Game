@@ -1,5 +1,4 @@
 extends CanvasLayer
-class_name UIManager
 
 # --- UI References ---
 @onready var card_zoom_panel: Panel = $CardZoomPanel

@@ -38,10 +38,16 @@ func _update_ui(new_speed: float = -1):
 # Button callbacks
 # -------------------------
 func _on_play_pause_pressed():
+	if UIManager.pause_menu_panel.visible:
+		return
 	GameSpeedManager.toggle_pause()
 
 func _on_speed2_pressed():
+	if UIManager.pause_menu_panel.visible:
+		return
 	GameSpeedManager.set_speed(2.0)
 
 func _on_speed3_pressed():
+	if UIManager.pause_menu_panel.visible:
+		return
 	GameSpeedManager.set_speed(3.0)

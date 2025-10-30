@@ -123,8 +123,8 @@ func slash_attack(target: Node2D):
 		return
 	var to_target = (target.global_position - parent_card.global_position).normalized()
 	var target_angle = to_target.angle()
-	var start_angle = target_angle + deg_to_rad(60)
-	var end_angle = target_angle - deg_to_rad(60)
+	var start_angle = target_angle + deg_to_rad(90)
+	var end_angle = target_angle - deg_to_rad(90)
 	var distance_to_target = (target.global_position - parent_card.global_position).length()
 	var offset = area2d.global_position - global_position
 	var radius = max(distance_to_target - offset.length(), 0)

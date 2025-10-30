@@ -6,6 +6,8 @@ var current_speed: float = 1.0
 var prev_speed: float = 1.0
 
 func _input(event):
+	if UIManager.pause_menu_panel.visible:
+		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		match event.keycode:
 			Key.KEY_1:

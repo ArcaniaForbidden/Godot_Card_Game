@@ -28,7 +28,6 @@ var card_scene = preload("res://Scenes/Card.tscn")
 var CardDatabase = preload("res://Scripts/CardDatabase.gd").card_database
 var crafting_manager: Node = null
 var map_manager: Node = null
-var ui_manager: Node = null
 var cached_rects: Dictionary = {}  # card -> Rect2
 var card_tweens: Dictionary = {}   # card -> SceneTreeTween
 var allowed_stack_types := {
@@ -48,12 +47,11 @@ var allowed_stack_types := {
 func _ready() -> void:
 	crafting_manager = get_parent().get_node("CraftingManager")
 	map_manager = get_parent().get_node("MapManager")
-	ui_manager = get_parent().get_node("UIManager")
 	spawn_initial_cards()
 	spawn_initial_slots()
 
 func _process(delta: float) -> void:
-	if ui_manager.pause_menu_panel.visible:
+	if UIManager.pause_menu_panel.visible:
 		if not drag_released_for_pause and card_being_dragged:
 			handle_mouse_release()
 			drag_released_for_pause = true
@@ -66,7 +64,7 @@ func _process(delta: float) -> void:
 	handle_enemy_movement(delta * GameSpeedManager.current_speed)
 
 func _input(event):
-	if ui_manager.pause_menu_panel.visible:
+	if UIManager.pause_menu_panel.visible:
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
@@ -179,9 +177,9 @@ func handle_mouse_press() -> void:
 	if clicked_card is PackSlot:
 		print("Cannot drag pack slot:", clicked_card.name)
 		return
-	#if clicked_card.card_type == "enemy":
-		#print("Cannot drag enemy card:", clicked_card.subtype)
-		#return
+	if clicked_card.card_type == "enemy":
+		print("Cannot drag enemy card:", clicked_card.subtype)
+		return
 	if clicked_card.is_being_simulated_dragged:
 		return
 	var current_time = Time.get_ticks_msec() / 1000.0
@@ -285,7 +283,7 @@ func finish_drag_generic(cards: Array, is_simulated: bool, play_sound: bool = tr
 	if cards.is_empty():
 		return
 	if play_sound and SoundManager:
-		SoundManager.play("card_drop", -6.0)
+		SoundManager.play("card_drop", -8.0, cards[0].position)
 	# Choose which flag to set/clear
 	for c in cards:
 		if not is_instance_valid(c):

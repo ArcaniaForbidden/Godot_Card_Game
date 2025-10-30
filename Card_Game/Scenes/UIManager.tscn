@@ -137,8 +137,10 @@ anchor_left = 4.5
 anchor_top = -8.425
 anchor_right = 4.5
 anchor_bottom = -8.425
-offset_right = 52.0
-offset_bottom = 52.0
+offset_left = -6.0
+offset_top = 6.0
+offset_right = 46.0
+offset_bottom = 58.0
 texture_normal = ExtResource("10_5mof6")
 texture_hover = ExtResource("12_dh66f")
 

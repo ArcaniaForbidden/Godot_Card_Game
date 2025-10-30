@@ -19,7 +19,7 @@ func _ready():
 
 func _on_button_hovered(button: Control, hovered: bool) -> void:
 	if hovered and SoundManager:
-		SoundManager.play("ui_hover", -6.0)
+		SoundManager.play("ui_hover", -14.0)
 	var label = button.get_node_or_null("Label")
 	if not label:
 		return
@@ -33,6 +33,7 @@ func _on_button_pressed(button: Object) -> void:
 	match button:
 		pause_menu_close_button:
 			visible = false
+			print("Pause menu close button pressed")
 		options_button:
 			print("Options menu logic here")
 		save_button:
