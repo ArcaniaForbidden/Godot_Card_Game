@@ -39,8 +39,8 @@ var allowed_stack_types := {
 	"food": ["unit", "resource", "material", "building", "food"],
 	"enemy": [],                                                           # enemies cannot stack
 	"neutral": [],
-	"building": ["building", "location"],
-	"location": ["location"],
+	"building": ["location"],
+	"location": [],
 	"card_pack": ["card_pack"],
 }
 
@@ -119,7 +119,7 @@ func spawn_initial_cards() -> void:
 	spawn_card("iron_deposit", Vector2(800, 300))
 	spawn_card("copper_deposit", Vector2(800, 300))
 	spawn_card("gold_deposit", Vector2(800, 300))
-	#spawn_card("wolf", Vector2(800, 600))
+	spawn_card("wolf", Vector2(800, 600))
 	#spawn_card("wolf", Vector2(900, 600))
 	#spawn_card("wolf", Vector2(1800, 600))
 	spawn_card("forest", Vector2(0, 100))
@@ -825,9 +825,7 @@ func debug_print_stacks() -> void:
 # ==============================
 func handle_enemy_movement(delta: float) -> void:
 	var movable_types = ["enemy", "neutral"]
-	var map_manager = get_tree().root.get_node("Main/MapManager")
 	var map_rect: Rect2 = map_manager.map_rect if map_manager else Rect2(Vector2.ZERO, Vector2(3000, 3000))
-	var card_manager = get_tree().root.get_node("Main/CardManager")
 	for stack in all_stacks:
 		if stack.size() == 0:
 			continue
@@ -851,7 +849,7 @@ func handle_enemy_movement(delta: float) -> void:
 		if enemy.card_type == "enemy":
 			var nearest_target: Card = null
 			var nearest_dist = INF
-			for stack2 in card_manager.all_stacks:
+			for stack2 in all_stacks:
 				if stack2.size() == 0:
 					continue
 				var card = stack2[0]

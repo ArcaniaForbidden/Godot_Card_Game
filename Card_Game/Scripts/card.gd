@@ -34,6 +34,7 @@ var is_equipped: bool = false
 var is_equipping: bool = false
 var attached_slot: InventorySlot = null
 var loot_table: Array = []
+var damage_flash_tween: Tween = null
 
 # --- UI references ---
 @onready var animation_manager: AnimationManager = AnimationManager.new()
@@ -106,6 +107,7 @@ func remove_foil_effect() -> void:
 func take_damage(amount: int):
 	if is_dead:
 		return
+	flash_damage_effect()
 	# Subtract health and clamp
 	health = clamp(health - amount, 0, max_health)
 	if SoundManager:
@@ -123,6 +125,19 @@ func take_damage(amount: int):
 		print("%s died!" % name)
 		emit_signal("died", self)
 		queue_free()
+
+func flash_damage_effect():
+	if not is_inside_tree():
+		return
+	# Cancel any existing flash
+	if damage_flash_tween and damage_flash_tween.is_valid():
+		damage_flash_tween.kill()
+		modulate = Color(1, 1, 1)  # Reset to normal color
+	var original_modulate := modulate
+	modulate = Color(1, 0.2, 0.2) # Flash red
+	# Create new tween
+	damage_flash_tween = create_tween()
+	damage_flash_tween.tween_property(self, "modulate", original_modulate, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
 # --- Setup function ---
 func setup(subtype_name: String) -> void:
@@ -233,15 +248,20 @@ func setup(subtype_name: String) -> void:
 		for weapon_entry in data["weapons"]:
 			var weapon_data: Dictionary = {}
 			if typeof(weapon_entry) == TYPE_STRING:
-				# If it's a string, fetch weapon info from database
 				weapon_data = CardDatabase.card_database.get(weapon_entry, {})
 			elif typeof(weapon_entry) == TYPE_DICTIONARY:
-				# Inline weapon definition
 				weapon_data = weapon_entry.duplicate(true)
 			else:
 				continue
-			var weapon_scene = preload("res://Scenes/Weapon.tscn")
+			var weapon_path = "res://Scenes/Weapon.tscn"
+			var weapon_scene = load(weapon_path)
+			if weapon_scene == null:
+				push_error("⚠️ Failed to load weapon scene at path: " + weapon_path)
+				continue
 			var weapon_instance = weapon_scene.instantiate()
+			if weapon_instance == null:
+				push_error("⚠️ Failed to instantiate weapon scene for: " + str(weapon_data))
+				continue
 			weapon_instance.name = "EnemyWeapon_" + weapon_data.get("name", str(randi()))
 			weapon_instance.owner_card = self
 			add_child(weapon_instance)
@@ -249,11 +269,17 @@ func setup(subtype_name: String) -> void:
 			weapon_instance.position = weapon_data.get("position", Vector2(40, -40))
 			weapon_instance.scale = weapon_data.get("weapon_scale", Vector2(3, 3))
 			if weapon_data.has("sprite"):
-				weapon_instance.get_node("Sprite2D").texture = weapon_data["sprite"]
+				var sprite_node = weapon_instance.get_node_or_null("Sprite2D")
+				if sprite_node:
+					sprite_node.texture = weapon_data["sprite"]
 			if weapon_data.has("weapon_polygon"):
-				weapon_instance.get_node("Area2D/CollisionPolygon2D").polygon = weapon_data["weapon_polygon"]
+				var poly_node = weapon_instance.get_node_or_null("Area2D/CollisionPolygon2D")
+				if poly_node:
+					poly_node.polygon = weapon_data["weapon_polygon"]
 			if weapon_data.has("polygon_offset"):
-				weapon_instance.get_node("Area2D/CollisionPolygon2D").position = weapon_data["polygon_offset"]
+				var poly_node = weapon_instance.get_node_or_null("Area2D/CollisionPolygon2D")
+				if poly_node:
+					poly_node.position = weapon_data["polygon_offset"]
 			# --- Weapon mechanics ---
 			weapon_instance.weapon_type = weapon_data.get("weapon_type", "melee")
 			weapon_instance.melee_type = weapon_data.get("melee_type", "lunge")
@@ -269,7 +295,7 @@ func setup(subtype_name: String) -> void:
 					weapon_instance.attack_range = add_stats["attack_range"]
 			if weapon_data.has("projectile_sprite"):
 				weapon_instance.projectile_sprite = weapon_data["projectile_sprite"]
-				weapon_instance.projectile_sound = weapon_data["projectile_sound"]
+				weapon_instance.projectile_sound = weapon_data.get("projectile_sound", {})
 				weapon_instance.projectile_speed = weapon_data.get("projectile_speed", 500.0)
 				weapon_instance.projectile_lifetime = weapon_data.get("projectile_lifetime", 1.0)
 				weapon_instance.projectile_polygon = weapon_data.get("projectile_polygon", [])
