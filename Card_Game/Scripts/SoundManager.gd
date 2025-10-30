@@ -29,7 +29,7 @@ func play(sound_name: String, volume_db: float = 0.0, position = null) -> void:
 	if position != null and not is_hover_sound:
 		sfx = AudioStreamPlayer2D.new()
 		sfx.position = position
-		sfx.attenuation = 1.0
+		sfx.attenuation = 0.5
 	else:
 		sfx = AudioStreamPlayer.new()
 	sfx.stream = sounds[sound_name]

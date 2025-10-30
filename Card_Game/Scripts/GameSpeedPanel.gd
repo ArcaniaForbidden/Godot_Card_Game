@@ -4,7 +4,6 @@ extends Node
 @onready var speed2_button: TextureButton = $Speed2xButton
 @onready var speed3_button: TextureButton = $Speed3xButton
 
-# preload textures
 var play_texture = preload("res://Images/play_button_active.png")
 var pause_texture = preload("res://Images/pause_button.png")
 var play_inactive_texture = preload("res://Images/play_button_inactive.png")
