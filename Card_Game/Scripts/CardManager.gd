@@ -121,9 +121,9 @@ func spawn_initial_cards() -> void:
 	spawn_card("iron_deposit", Vector2(800, 300))
 	spawn_card("copper_deposit", Vector2(800, 300))
 	spawn_card("gold_deposit", Vector2(800, 300))
-	spawn_card("wolf", Vector2(800, 600))
-	spawn_card("wolf", Vector2(900, 600))
-	spawn_card("wolf", Vector2(1800, 600))
+	#spawn_card("wolf", Vector2(800, 600))
+	#spawn_card("wolf", Vector2(900, 600))
+	#spawn_card("wolf", Vector2(1800, 600))
 	spawn_card("forest", Vector2(0, 100))
 	spawn_card("plains", Vector2(0, 200))
 	spawn_card("mountain", Vector2(0, 300))
@@ -264,7 +264,7 @@ func start_drag(card: Card) -> void:
 	close_stack_inventories(dragged_substack)
 	# Play pickup sound
 	if SoundManager:
-		SoundManager.play("card_pickup", -12.0)
+		SoundManager.play("card_pickup", -12.0, dragged_substack[0].position)
 	# Store mouse offset relative to the card's original position
 	drag_offset = dragged_substack[0].position - get_global_mouse_position()
 	# Mark cards as being dragged, assign high z-index

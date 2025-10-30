@@ -165,7 +165,7 @@ func slash_attack(target: Node2D):
 		sweep_tween.tween_method(do_sweep, start_angle, end_angle, total_time * 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 		sweep_tween.finished.connect(return_to_base)
 		if weapon_attack_sound and SoundManager:
-			SoundManager.play(weapon_attack_sound["name"], weapon_attack_sound.get("volume_db", 0.0))
+			SoundManager.play(weapon_attack_sound["name"], weapon_attack_sound.get("volume_db", 0.0), global_position)
 	var on_windup_finished = func():
 		if is_instance_valid(self):
 			start_sweep.call()
@@ -192,7 +192,7 @@ func lunge_attack(target: Node2D):
 	tween.tween_callback(func():
 		if is_instance_valid(self):
 			if SoundManager and weapon_attack_sound:
-				SoundManager.play(weapon_attack_sound["name"], weapon_attack_sound.get("volume_db", 0.0))
+				SoundManager.play(weapon_attack_sound["name"], weapon_attack_sound.get("volume_db", 0.0), global_position)
 			checking_lunge = true
 	)
 	tween.tween_property(self, "position", final_position, total_time * 0.2)
@@ -239,7 +239,7 @@ func ranged_attack(card: Card, target: Node2D):
 		projectile.speed = projectile_speed
 		projectile.lifetime = projectile_lifetime
 		if projectile_sound and SoundManager:
-			SoundManager.play(projectile_sound["name"], projectile_sound.get("volume_db", 0.0))
+			SoundManager.play(projectile_sound["name"], projectile_sound.get("volume_db", 0.0), global_position)
 		get_tree().root.add_child(projectile)
 	)
 	tween.tween_interval(0.5)
