@@ -121,11 +121,11 @@ func take_damage(amount: int):
 	if health_icon:
 		health_icon.visible = true
 	if is_inside_tree():
-		var damage_number_scene = preload("res://Scenes/DamageNumber.tscn")  # Path to your damage number scene
+		var damage_number_scene = preload("res://Scenes/VisualNumber.tscn")
 		var damage_number_instance = damage_number_scene.instantiate()
 		get_parent().add_child(damage_number_instance)
-		damage_number_instance.global_position = global_position + Vector2(0, -70)  # Spawn above the card
-		damage_number_instance.show_damage(amount)  # Display the damage number with the amount
+		damage_number_instance.global_position = global_position + Vector2(0, -70)
+		damage_number_instance.show_number(amount)
 	print("%s took %d damage, remaining HP: %d" % [name, amount, health])
 	if health <= 0:
 		is_dead = true
@@ -204,7 +204,6 @@ func setup(subtype_name: String) -> void:
 		value = int(data["value"])
 	else:
 		value = null
-	self.tags = data.get("tags", [])
 	# --- Show/hide value label and icon ---
 	if card_type == "card_pack":
 		if value_icon:

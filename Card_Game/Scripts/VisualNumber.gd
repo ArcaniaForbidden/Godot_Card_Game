@@ -6,9 +6,9 @@ extends Node2D
 @export var random_x_range: Vector2 = Vector2(-40, 40)
 @export var random_y_range: Vector2 = Vector2(-40, 0)
 
-@onready var label = $DamageLabel
+@onready var label = $VisualLabel
 
-func show_damage(amount: int):
+func show_number(amount: int):
 	label.label_settings = label.label_settings.duplicate()
 	label.text = str(amount)
 	label.visible = true
