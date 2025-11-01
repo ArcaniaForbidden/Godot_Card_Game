@@ -279,7 +279,7 @@ static var card_database = {
 		"card_type": "food",
 		"display_name": "Raw Meat",
 		"value": 1,
-		"food": 1,
+		"food_value": 1,
 	},
 	"cooked_meat": { 
 		"card": preload("res://Images/food_card.png"),
@@ -287,7 +287,7 @@ static var card_database = {
 		"card_type": "food",
 		"display_name": "Cooked Meat",
 		"value": 1,
-		"food": 2,
+		"food_value": 2,
 	},
 	"bread": { 
 		"card": preload("res://Images/food_card.png"),
@@ -295,7 +295,7 @@ static var card_database = {
 		"card_type": "food",
 		"display_name": "Cooked Meat",
 		"value": 1,
-		"food": 2,
+		"food_value": 2,
 	},
 	"house": {
 		"card": preload("res://Images/building_card.png"),
@@ -546,6 +546,7 @@ static var card_database = {
 		"card_type": "unit",
 		"display_name": "Peasant",
 		"stats": {"health": 10, "attack": 0, "armor": 0, "attack_speed": 0.0, "attack_range": 0},
+		"food_required": 2,
 	},
 	"baby_peasant": {
 		"card": preload("res://Images/unit_card.png"),
@@ -553,6 +554,7 @@ static var card_database = {
 		"card_type": "unit",
 		"display_name": "Baby Peasant",
 		"stats": {"health": 3},
+		"food_required": 2,
 	},
 	"wolf": {
 		"card": preload("res://Images/enemy_card.png"),

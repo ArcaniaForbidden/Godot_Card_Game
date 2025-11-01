@@ -9,6 +9,7 @@ extends Node2D
 @onready var label = $DamageLabel
 
 func show_damage(amount: int):
+	label.label_settings = label.label_settings.duplicate()
 	label.text = str(amount)
 	label.visible = true
 	label.label_settings.font_color = color

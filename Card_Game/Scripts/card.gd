@@ -12,7 +12,6 @@ var target_position: Vector2
 var is_being_dragged: bool = false
 var is_being_simulated_dragged: bool = false
 var card_type: String = ""
-var tags: Array = []
 var subtype: String = ""
 var display_name: String = ""
 var weapon_type: String = ""
@@ -35,6 +34,8 @@ var is_equipping: bool = false
 var attached_slot: InventorySlot = null
 var loot_table: Array = []
 var damage_flash_tween: Tween = null
+var food_value_required: int = 0
+var food_value: int = 0
 
 # --- UI references ---
 @onready var animation_manager: AnimationManager = AnimationManager.new()
@@ -249,6 +250,10 @@ func setup(subtype_name: String) -> void:
 		var inventory_instance = inventory_scene.instantiate()
 		add_child(inventory_instance)
 		inventory_instance.position = Vector2(0, 80)
+	if data.has("food_required"):
+		food_value_required = int(data["food_required"])
+	if data.has("food_value"):
+		food_value = int(data["food_value"])
 	# --- Enemy Weapon Setup (multiple weapons) ---
 	if card_type == "enemy" and data.has("weapons"):
 		for weapon_entry in data["weapons"]:

@@ -21,6 +21,7 @@ SoundManager="*res://Scenes/SoundManager.tscn"
 PlayerProgress="*res://Scripts/PlayerProgress.gd"
 GameSpeedManager="*res://Scripts/GameSpeedManager.gd"
 UIManager="*res://Scenes/UIManager.tscn"
+TimeManager="*res://Scripts/TimeManager.gd"
 
 [display]
 

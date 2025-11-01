@@ -39,7 +39,7 @@ var allowed_stack_types := {
 	"food": ["unit", "resource", "material", "building", "food"],
 	"enemy": [],                                                           # enemies cannot stack
 	"neutral": [],
-	"building": ["location"],
+	"building": [],
 	"location": [],
 	"card_pack": ["card_pack"],
 }

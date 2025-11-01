@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://e8ajh2rt8q5g"]
+[gd_scene load_steps=22 format=3 uid="uid://e8ajh2rt8q5g"]
 
 [ext_resource type="Script" uid="uid://bsj7a0hun52jo" path="res://Scripts/UIManager.gd" id="1_felxf"]
 [ext_resource type="Texture2D" uid="uid://c0rvslqmgpohg" path="res://Images/unit_card.png" id="2_08khg"]
@@ -15,6 +15,9 @@
 [ext_resource type="FontFile" uid="uid://q6k4rvj4di0k" path="res://Fonts/MedodicaRegular.otf" id="11_vfi26"]
 [ext_resource type="Texture2D" uid="uid://cyi68t5koioks" path="res://Images/pause_menu_button_hover.png" id="12_4doyo"]
 [ext_resource type="Texture2D" uid="uid://bw8hrh6uxwxq" path="res://Images/pause_menu_close_button_hover.png" id="12_dh66f"]
+[ext_resource type="Script" uid="uid://bk2b7g3sdw2ww" path="res://Scripts/TimeBarPanel.gd" id="16_0oqn8"]
+[ext_resource type="Texture2D" uid="uid://bbaswjwlnyfcv" path="res://Images/time_bar.png" id="16_b7jjc"]
+[ext_resource type="Texture2D" uid="uid://dbhyt6uvrhhw6" path="res://Images/time_bar_filler.png" id="17_0oqn8"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_y1w80"]
 texture = ExtResource("3_a33nh")
@@ -242,3 +245,22 @@ text = "Exit Game"
 label_settings = ExtResource("9_00rri")
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="TimeBarPanel" type="Panel" parent="."]
+offset_left = 543.0
+offset_top = 54.0
+offset_right = 543.0
+offset_bottom = 54.0
+script = ExtResource("16_0oqn8")
+
+[node name="Sprite2D" type="Sprite2D" parent="TimeBarPanel"]
+position = Vector2(1120, -31)
+texture = ExtResource("16_b7jjc")
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="TimeBarPanel"]
+layout_mode = 0
+offset_left = 1003.0
+offset_top = -46.0
+offset_right = 1237.0
+offset_bottom = -16.0
+texture_progress = ExtResource("17_0oqn8")
