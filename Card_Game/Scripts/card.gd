@@ -144,7 +144,7 @@ func flash_damage_effect():
 	modulate = Color(1, 0.2, 0.2) # Flash red
 	# Create new tween
 	damage_flash_tween = create_tween()
-	damage_flash_tween.tween_property(self, "modulate", original_modulate, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	damage_flash_tween.tween_property(self, "modulate", original_modulate, 0.75).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
 # --- Setup function ---
 func setup(subtype_name: String) -> void:

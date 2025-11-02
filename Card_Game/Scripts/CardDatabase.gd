@@ -565,6 +565,8 @@ static var card_database = {
 		"min_jump_time": 1.5,
 		"max_jump_time": 2.5,
 		"jump_distance": 150.0,
+		"raid_value": 1,
+		"raid_group_range": Vector2(3, 6),
 		"weapons": [
 			{
 				"name": "wolf_claw",

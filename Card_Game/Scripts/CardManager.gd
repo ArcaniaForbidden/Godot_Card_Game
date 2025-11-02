@@ -111,15 +111,15 @@ func spawn_initial_cards() -> void:
 	spawn_card("brick", Vector2(800, 300))
 	spawn_card("plank", Vector2(800, 300))
 	spawn_card("water", Vector2(800, 300))
-	spawn_card("gold_coin", Vector2(900, 300))
-	spawn_card("gold_coin", Vector2(900, 300))
-	spawn_card("gold_coin", Vector2(900, 300))
-	spawn_card("gold_coin", Vector2(900, 300))
-	spawn_card("gold_coin", Vector2(900, 300))
+	#spawn_card("gold_coin", Vector2(900, 300))
+	#spawn_card("gold_coin", Vector2(900, 300))
+	#spawn_card("gold_coin", Vector2(900, 300))
+	#spawn_card("gold_coin", Vector2(900, 300))
+	#spawn_card("gold_coin", Vector2(900, 300))
 	spawn_card("iron_deposit", Vector2(800, 300))
 	spawn_card("copper_deposit", Vector2(800, 300))
 	spawn_card("gold_deposit", Vector2(800, 300))
-	spawn_card("wolf", Vector2(800, 600))
+	#spawn_card("wolf", Vector2(800, 600))
 	#spawn_card("wolf", Vector2(900, 600))
 	#spawn_card("wolf", Vector2(1800, 600))
 	spawn_card("forest", Vector2(0, 100))
@@ -135,9 +135,8 @@ func spawn_card(subtype: String, position: Vector2) -> Card:
 	card.is_being_dragged = false
 	card.target_position = position
 	all_stacks.append([card])
-	if CardDatabase.has(subtype) and CardDatabase[subtype].has("loot_table"):
-		if card.has_signal("died"):
-			card.connect("died", Callable(self, "_on_card_died"))
+	if card.has_signal("died"):
+		card.connect("died", Callable(self, "_on_card_died"))
 	return card
 
 func spawn_initial_slots() -> void:

@@ -5,10 +5,8 @@ signal day_started
 
 const DAY_DURATION := 30.0
 var day_timer := DAY_DURATION
+var day_count := 1
 var is_night := false
-
-func _ready():
-	set_process(true)
 
 func _process(delta):
 	if not is_night:
@@ -25,5 +23,10 @@ func start_night():
 func start_day():
 	is_night = false
 	day_timer = DAY_DURATION
+	day_count += 1
 	print("☀️ Day has begun!")
+	print(day_count)
 	emit_signal("day_started")
+
+func get_day_count() -> int:
+	return day_count

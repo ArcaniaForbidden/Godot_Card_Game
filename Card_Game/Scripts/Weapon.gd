@@ -99,6 +99,8 @@ func get_nearest_enemy_in_range(origin: Vector2, range: float) -> Node2D:
 func melee_attack(target: Node2D):
 	if weapon_type != "melee":
 		return
+	if owner_card.is_being_dragged:
+		return
 	is_attacking = true
 	has_dealt_damage_this_attack = false
 	hit_targets.clear()
@@ -113,6 +115,8 @@ func melee_attack(target: Node2D):
 
 func slash_attack(target: Node2D):
 	if weapon_type != "melee" or melee_type != "slash":
+		return
+	if owner_card.is_being_dragged:
 		return
 	is_attacking = true
 	has_dealt_damage_this_attack = false
@@ -178,6 +182,8 @@ func slash_attack(target: Node2D):
 func lunge_attack(target: Node2D):
 	if not is_instance_valid(self):
 		return
+	if owner_card.is_being_dragged:
+		return
 	base_position = position
 	var to_target_global = target.global_position - global_position
 	var distance_to_target = to_target_global.length()
@@ -213,6 +219,8 @@ func lunge_attack(target: Node2D):
 
 func ranged_attack(card: Card, target: Node2D):
 	if weapon_type != "ranged":
+		return
+	if owner_card.is_being_dragged:
 		return
 	if not is_instance_valid(self) or not is_instance_valid(card):
 		return

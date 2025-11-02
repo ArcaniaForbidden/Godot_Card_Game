@@ -25,6 +25,8 @@ func _on_night_started():
 		night_tween.kill()
 	night_tween = create_tween()
 	night_tween.tween_property(bar, "value", 0, 1.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	RaidManager.days_since_last_raid += 1
+	RaidManager.roll_for_raid()
 
 # Reset bar when day starts
 func _on_day_started():
