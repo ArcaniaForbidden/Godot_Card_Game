@@ -34,6 +34,7 @@ var is_equipping: bool = false
 var attached_slot: InventorySlot = null
 var loot_table: Array = []
 var damage_flash_tween: Tween = null
+var new_building: bool = true
 var food_value_required: int = 0
 var food_value: int = 0
 

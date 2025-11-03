@@ -179,7 +179,12 @@ func handle_mouse_press() -> void:
 	if clicked_card.card_type == "enemy":
 		print("Cannot drag enemy card:", clicked_card.subtype)
 		return
+	if clicked_card.card_type == "building":
+		if (not TimeManager.is_night and not clicked_card.new_building) or RaidManager.active_raid_enemies.size() > 0:
+			print("Cannot move building right now:", clicked_card.subtype)
+			return
 	if clicked_card.is_being_simulated_dragged:
+		print("Cannot drag card being simulated dragged:", clicked_card.subtype)
 		return
 	var current_time = Time.get_ticks_msec() / 1000.0
 	if clicked_card == last_clicked_card and current_time - last_click_time <= DOUBLE_CLICK_TIME:
@@ -242,6 +247,8 @@ func handle_dragging() -> void:
 func start_drag(card: Card) -> void:
 	if card.is_equipped and card.attached_slot:
 		card.attached_slot.unequip_card()
+	if card.card_type == "building":
+		card.new_building = false
 	var stack = find_stack(card)
 	if card.animation_manager:
 		card.animation_manager.play_walk()
@@ -462,7 +469,7 @@ func push_apart_cards() -> void:
 	var card_rects := {}  # cache rects for this frame
 	for stack in all_stacks:
 		if stack.is_empty() or not is_instance_valid(stack[0]) \
-			or stack.has(card_being_dragged) or stack[0].card_type == "enemy"\
+			or stack.has(card_being_dragged) or stack[0].card_type == "enemy" or stack[0].card_type == "building"\
 			or stack[0] is InventorySlot  or stack[0] is SellSlot or stack[0] is PackSlot\
 			or stack_has_simulated_dragged(stack)\
 			or stack.any(func(c): return c.is_equipped if is_instance_valid(c) else false):
@@ -570,7 +577,7 @@ func get_stack_bounds(stack: Array) -> Rect2:
 	return Rect2(Vector2(min_x, min_y), Vector2(max_x - min_x, max_y - min_y))
 
 # ==============================
-#  STACK HELPERS
+#  HELPERS
 # ==============================
 func find_stack(card: Node2D) -> Array:
 	for stack in all_stacks:
@@ -598,9 +605,6 @@ func close_stack_inventories(stack: Array) -> void:
 				if slot.attached_card and is_instance_valid(slot.attached_card):
 					slot.attached_card.visible = false
 
-# ==============================
-#  UTILITIES & HELPERS
-# ==============================
 func raycast_check_for_card() -> Node2D:
 	var space_state = get_world_2d().direct_space_state
 	var parameters = PhysicsPointQueryParameters2D.new()
@@ -863,7 +867,7 @@ func handle_enemy_movement(delta: float) -> void:
 				direction_to_target = (nearest_target.global_position - enemy.global_position).normalized() * hop_range * 0.5
 		elif enemy.card_type == "neutral":
 			direction_to_target = Vector2.ZERO
-		var target_pos = enemy.global_position + random_offset * 0.6 + direction_to_target * 0.4
+		var target_pos = enemy.global_position + random_offset * 0.3 + direction_to_target * 0.7
 		target_pos.x = clamp(target_pos.x, map_rect.position.x, map_rect.position.x + map_rect.size.x)
 		target_pos.y = clamp(target_pos.y, map_rect.position.y, map_rect.position.y + map_rect.size.y)
 		var move_duration = 0.25

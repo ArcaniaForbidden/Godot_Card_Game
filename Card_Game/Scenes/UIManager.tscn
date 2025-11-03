@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://e8ajh2rt8q5g"]
+[gd_scene load_steps=26 format=3 uid="uid://e8ajh2rt8q5g"]
 
 [ext_resource type="Script" uid="uid://bsj7a0hun52jo" path="res://Scripts/UIManager.gd" id="1_felxf"]
 [ext_resource type="Texture2D" uid="uid://c0rvslqmgpohg" path="res://Images/unit_card.png" id="2_08khg"]
@@ -18,6 +18,10 @@
 [ext_resource type="Script" uid="uid://bk2b7g3sdw2ww" path="res://Scripts/TimeBarPanel.gd" id="16_0oqn8"]
 [ext_resource type="Texture2D" uid="uid://bbaswjwlnyfcv" path="res://Images/time_bar.png" id="16_b7jjc"]
 [ext_resource type="Texture2D" uid="uid://dbhyt6uvrhhw6" path="res://Images/time_bar_filler.png" id="17_0oqn8"]
+[ext_resource type="Texture2D" uid="uid://4o6g6r3rc2fo" path="res://Images/sun.png" id="19_qp6jw"]
+[ext_resource type="Texture2D" uid="uid://bi7hm1iq2a4jc" path="res://Images/time_icon_background.png" id="19_ynkwj"]
+[ext_resource type="Texture2D" uid="uid://3vs77lrvfjxg" path="res://Images/next_day_button.png" id="21_x54vm"]
+[ext_resource type="Texture2D" uid="uid://ddheofb0414y4" path="res://Images/next_day_button_hover.png" id="22_pwmvk"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_y1w80"]
 texture = ExtResource("3_a33nh")
@@ -264,3 +268,38 @@ offset_top = -46.0
 offset_right = 1237.0
 offset_bottom = -16.0
 texture_progress = ExtResource("17_0oqn8")
+
+[node name="TimeIconBackground" type="Sprite2D" parent="TimeBarPanel"]
+position = Vector2(972, -31)
+texture = ExtResource("19_ynkwj")
+
+[node name="TimeIcon" type="Sprite2D" parent="TimeBarPanel"]
+position = Vector2(972, -31)
+texture = ExtResource("19_qp6jw")
+
+[node name="NextDayButton" type="TextureButton" parent="TimeBarPanel"]
+offset_left = 649.0
+offset_top = -54.0
+offset_right = 949.0
+offset_bottom = -8.0
+texture_normal = ExtResource("21_x54vm")
+texture_hover = ExtResource("22_pwmvk")
+
+[node name="Label" type="Label" parent="TimeBarPanel/NextDayButton"]
+layout_mode = 0
+offset_top = -9.0
+offset_right = 75.0
+offset_bottom = 7.0
+scale = Vector2(4, 4)
+text = "Next Day"
+label_settings = ExtResource("9_00rri")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NightPanel" type="Panel" parent="."]
+offset_left = 334.0
+offset_top = 200.0
+offset_right = 334.0
+offset_bottom = 200.0
+
+[node name="BackgroundSprite2D" type="Sprite2D" parent="NightPanel"]

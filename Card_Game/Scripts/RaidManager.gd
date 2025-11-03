@@ -5,12 +5,11 @@ var card_database = preload("res://Scripts/CardDatabase.gd").card_database
 var days_since_last_raid: int = 0
 var active_raid_enemies := []
 
-# --- Tunable balance variables ---
 @export var VALUE_SCALE := 0.01           # 1 enemy strength per 100 value
-@export var DAY_SCALE := 0.5              # +0.5 strength per day
-@export var UNIT_SCALE := 1.0             # +1 strength per unit
-@export var BUILDING_SCALE := 0.2         # +0.2 strength per building
-@export var BASE_RAID_STRENGTH := 4       # Minimum raid power
+@export var DAY_SCALE := 0.5              # 0.5 strength per day
+@export var UNIT_SCALE := 1.0             # 1 strength per unit
+@export var BUILDING_SCALE := 0.2         # 0.2 strength per building
+@export var BASE_RAID_STRENGTH := 2       # Minimum raid power
 
 func _ready():
 	card_manager = get_node_or_null("/root/Main/CardManager")
@@ -122,8 +121,7 @@ func roll_for_raid() -> void:
 		print("Spawning raid")
 	else:
 		print("No raid tonight")
-		if TimeManager:
-			TimeManager.start_day()
+		show_next_day_button()
 
 func _on_raid_enemy_died(card):
 	if card in active_raid_enemies:
@@ -132,5 +130,14 @@ func _on_raid_enemy_died(card):
 		if active_raid_enemies.is_empty():
 			print("✅ All raid enemies defeated!")
 			days_since_last_raid = 0
-			if TimeManager:
-				TimeManager.start_day()
+			show_next_day_button()
+
+func show_next_day_button():
+	if UIManager.next_day_button:
+		UIManager.next_day_button.disabled = false
+	if not UIManager.next_day_button: 
+		return
+	UIManager.next_day_button.show()
+	UIManager.next_day_button.modulate.a = 0.0
+	var tween := create_tween()
+	tween.tween_property(UIManager.next_day_button, "modulate:a", 1.0, 0.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)

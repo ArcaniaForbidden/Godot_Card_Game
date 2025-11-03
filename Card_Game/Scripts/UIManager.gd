@@ -9,6 +9,7 @@ extends CanvasLayer
 @onready var stats_panel: Panel = $StatsPanel
 @onready var stats_vbox_container: VBoxContainer = $StatsPanel/StatsVBoxContainer
 @onready var pause_menu_panel: Panel = $PauseMenuPanel
+@onready var next_day_button: TextureButton = $TimeBarPanel/NextDayButton
 
 var current_card: Node = null
 

@@ -231,7 +231,7 @@ func ranged_attack(card: Card, target: Node2D):
 	var tween = get_tree().create_tween()
 	tween.tween_property(self, "rotation", target_angle, 0.2)
 	tween.tween_callback(func():
-		if not is_instance_valid(self) or not is_instance_valid(card):
+		if not is_instance_valid(self) or not is_instance_valid(card) or not is_instance_valid(target):
 			return
 		var projectile = projectile_scene.instantiate()
 		projectile.global_position = global_position

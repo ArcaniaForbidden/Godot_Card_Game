@@ -20,8 +20,6 @@ class CraftingJob:
 # ==============================
 var active_jobs: Array = []
 var card_manager: CardManager = null
-
-# Optional: show progress for debugging
 var debug_show_progress := true
 
 # ==============================
@@ -31,6 +29,8 @@ func _ready() -> void:
 	card_manager = get_parent().get_node("CardManager") as CardManager
 
 func _process(delta: float) -> void:
+	if TimeManager.is_night:
+		return
 	update_jobs(delta * GameSpeedManager.current_speed)
 	check_all_stacks_for_recipes()
 

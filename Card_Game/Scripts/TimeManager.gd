@@ -3,7 +3,7 @@ extends Node
 signal night_started
 signal day_started
 
-const DAY_DURATION := 30.0
+const DAY_DURATION := 18.0
 var day_timer := DAY_DURATION
 var day_count := 1
 var is_night := false
