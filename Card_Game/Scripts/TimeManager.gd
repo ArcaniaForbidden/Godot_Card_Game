@@ -25,7 +25,7 @@ func start_day():
 	day_timer = DAY_DURATION
 	day_count += 1
 	if SoundManager:
-		SoundManager.play("new_day", -14.0)
+		SoundManager.play("new_day", 0.0)
 	print("☀️ Day has begun!")
 	print(day_count)
 	emit_signal("day_started")

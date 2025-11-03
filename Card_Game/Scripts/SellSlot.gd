@@ -41,7 +41,7 @@ func sell_stack(stack: Array) -> void:
 			coin_card.scale = Vector2(1.1, 1.1)
 			# Play coin sound
 			if SoundManager:
-				SoundManager.play("coin", -18.0)
+				SoundManager.play("coin", 0.0)
 			# --- Position tween ---
 			var tween_pos = get_tree().create_tween()
 			tween_pos.tween_property(coin_card, "position", final_pos, 1.0).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)

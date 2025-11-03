@@ -1,5 +1,9 @@
 extends Node2D
 
+var master_volume_percentage: int = 100
+var sound_volume_percentage: int = 100
+var music_volume_percentage: int = 100
+
 var current_hover_player: AudioStreamPlayer = null
 var sounds = {
 	"card_pickup": preload("res://Sounds/card_pickup.wav"),
@@ -17,11 +21,10 @@ var sounds = {
 	"raid_start": preload("res://Sounds/raid_start.wav"),
 }
 
-func play(sound_name: String, volume_db: float = 0.0, position = null) -> void:
+func play(sound_name: String, base_volume_db: float = 0.0, position = null) -> void:
 	if not sounds.has(sound_name):
 		return
 	var is_hover_sound = sound_name == "ui_hover"
-	# Stop previous hover sound safely
 	if is_hover_sound and current_hover_player:
 		if is_instance_valid(current_hover_player):
 			current_hover_player.stop()
@@ -35,16 +38,26 @@ func play(sound_name: String, volume_db: float = 0.0, position = null) -> void:
 	else:
 		sfx = AudioStreamPlayer.new()
 	sfx.stream = sounds[sound_name]
-	sfx.volume_db = volume_db
+	# --- Determine category volume ---
+	var category_volume_pct: int
+	# You can define which sounds are "music" or "SFX"
+	if sound_name in []: # example music
+		category_volume_pct = music_volume_percentage
+	else:
+		category_volume_pct = sound_volume_percentage
+	var final_volume_db = base_volume_db + percent_to_db(master_volume_percentage) + percent_to_db(category_volume_pct)
+	sfx.volume_db = final_volume_db
 	add_child(sfx)
 	sfx.play()
 	if is_hover_sound:
 		current_hover_player = sfx
-	# Free after finished safely
 	var duration = sfx.stream.get_length()
 	await get_tree().create_timer(duration).timeout
 	if is_instance_valid(sfx):
 		sfx.queue_free()
-	# Only clear hover reference if this was the current hover
 	if is_hover_sound and current_hover_player == sfx:
 		current_hover_player = null
+
+# Converts 0-100% to Godot dB (-30dB to 0dB)
+func percent_to_db(pct: float) -> float:
+	return lerp(-30.0, 0.0, clampf(pct, 0, 100) / 100.0)

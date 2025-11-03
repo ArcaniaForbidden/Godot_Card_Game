@@ -10,6 +10,9 @@ extends CanvasLayer
 @onready var stats_vbox_container: VBoxContainer = $StatsPanel/StatsVBoxContainer
 @onready var pause_menu_panel: Panel = $PauseMenuPanel
 @onready var next_day_button: TextureButton = $TimeBarPanel/NextDayButton
+@onready var options_panel: Panel = $OptionsPanel
+@onready var audio_panel: Panel = $OptionsPanel/AudioPanel
+@onready var graphics_panel: Panel = $OptionsPanel/GraphicsPanel
 
 var current_card: Node = null
 
@@ -17,6 +20,7 @@ func _ready() -> void:
 	card_zoom_panel.hide()
 	stats_panel.hide()
 	pause_menu_panel.hide()
+	options_panel.hide()
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
@@ -26,7 +30,7 @@ func _input(event: InputEvent) -> void:
 			return
 		if card:
 			open_card_ui(card)
-	if event is InputEventKey and event.pressed and not event.echo and event.keycode == Key.KEY_ESCAPE:
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == Key.KEY_ESCAPE and not options_panel.visible:
 		toggle_pause_menu()
 
 func open_card_ui(card: Node) -> void:

@@ -517,9 +517,6 @@ offset_left = 50.0
 offset_top = -110.0
 offset_right = 82.0
 offset_bottom = -90.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("11_vfi26")
-theme_override_font_sizes/font_size = 16
 
 [node name="ResolutionLabel" type="Label" parent="OptionsPanel/GraphicsPanel"]
 offset_left = -220.0
@@ -532,13 +529,12 @@ label_settings = ExtResource("9_00rri")
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="FullscreenButton" type="TextureButton" parent="OptionsPanel/GraphicsPanel"]
+[node name="FullscreenCheckBox" type="TextureButton" parent="OptionsPanel/GraphicsPanel"]
 layout_mode = 0
 offset_left = 50.0
 offset_top = -50.0
 offset_right = 74.0
 offset_bottom = -26.0
-toggle_mode = true
 texture_normal = ExtResource("28_g8t0v")
 texture_pressed = ExtResource("29_bb722")
 
@@ -553,13 +549,12 @@ label_settings = ExtResource("9_00rri")
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="VSyncButton" type="TextureButton" parent="OptionsPanel/GraphicsPanel"]
+[node name="VSyncCheckBox" type="TextureButton" parent="OptionsPanel/GraphicsPanel"]
 layout_mode = 0
 offset_left = 50.0
 offset_top = 10.0
 offset_right = 74.0
 offset_bottom = 34.0
-toggle_mode = true
 texture_normal = ExtResource("28_g8t0v")
 texture_pressed = ExtResource("29_bb722")
 
@@ -606,7 +601,7 @@ theme_override_icons/grabber_highlight = ExtResource("24_pwmvk")
 theme_override_styles/slider = SubResource("StyleBoxEmpty_pwmvk")
 min_value = 30.0
 max_value = 240.0
-value = 240.0
+value = 60.0
 
 [node name="FPSLabel" type="Label" parent="OptionsPanel/GraphicsPanel"]
 offset_left = -220.0

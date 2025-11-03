@@ -18,8 +18,10 @@ func _ready():
 		button.mouse_exited.connect(Callable(self, "_on_button_hovered").bind(button, false))
 
 func _on_button_hovered(button: Control, hovered: bool) -> void:
+	if UIManager.options_panel.visible:
+		return
 	if hovered and SoundManager:
-		SoundManager.play("ui_hover", -14.0)
+		SoundManager.play("ui_hover", 0.0)
 	var label = button.get_node_or_null("Label")
 	if not label:
 		return
@@ -30,12 +32,21 @@ func _on_button_hovered(button: Control, hovered: bool) -> void:
 	label.label_settings.font_color = hover_color if hovered else normal_color
 
 func _on_button_pressed(button: Object) -> void:
+	if UIManager.options_panel.visible:
+		return
 	match button:
 		pause_menu_close_button:
 			visible = false
 			print("Pause menu close button pressed")
 		options_button:
-			print("Options menu logic here")
+			UIManager.options_panel.visible = true
+			UIManager.audio_panel.visible = true
+			UIManager.graphics_panel.visible = false
+			var label = button.get_node_or_null("Label")
+			if label.label_settings:
+				label.label_settings = label.label_settings.duplicate()
+				label.label_settings.font_color = normal_color
+			print("Options menu opened")
 		save_button:
 			print("Save game logic here")
 		load_button:

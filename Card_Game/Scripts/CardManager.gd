@@ -268,7 +268,7 @@ func start_drag(card: Card) -> void:
 	close_stack_inventories(dragged_substack)
 	# Play pickup sound
 	if SoundManager:
-		SoundManager.play("card_pickup", -12.0, dragged_substack[0].position)
+		SoundManager.play("card_pickup", 0.0, dragged_substack[0].position)
 	# Store mouse offset relative to the card's original position
 	drag_offset = dragged_substack[0].position - get_global_mouse_position()
 	# Mark cards as being dragged, assign high z-index
@@ -289,7 +289,7 @@ func finish_drag_generic(cards: Array, is_simulated: bool, play_sound: bool = tr
 	if cards.is_empty():
 		return
 	if play_sound and SoundManager:
-		SoundManager.play("card_drop", -8.0, cards[0].position)
+		SoundManager.play("card_drop", 0.0, cards[0].position)
 	# Choose which flag to set/clear
 	for c in cards:
 		if not is_instance_valid(c):
@@ -726,7 +726,7 @@ func open_card_pack(card_pack: Card, num_cards := 5) -> void:
 		card_pack.area.monitoring = false
 		card_pack.area.monitorable = false
 	if SoundManager:
-		SoundManager.play("card_pack_open", -4.0)
+		SoundManager.play("card_pack_open", 0.0)
 	# Keep the pack visually above spawned cards
 	card_pack.z_index = 1000
 	card_pack.show()
@@ -755,7 +755,7 @@ func open_card_pack(card_pack: Card, num_cards := 5) -> void:
 		tween.tween_interval(i * delay_per_card)
 		tween.tween_callback(func():
 			if SoundManager:
-				SoundManager.play("card_pop", -16.0)
+				SoundManager.play("card_pop", 0.0)
 		)
 		tween.tween_property(card, "position", target_pos, 0.3)\
 			.set_trans(Tween.TRANS_QUAD)\

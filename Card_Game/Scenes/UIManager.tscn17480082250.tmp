@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://e8ajh2rt8q5g"]
+[gd_scene load_steps=32 format=3 uid="uid://e8ajh2rt8q5g"]
 
 [ext_resource type="Script" uid="uid://bsj7a0hun52jo" path="res://Scripts/UIManager.gd" id="1_felxf"]
 [ext_resource type="Texture2D" uid="uid://c0rvslqmgpohg" path="res://Images/unit_card.png" id="2_08khg"]
@@ -27,8 +27,6 @@
 [ext_resource type="Texture2D" uid="uid://cajoaqx7wvmps" path="res://Images/hslider_fill.png" id="24_055rd"]
 [ext_resource type="Texture2D" uid="uid://dg5ayw27ymbrk" path="res://Images/slider_grabber.png" id="24_pwmvk"]
 [ext_resource type="Texture2D" uid="uid://c5skd310852m4" path="res://Images/hslider_empty.png" id="25_bpcpp"]
-[ext_resource type="Texture2D" uid="uid://djsqg3e1cqjhk" path="res://Images/button_normal.png" id="28_g8t0v"]
-[ext_resource type="Texture2D" uid="uid://dltrrsteqr51a" path="res://Images/button_pressed.png" id="29_bb722"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_y1w80"]
 texture = ExtResource("3_a33nh")
@@ -517,9 +515,6 @@ offset_left = 50.0
 offset_top = -110.0
 offset_right = 82.0
 offset_bottom = -90.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("11_vfi26")
-theme_override_font_sizes/font_size = 16
 
 [node name="ResolutionLabel" type="Label" parent="OptionsPanel/GraphicsPanel"]
 offset_left = -220.0
@@ -532,15 +527,12 @@ label_settings = ExtResource("9_00rri")
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="FullscreenButton" type="TextureButton" parent="OptionsPanel/GraphicsPanel"]
+[node name="FullscreenCheckBox" type="CheckBox" parent="OptionsPanel/GraphicsPanel"]
 layout_mode = 0
 offset_left = 50.0
 offset_top = -50.0
 offset_right = 74.0
 offset_bottom = -26.0
-toggle_mode = true
-texture_normal = ExtResource("28_g8t0v")
-texture_pressed = ExtResource("29_bb722")
 
 [node name="FullscreenLabel" type="Label" parent="OptionsPanel/GraphicsPanel"]
 offset_left = -220.0
@@ -553,15 +545,11 @@ label_settings = ExtResource("9_00rri")
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="VSyncButton" type="TextureButton" parent="OptionsPanel/GraphicsPanel"]
-layout_mode = 0
+[node name="VSyncCheckBox" type="CheckBox" parent="OptionsPanel/GraphicsPanel"]
 offset_left = 50.0
 offset_top = 10.0
 offset_right = 74.0
 offset_bottom = 34.0
-toggle_mode = true
-texture_normal = ExtResource("28_g8t0v")
-texture_pressed = ExtResource("29_bb722")
 
 [node name="VSyncLabel" type="Label" parent="OptionsPanel/GraphicsPanel"]
 offset_left = -220.0
@@ -606,7 +594,7 @@ theme_override_icons/grabber_highlight = ExtResource("24_pwmvk")
 theme_override_styles/slider = SubResource("StyleBoxEmpty_pwmvk")
 min_value = 30.0
 max_value = 240.0
-value = 240.0
+value = 60.0
 
 [node name="FPSLabel" type="Label" parent="OptionsPanel/GraphicsPanel"]
 offset_left = -220.0
@@ -639,7 +627,6 @@ label_settings = ExtResource("9_00rri")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[connection signal="pressed" from="PauseMenuPanel/OptionsButton" to="." method="_on_options_button_pressed"]
 [connection signal="value_changed" from="OptionsPanel/AudioPanel/MasterVolumeHSlider" to="." method="_on_master_volume_h_slider_value_changed"]
 [connection signal="value_changed" from="OptionsPanel/AudioPanel/SoundVolumeHSlider" to="." method="_on_sound_volume_h_slider_value_changed"]
 [connection signal="value_changed" from="OptionsPanel/AudioPanel/MusicVolumeHSlider" to="." method="_on_music_volume_h_slider_value_changed"]

@@ -44,7 +44,7 @@ func _on_next_day_button_pressed():
 
 func _on_next_day_button_hovered(button: Control, hovered: bool) -> void:
 	if hovered and SoundManager:
-		SoundManager.play("ui_hover", -14.0)
+		SoundManager.play("ui_hover", 0.0)
 	var label = button.get_node_or_null("Label")
 	if not label:
 		return

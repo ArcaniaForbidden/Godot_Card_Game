@@ -263,7 +263,7 @@ func complete_job(job: CraftingJob) -> void:
 	# --- Finish job ---
 	PlayerProgress.increment_recipe(job.recipe_name)
 	if SoundManager:
-		SoundManager.play("card_pop", -4.0, stack[0].position)
+		SoundManager.play("card_pop", 0.0, stack[0].position)
 	job.is_active = false
 	if job in active_jobs:
 		active_jobs.erase(job)

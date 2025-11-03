@@ -9,7 +9,7 @@ var active_raid_enemies := []
 @export var DAY_SCALE := 0.5              # 0.5 strength per day
 @export var UNIT_SCALE := 1.0             # 1 strength per unit
 @export var BUILDING_SCALE := 0.2         # 0.2 strength per building
-@export var BASE_RAID_STRENGTH := 2       # Minimum raid power
+@export var BASE_RAID_STRENGTH := 3       # Minimum raid power
 
 func _ready():
 	card_manager = get_node_or_null("/root/Main/CardManager")
@@ -61,10 +61,9 @@ func get_raid_strength() -> int:
 		(total_value * VALUE_SCALE) +
 		(current_day * DAY_SCALE) +
 		(unit_count * UNIT_SCALE) +
-		(building_count * BUILDING_SCALE) +
-		BASE_RAID_STRENGTH
+		(building_count * BUILDING_SCALE)
 	)
-	return max(raid_strength, BASE_RAID_STRENGTH * 2)
+	return max(raid_strength, BASE_RAID_STRENGTH)
 
 func spawn_raid() -> void:
 	var raid_strength := get_raid_strength()
@@ -119,7 +118,7 @@ func roll_for_raid() -> void:
 	if randf() < chance:
 		spawn_raid()
 		if SoundManager:
-			SoundManager.play("raid_start", -14.0)
+			SoundManager.play("raid_start", 0.0)
 		print("Spawning raid")
 	else:
 		print("No raid tonight")
