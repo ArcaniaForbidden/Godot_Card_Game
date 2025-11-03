@@ -118,6 +118,8 @@ func roll_for_raid() -> void:
 	var chance: float = clamp(days_since_last_raid * 0.25, 0.0, 1.0)
 	if randf() < chance:
 		spawn_raid()
+		if SoundManager:
+			SoundManager.play("raid_start", -14.0)
 		print("Spawning raid")
 	else:
 		print("No raid tonight")
