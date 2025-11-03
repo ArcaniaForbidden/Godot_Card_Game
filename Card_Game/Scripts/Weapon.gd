@@ -265,7 +265,10 @@ func can_damage(attacker: Card, target: Card) -> bool:
 		"enemy":
 			return target.card_type in ["unit", "building"]
 		"unit":
-			return target.card_type in ["enemy", "neutral"]
+			if TimeManager.is_night:
+				return target.card_type in ["enemy"]
+			else:
+				return target.card_type in ["enemy", "neutral"]
 		"building":
 			return target.card_type == "enemy"
 		_:

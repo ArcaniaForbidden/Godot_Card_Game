@@ -13,6 +13,7 @@ var sounds = {
 	"claw_slash": preload("res://Sounds/claw_slash.wav"),
 	"arrow": preload("res://Sounds/arrow.wav"),
 	"ui_hover": preload("res://Sounds/ui_hover.wav"),
+	"new_day": preload("res://Sounds/new_day.wav"),
 }
 
 func play(sound_name: String, volume_db: float = 0.0, position = null) -> void:

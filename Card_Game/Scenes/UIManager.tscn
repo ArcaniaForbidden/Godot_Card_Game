@@ -295,11 +295,3 @@ text = "Next Day"
 label_settings = ExtResource("9_00rri")
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="NightPanel" type="Panel" parent="."]
-offset_left = 334.0
-offset_top = 200.0
-offset_right = 334.0
-offset_bottom = 200.0
-
-[node name="BackgroundSprite2D" type="Sprite2D" parent="NightPanel"]
