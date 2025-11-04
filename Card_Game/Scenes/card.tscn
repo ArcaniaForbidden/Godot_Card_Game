@@ -121,7 +121,6 @@ label_settings = ExtResource("5_xnv4g")
 metadata/_edit_use_anchors_ = true
 
 [node name="FoilOverlay" type="Sprite2D" parent="."]
-visible = false
 position = Vector2(-4.76837e-07, 8.58307e-06)
 texture = ExtResource("8_u5wvb")
 
