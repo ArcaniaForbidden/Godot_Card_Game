@@ -48,9 +48,9 @@ func _on_button_pressed(button: Object) -> void:
 				label.label_settings.font_color = normal_color
 			print("Options menu opened")
 		save_button:
-			print("Save game logic here")
+			SaveManager.save_game()
 		load_button:
-			print("Load game logic here")
+			SaveManager.load_game()
 		main_menu_button:
 			print("Main menu logic here")
 		exit_game_button:

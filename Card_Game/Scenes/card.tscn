@@ -61,7 +61,6 @@ scale = Vector2(3, 3)
 texture = ExtResource("4_mm04k")
 
 [node name="DisplayNameLabel" type="Label" parent="."]
-anchors_preset = -1
 offset_left = -40.0
 offset_top = -62.0
 offset_right = 40.0

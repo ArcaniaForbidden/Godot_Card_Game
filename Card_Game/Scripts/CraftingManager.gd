@@ -50,6 +50,19 @@ func start_job(stack: Array, recipe_name: String) -> void:
 	if matched_cards.is_empty():
 		print("❌ No matched cards for recipe:", recipe_name)
 		return
+	if recipe.has("heal_amount"):
+		var can_heal := false
+		for card in matched_cards:
+			if not is_instance_valid(card):
+				continue
+			if card.card_type == "building":
+				continue
+			if card.health < card.max_health:
+				can_heal = true
+				break
+		if not can_heal:
+			print("⚠️ All cards already at max health, skipping job:", recipe_name)
+			return
 	var job = CraftingJob.new()
 	job.stack = stack
 	job.recipe_name = recipe_name
@@ -183,6 +196,19 @@ func complete_job(job: CraftingJob) -> void:
 					.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 				card.z_index = i + 1
 				card_manager.card_tweens[card] = tween
+	# --- heal_amount --- 
+	if recipe.has("heal_amount"):
+		var heal_amount = recipe.heal_amount
+		var healed_cards := []
+		for card in job.input_cards:
+			if not is_instance_valid(card):
+				continue
+			if card in healed_cards:
+				continue  # skip duplicates
+			if card.card_type == "building":
+				continue
+			card.heal(heal_amount)
+			healed_cards.append(card)
 	# --- Determine outputs ---
 	var outputs = recipe.get("outputs", [])
 	if recipe.has("loot_table"):
@@ -262,8 +288,10 @@ func complete_job(job: CraftingJob) -> void:
 		))
 	# --- Finish job ---
 	PlayerProgress.increment_recipe(job.recipe_name)
-	if SoundManager:
+	if not recipe.has("heal_amount") and SoundManager:
 		SoundManager.play("card_pop", 0.0, stack[0].position)
+	if recipe.has("heal_amount") and SoundManager:
+		SoundManager.play("heal", 0.0, stack[0].position)
 	job.is_active = false
 	if job in active_jobs:
 		active_jobs.erase(job)
@@ -273,9 +301,6 @@ func complete_job(job: CraftingJob) -> void:
 	job.progress_bar = null
 	job.progress_bar_sprite = null
 	job.progress_bar_label = null
-	job.is_active = false
-	if job in active_jobs:
-		active_jobs.erase(job)
 	print("✅ Job completed: %s" % job.recipe_name)
 
 # ==============================
@@ -318,15 +343,18 @@ func stack_matches_recipe(stack: Array, recipe_inputs: Array) -> Array:
 # ==============================
 func check_all_stacks_for_recipes():
 	for stack in card_manager.all_stacks:
-		# Skip if a job is already running on this stack
+		# --- Skip empty stacks ---
+		if stack.size() == 0:
+			continue
+		# --- Skip if a job is already running on this stack ---
 		var already_running := false
 		for job in active_jobs:
-			if job.stack == stack:
+			if job.stack == stack and job.is_active:
 				already_running = true
 				break
 		if already_running:
 			continue
-		# Find the longest matching recipe
+		# --- Find the recipe that matches the most cards in this stack ---
 		var best_recipe_name := ""
 		var best_match: Array = []
 		for recipe_name in RecipeDatabase.recipes.keys():
@@ -335,7 +363,22 @@ func check_all_stacks_for_recipes():
 			if matched.size() > best_match.size():
 				best_match = matched
 				best_recipe_name = recipe_name
+		# --- Start a job only if there’s a valid match ---
 		if best_match.size() > 0:
+			# Optional optimization: skip healing jobs if all healable cards are at full health
+			var recipe = RecipeDatabase.recipes[best_recipe_name]
+			if recipe.has("heal_amount"):
+				var can_heal := false
+				for card in best_match:
+					if not is_instance_valid(card):
+						continue
+					if card.card_type == "building":
+						continue
+					if card.health < card.max_health:
+						can_heal = true
+						break
+				if not can_heal:
+					continue  # skip starting this healing job
 			start_job(stack, best_recipe_name)
 
 # ==============================

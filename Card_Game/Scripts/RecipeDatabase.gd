@@ -63,13 +63,26 @@ static var recipes = {
 			{"subtype": "peasant", "consume": false} # unit on top
 		],
 		"loot_table": [
-			{"weight": 1, "outputs": [{"subtype": "aquifer"}]},
-			{"weight": 5, "outputs": [{"subtype": "soil"}]},
-			{"weight": 8, "outputs": [{"subtype": "plant_fiber"}]},
-			{"weight": 4, "outputs": [{"subtype": "tree"}]},
-			{"weight": 4, "outputs": [{"subtype": "rock"}]},
-			#{"weight": 2, "outputs": [{"subtype": "cow"}]},
-			{"weight": 2, "outputs": [{"subtype": "horse"}]},
+			{"weight": 5, "outputs": [{"subtype": "aquifer"}]},
+			{"weight": 5, "outputs": [{"subtype": "forest"}]},
+			{"weight": 20, "outputs": [{"subtype": "soil"}]},
+			{"weight": 20, "outputs": [{"subtype": "plant_fiber"}]},
+			{"weight": 20, "outputs": [{"subtype": "tree"}]},
+			{"weight": 20, "outputs": [{"subtype": "rock"}]},
+			{"weight": 4, "outputs": [{"subtype": "cow"}]},
+			{"weight": 3, "outputs": [{"subtype": "horse"}]},
+			{"weight": 2, "outputs": [{"subtype": "rabbit"}]},
+			{"weight": 1, "outputs": [{"subtype": "chicken"}]},
+		],
+		"work_time": 30.0
+	},
+	"Search Aquifer": {
+		"inputs": [
+			{"subtype": "aquifer", "consume": false}, # environment card
+			{"subtype": "peasant", "consume": false} # unit on top
+		],
+		"loot_table": [
+			{"weight": 100, "outputs": [{"subtype": "water"}]},
 		],
 		"work_time": 30.0
 	},
@@ -79,9 +92,11 @@ static var recipes = {
 			{"subtype": "peasant", "consume": false} # unit on top
 		],
 		"loot_table": [
-			{"weight": 10, "outputs": [{"subtype": "plant_fiber"}]},
-			{"weight": 45, "outputs": [{"subtype": "tree"}]},
+			{"weight": 5, "outputs": [{"subtype": "mountain"}]},
+			{"weight": 7, "outputs": [{"subtype": "plant_fiber"}]},
+			{"weight": 40, "outputs": [{"subtype": "tree"}]},
 			{"weight": 40, "outputs": [{"subtype": "wood"}]},
+			{"weight": 3, "outputs": [{"subtype": "horse"}]},
 			{"weight": 5, "outputs": [{"subtype": "wolf"}]},
 		],
 		"work_time": 30.0
@@ -280,7 +295,7 @@ static var recipes = {
 		"outputs": [
 			{"subtype": "peasant"}
 		],
-		"work_time": 700.0
+		"work_time": 540.0
 	},
 	"Grow Wheat on Farm": {
 		"inputs": [
@@ -290,7 +305,7 @@ static var recipes = {
 		"outputs": [
 			{"subtype": "wheat"},
 		],
-		"work_time": 180.0
+		"work_time": 90.0
 	},
 	"Grow Wheat on Farm with Water": {
 		"inputs": [
@@ -301,7 +316,7 @@ static var recipes = {
 		"outputs": [
 			{"subtype": "wheat"},
 		],
-		"work_time": 120.0
+		"work_time": 60.0
 	},
 	"Cook Bread": {
 		"inputs": [
@@ -510,6 +525,15 @@ static var recipes = {
 			{"subtype": "gold_mine"}
 		],
 		"work_time": 15.0
+	},
+	"Heal Peasant on House": {
+		"inputs": [
+			{"subtype": "house", "consume": false},    # building or source
+			{"subtype": "peasant", "consume": false}   # target to heal
+		],
+		"outputs": [],
+		"heal_amount": 1,    # custom key for healing
+		"work_time": 10.0
 	},
 	"Use Well": {
 		"inputs": [

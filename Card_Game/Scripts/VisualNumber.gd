@@ -8,11 +8,11 @@ extends Node2D
 
 @onready var label = $VisualLabel
 
-func show_number(amount: int):
+func show_number(amount: int, custom_color: Color):
 	label.label_settings = label.label_settings.duplicate()
 	label.text = str(amount)
 	label.visible = true
-	label.label_settings.font_color = color
+	label.label_settings.font_color = custom_color if custom_color != null else color
 	var random_x = randf_range(random_x_range.x, random_x_range.y)
 	var random_y = randf_range(random_y_range.x, random_y_range.y)
 	position += Vector2(random_x, random_y)

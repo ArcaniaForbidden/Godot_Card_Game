@@ -2,12 +2,25 @@
 #  TODO LIST
 # ==============================
 
+# Add inventory system to each villager/unit ✅ (Added PeasantInventory 9/20/25)
+# Add health bar
+# Add hunger system
+# Add save/load system
+# Add taming system
+# Add healing from peasant on house ✅ (11/4/25)
+# Add berries as an early game food
+# Add recipe book system
+
 #var enemy_go_attack: bool = false
 #var player_card_alive: bool = true
 #func battle():
 	#if enemy_go_attack:
 		#player_card_alive = false
 		#return
+
+# ==============================
+#  FUTURE IDEAS
+# ==============================
 
 # Recipe Progression
 # Wood x3 -> Plank
@@ -18,12 +31,6 @@
 # Reinforced Brick + Magic Dust -> Enchanted Brick
 # Fiber obtained from cotton plants, plants and soil are found in plains as well as some animals
 
-
-# ==============================
-#  FUTURE IDEAS
-# ==============================
-
-# Add inventory system to each villager/unit ✅ (Added PeasantInventory 9/20/25)
 # Potentially add a global inventory storage as well that contains only weapons/armor or quest items
 # Add rarity/tiers for items (can be obtained through gatcha or buying from merchants/traders or quests/dungeons)
 # Combat should be RTS when exploring.

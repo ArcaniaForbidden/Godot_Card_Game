@@ -122,13 +122,33 @@ func take_damage(amount: int):
 		var damage_number_instance = damage_number_scene.instantiate()
 		get_parent().add_child(damage_number_instance)
 		damage_number_instance.global_position = global_position + Vector2(0, -70)
-		damage_number_instance.show_number(amount)
+		damage_number_instance.z_index = 1000
+		damage_number_instance.show_number(amount, Color(1, 0.2, 0.2))
 	print("%s took %d damage, remaining HP: %d" % [name, amount, health])
 	if health <= 0:
 		is_dead = true
 		print("%s died!" % name)
 		emit_signal("died", self)
 		queue_free()
+
+func heal(amount: int) -> void:
+	if health >= max_health:
+		return  # no healing needed
+	var healing = min(amount, max_health - health)
+	if healing <= 0:
+		return
+	health += healing
+	if health_label:
+		health_label.text = "%d" % [health]
+	if health_icon:
+		health_icon.visible = true
+	if is_inside_tree():
+		var heal_number_scene = preload("res://Scenes/VisualNumber.tscn")
+		var heal_number_instance = heal_number_scene.instantiate()
+		get_parent().add_child(heal_number_instance)
+		heal_number_instance.global_position = global_position + Vector2(0, -70)
+		heal_number_instance.z_index = 1000
+		heal_number_instance.show_number(healing, Color(0.3, 1.0, 0.3)) # only show actual healing
 
 func flash_damage_effect():
 	if not is_inside_tree():

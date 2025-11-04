@@ -564,7 +564,7 @@ static var card_database = {
 		"stats": {"health": 5, "attack": 0, "armor": 0, "attack_speed": 0.0, "attack_range": 0},
 		"min_jump_time": 1.5,
 		"max_jump_time": 2.5,
-		"jump_distance": 150.0,
+		"jump_distance": 300.0,
 		"raid_value": 1,
 		"raid_group_range": Vector2(3, 6),
 		"weapons": [
@@ -608,7 +608,7 @@ static var card_database = {
 		"stats": {"health": 5},
 		"min_jump_time": 2.0,
 		"max_jump_time": 3.0,
-		"jump_distance": 250.0,
+		"jump_distance": 400.0,
 		"loot_table": [
 			{ "subtype": "leather", "chance": 0.9 },
 			{ "subtype": "leather", "chance": 0.5 },
@@ -623,7 +623,7 @@ static var card_database = {
 		"stats": {"health": 4},
 		"min_jump_time": 2.0,
 		"max_jump_time": 3.0,
-		"jump_distance": 125.0,
+		"jump_distance": 200.0,
 		"loot_table": [
 			{ "subtype": "leather", "chance": 0.9 },
 			{ "subtype": "leather", "chance": 0.5 },
@@ -639,7 +639,7 @@ static var card_database = {
 		"stats": {"health": 3},
 		"min_jump_time": 1.5,
 		"max_jump_time": 2.5,
-		"jump_distance": 150.0,
+		"jump_distance": 300.0,
 		"loot_table": [
 			{ "subtype": "leather", "chance": 0.5 },
 			{ "subtype": "raw_meat", "chance": 0.5 },
@@ -653,7 +653,7 @@ static var card_database = {
 		"stats": {"health": 2},
 		"min_jump_time": 2.0,
 		"max_jump_time": 3.0,
-		"jump_distance": 175.0,
+		"jump_distance": 250.0,
 		"loot_table": [
 			{ "subtype": "raw_meat", "chance": 0.5 },
 			{ "subtype": "raw_meat", "chance": 0.1 },

@@ -438,6 +438,7 @@ horizontal_alignment = 2
 vertical_alignment = 1
 
 [node name="SoundVolumeTextureProgressBar" type="TextureProgressBar" parent="OptionsPanel/AudioPanel"]
+layout_mode = 0
 offset_left = 55.0
 offset_top = -40.0
 offset_right = 245.0
@@ -446,6 +447,7 @@ texture_under = ExtResource("24_055rd")
 texture_progress = ExtResource("25_bpcpp")
 
 [node name="SoundVolumeHSlider" type="HSlider" parent="OptionsPanel/AudioPanel"]
+layout_mode = 0
 offset_left = 50.0
 offset_top = -50.0
 offset_right = 250.0
@@ -456,6 +458,7 @@ theme_override_styles/slider = SubResource("StyleBoxEmpty_pwmvk")
 value = 100.0
 
 [node name="SoundVolumeValueLabel" type="Label" parent="OptionsPanel/AudioPanel"]
+layout_mode = 0
 offset_left = -10.0
 offset_top = -50.0
 offset_right = 20.0
@@ -467,6 +470,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="MusicVolumeValueLabel" type="Label" parent="OptionsPanel/AudioPanel"]
+layout_mode = 0
 offset_left = -10.0
 offset_top = 10.0
 offset_right = 20.0
@@ -478,6 +482,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="MusicVolumeTextureProgressBar" type="TextureProgressBar" parent="OptionsPanel/AudioPanel"]
+layout_mode = 0
 offset_left = 55.0
 offset_top = 20.0
 offset_right = 245.0
@@ -486,6 +491,7 @@ texture_under = ExtResource("24_055rd")
 texture_progress = ExtResource("25_bpcpp")
 
 [node name="MusicVolumeHSlider" type="HSlider" parent="OptionsPanel/AudioPanel"]
+layout_mode = 0
 offset_left = 50.0
 offset_top = 10.0
 offset_right = 250.0
@@ -521,6 +527,7 @@ theme_override_fonts/font = ExtResource("11_vfi26")
 theme_override_font_sizes/font_size = 16
 
 [node name="ResolutionLabel" type="Label" parent="OptionsPanel/GraphicsPanel"]
+layout_mode = 0
 offset_left = -220.0
 offset_top = -110.0
 offset_right = -130.0
@@ -542,6 +549,7 @@ texture_normal = ExtResource("28_g8t0v")
 texture_pressed = ExtResource("29_bb722")
 
 [node name="FullscreenLabel" type="Label" parent="OptionsPanel/GraphicsPanel"]
+layout_mode = 0
 offset_left = -220.0
 offset_top = -50.0
 offset_right = -130.0
@@ -563,6 +571,7 @@ texture_normal = ExtResource("28_g8t0v")
 texture_pressed = ExtResource("29_bb722")
 
 [node name="VSyncLabel" type="Label" parent="OptionsPanel/GraphicsPanel"]
+layout_mode = 0
 offset_left = -220.0
 offset_top = 10.0
 offset_right = -130.0
@@ -574,6 +583,7 @@ horizontal_alignment = 2
 vertical_alignment = 1
 
 [node name="FPSValueLabel" type="Label" parent="OptionsPanel/GraphicsPanel"]
+layout_mode = 0
 offset_left = -10.0
 offset_top = 70.0
 offset_right = 20.0
@@ -585,6 +595,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="FPSTextureProgressBar" type="TextureProgressBar" parent="OptionsPanel/GraphicsPanel"]
+layout_mode = 0
 offset_left = 55.0
 offset_top = 80.0
 offset_right = 245.0
@@ -596,6 +607,7 @@ texture_under = ExtResource("24_055rd")
 texture_progress = ExtResource("25_bpcpp")
 
 [node name="FPSHSlider" type="HSlider" parent="OptionsPanel/GraphicsPanel"]
+layout_mode = 0
 offset_left = 50.0
 offset_top = 70.0
 offset_right = 250.0
@@ -608,6 +620,7 @@ max_value = 240.0
 value = 240.0
 
 [node name="FPSLabel" type="Label" parent="OptionsPanel/GraphicsPanel"]
+layout_mode = 0
 offset_left = -220.0
 offset_top = 70.0
 offset_right = -130.0
@@ -626,6 +639,7 @@ offset_right = 225.0
 offset_bottom = 176.0
 scale = Vector2(0.5, 0.5)
 texture_normal = ExtResource("21_x54vm")
+texture_hover = ExtResource("22_pwmvk")
 
 [node name="Label" type="Label" parent="OptionsPanel/GraphicsPanel/ApplyButton"]
 layout_mode = 0
