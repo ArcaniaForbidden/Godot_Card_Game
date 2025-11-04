@@ -69,16 +69,16 @@ texture = ExtResource("2_sjxgx")
 
 [node name="CardZoomLabel" type="Label" parent="CardZoomPanel/CardZoomContainer"]
 layout_mode = 0
-offset_left = 16.0
+offset_left = 19.0
 offset_top = 16.0
-offset_right = 184.0
+offset_right = 177.0
 offset_bottom = 48.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("11_vfi26")
 theme_override_font_sizes/font_size = 32
 text = "Miner"
-horizontal_alignment = 1
 vertical_alignment = 1
+clip_text = true
 
 [node name="AnimatedSpriteZoom" type="AnimatedSprite2D" parent="CardZoomPanel/CardZoomContainer"]
 position = Vector2(98, 164)
@@ -95,8 +95,8 @@ theme_override_styles/panel = SubResource("StyleBoxTexture_y1w80")
 
 [node name="StatsVBoxContainer" type="VBoxContainer" parent="StatsPanel"]
 layout_mode = 0
-offset_left = 15.0
-offset_top = 17.0
+offset_left = 21.0
+offset_top = 22.0
 offset_right = 180.0
 offset_bottom = 263.0
 
@@ -379,7 +379,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="AudioPanel" type="Panel" parent="OptionsPanel"]
-visible = false
 layout_mode = 0
 
 [node name="MasterVolumeLabel" type="Label" parent="OptionsPanel/AudioPanel"]

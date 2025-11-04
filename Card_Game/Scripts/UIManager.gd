@@ -8,6 +8,7 @@ extends CanvasLayer
 @onready var card_zoom_label: Label = $CardZoomPanel/CardZoomContainer/CardZoomLabel
 @onready var stats_panel: Panel = $StatsPanel
 @onready var stats_vbox_container: VBoxContainer = $StatsPanel/StatsVBoxContainer
+@onready var stat_label_settings: LabelSettings = preload("res://Themes/label_settings.tres")
 @onready var pause_menu_panel: Panel = $PauseMenuPanel
 @onready var next_day_button: TextureButton = $TimeBarPanel/NextDayButton
 @onready var options_panel: Panel = $OptionsPanel
@@ -65,6 +66,7 @@ func open_card_ui(card: Node) -> void:
 	# Type label
 	var type_label = Label.new()
 	type_label.text = "Type: %s" % card.card_type.capitalize()
+	type_label.label_settings = stat_label_settings
 	stats_vbox_container.add_child(type_label)
 	var stat_properties = {
 		"Health": "%d/%d" % [card.health, card.max_health],
@@ -80,27 +82,32 @@ func open_card_ui(card: Node) -> void:
 			if card.max_health > 0:
 				var label = Label.new()
 				label.text = "%s: %s" % [stat_name, str(stat_value)]
+				label.label_settings = stat_label_settings
 				stats_vbox_container.add_child(label)
 		elif stat_value != null and stat_value != 0:
 			# Only show non-zero stats
 			var label = Label.new()
 			label.text = "%s: %s" % [stat_name, str(stat_value)]
+			label.label_settings = stat_label_settings
 			stats_vbox_container.add_child(label)
 	if card.value != null:
 		var value_label = Label.new()
 		value_label.text = "Value: %d" % card.value
+		value_label.label_settings = stat_label_settings
 		stats_vbox_container.add_child(value_label)
 	# Show equipment stat modifiers if this card is equipment
 	if card.card_type == "equipment" and card.stats:
 		if card.stats.has("add"):
 			for key in card.stats["add"].keys():
 				var label = Label.new()
-				label.text = "%s: +%s" % [key.capitalize(), str(card.stats["add"][key])]
+				label.text = "%s: %s" % [key.capitalize(), str(card.stats["add"][key])]
+				label.label_settings = stat_label_settings
 				stats_vbox_container.add_child(label)
 		if card.stats.has("mul"):
 			for key in card.stats["mul"].keys():
 				var label = Label.new()
-				label.text = "%s: x%s" % [key.capitalize(), str(card.stats["mul"][key])]
+				label.text = "%s: %s" % [key.capitalize(), str(card.stats["mul"][key])]
+				label.label_settings = stat_label_settings
 				stats_vbox_container.add_child(label)
 
 func toggle_pause_menu() -> void:

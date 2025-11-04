@@ -6,8 +6,6 @@ signal hovered_off
 signal ui_zoom_update(card: Card)
 signal died(card: Card)
 
-const LABEL_COLOR := Color.BLACK
-
 var target_position: Vector2
 var is_being_dragged: bool = false
 var is_being_simulated_dragged: bool = false
@@ -40,7 +38,7 @@ var food_value: int = 0
 
 # --- UI references ---
 @onready var animation_manager: AnimationManager = AnimationManager.new()
-@onready var display_name_label: Label = get_node_or_null("CardLabel")
+@onready var display_name_label: Label = get_node_or_null("DisplayNameLabel")
 @onready var card_pack_label1: Label = get_node_or_null("CardPackLabel1")
 @onready var card_pack_label2: Label = get_node_or_null("CardPackLabel2")
 @onready var card_image: Sprite2D = get_node_or_null("CardImage")
@@ -71,7 +69,6 @@ func set_health(value: int) -> void:
 	health = clamp(value, 0, max_health)
 	if health_label:
 		health_label.text = "%d" % [health]
-		health_label.self_modulate = LABEL_COLOR
 	if health_icon:
 		health_icon.visible = true
 
@@ -117,7 +114,6 @@ func take_damage(amount: int):
 	# Update the label like set_health
 	if health_label:
 		health_label.text = "%d" % [health]
-		health_label.self_modulate = LABEL_COLOR
 	# Make sure icon is visible
 	if health_icon:
 		health_icon.visible = true
@@ -165,15 +161,9 @@ func setup(subtype_name: String) -> void:
 			var first_word := parts[0].capitalize()
 			card_pack_label1.visible = true
 			card_pack_label1.text = first_word
-			card_pack_label1.horizontal_alignment = 1
-			card_pack_label1.vertical_alignment = 1
-			card_pack_label1.self_modulate = LABEL_COLOR
 		if card_pack_label2:
 			card_pack_label2.visible = true
 			card_pack_label2.text = "Card Pack"
-			card_pack_label2.horizontal_alignment = 1
-			card_pack_label2.vertical_alignment = 1
-			card_pack_label2.self_modulate = LABEL_COLOR
 	else:
 		if card_pack_label1:
 			card_pack_label1.visible = false
@@ -192,10 +182,7 @@ func setup(subtype_name: String) -> void:
 			if sprite_animated.sprite_frames.has_animation("idle"):
 				sprite_animated.play("idle")
 	if display_name_label:
-		display_name_label.horizontal_alignment = 1
-		display_name_label.vertical_alignment = 1
 		display_name_label.text = display_name
-		display_name_label.self_modulate = LABEL_COLOR
 	if card_type == "equipment":
 		slot = data.get("slot", "")
 	else:
@@ -217,9 +204,6 @@ func setup(subtype_name: String) -> void:
 		if value_label:
 			value_label.visible = true
 			value_label.text = str(value)
-			value_label.horizontal_alignment = 1
-			value_label.vertical_alignment = 1
-			value_label.self_modulate = LABEL_COLOR
 	else:
 		if value_icon:
 			value_icon.visible = false

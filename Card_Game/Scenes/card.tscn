@@ -60,13 +60,16 @@ position = Vector2(0, 12)
 scale = Vector2(3, 3)
 texture = ExtResource("4_mm04k")
 
-[node name="CardLabel" type="Label" parent="."]
-offset_left = -41.0
+[node name="DisplayNameLabel" type="Label" parent="."]
+anchors_preset = -1
+offset_left = -40.0
 offset_top = -62.0
-offset_right = 41.0
+offset_right = 40.0
 offset_bottom = -46.0
 text = "Miner"
 label_settings = ExtResource("5_xnv4g")
+vertical_alignment = 1
+clip_text = true
 metadata/_edit_use_anchors_ = true
 
 [node name="HealthIcon" type="Sprite2D" parent="."]
@@ -118,6 +121,7 @@ label_settings = ExtResource("5_xnv4g")
 metadata/_edit_use_anchors_ = true
 
 [node name="FoilOverlay" type="Sprite2D" parent="."]
+visible = false
 position = Vector2(-4.76837e-07, 8.58307e-06)
 texture = ExtResource("8_u5wvb")
 
