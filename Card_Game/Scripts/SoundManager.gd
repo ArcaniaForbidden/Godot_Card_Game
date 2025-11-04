@@ -13,6 +13,7 @@ var sounds = {
 	"coin": preload("res://Sounds/coin.wav"),
 	"damage": preload("res://Sounds/damage.wav"),
 	"heal": preload("res://Sounds/heal.wav"),
+	"repair_building": preload("res://Sounds/repair_building.wav"),
 	"sword_slash": preload("res://Sounds/sword_slash.wav"),
 	"spear_thrust": preload("res://Sounds/spear_thrust.wav"),
 	"claw_slash": preload("res://Sounds/claw_slash.wav"),

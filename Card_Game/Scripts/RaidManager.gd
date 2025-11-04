@@ -136,9 +136,24 @@ func _on_raid_enemy_died(card):
 func show_next_day_button():
 	if UIManager.next_day_button:
 		UIManager.next_day_button.disabled = false
+		UIManager.next_day_button.show()
+		UIManager.next_day_button.modulate.a = 0.0
+		repair_buildings()
 	if not UIManager.next_day_button: 
 		return
-	UIManager.next_day_button.show()
-	UIManager.next_day_button.modulate.a = 0.0
 	var tween := create_tween()
 	tween.tween_property(UIManager.next_day_button, "modulate:a", 1.0, 0.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+func repair_buildings():
+	var repaired_buildings := false
+	for stack in card_manager.all_stacks:
+		for building_card in stack:
+			if not is_instance_valid(building_card):
+				continue
+			if building_card.card_type == "building":
+				if building_card.health < building_card.max_health:
+					var full_repair = building_card.max_health - building_card.health
+					building_card.heal(full_repair)
+					repaired_buildings = true
+	if repaired_buildings == true and SoundManager:
+		SoundManager.play("repair_building", -4.0)
