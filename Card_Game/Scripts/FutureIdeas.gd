@@ -8,6 +8,7 @@
 # Add save/load system
 # Add taming system
 # Add healing from peasant on house ✅ (11/4/25)
+# Add repair buildings mechanic ✅ (11/4/25)
 # Add berries as an early game food
 # Add recipe book system
 

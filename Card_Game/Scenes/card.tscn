@@ -108,6 +108,8 @@ offset_right = 41.0
 offset_bottom = -41.0
 text = "Card Pack"
 label_settings = ExtResource("5_xnv4g")
+horizontal_alignment = 1
+vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="CardPackLabel2" type="Label" parent="."]
@@ -117,6 +119,8 @@ offset_right = 41.0
 offset_bottom = 55.0
 text = "Miner"
 label_settings = ExtResource("5_xnv4g")
+horizontal_alignment = 1
+vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="FoilOverlay" type="Sprite2D" parent="."]

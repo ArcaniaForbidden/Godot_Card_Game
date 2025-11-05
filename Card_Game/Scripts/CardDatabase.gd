@@ -137,6 +137,13 @@ static var card_database = {
 		"display_name": "Rock",
 		"value": 0,
 	},
+	"berry_bush": {
+		"card": preload("res://Images/resource_card.png"),
+		"sprite": preload("res://Images/berry_bush.png"),
+		"card_type": "resource",
+		"display_name": "Berry Bush",
+		"value": 0,
+	},
 	"iron_deposit": {
 		"card": preload("res://Images/resource_card.png"),
 		"sprite": preload("res://Images/iron_deposit.png"),
@@ -158,14 +165,14 @@ static var card_database = {
 		"display_name": "Gold Deposit",
 		"value": 0,
 	},
-	"soil": { 
+	"soil": {
 		"card": preload("res://Images/resource_card.png"),
 		"sprite": preload("res://Images/soil.png"),
 		"card_type": "material",
 		"display_name": "Soil",
 		"value": 0,
 	},
-	"stone": { 
+	"stone": {
 		"card": preload("res://Images/material_card.png"),
 		"sprite": preload("res://Images/stone.png"),
 		"card_type": "material",
@@ -266,14 +273,14 @@ static var card_database = {
 		"display_name": "Plank",
 		"value": 4,
 	},
-	"brick": { 
+	"brick": {
 		"card": preload("res://Images/material_card.png"),
 		"sprite": preload("res://Images/brick.png"),
 		"card_type": "material",
 		"display_name": "Brick",
 		"value": 4,
 	},
-	"raw_meat": { 
+	"raw_meat": {
 		"card": preload("res://Images/food_card.png"),
 		"sprite": preload("res://Images/raw_meat.png"),
 		"card_type": "food",
@@ -281,7 +288,7 @@ static var card_database = {
 		"value": 1,
 		"food_value": 1,
 	},
-	"cooked_meat": { 
+	"cooked_meat": {
 		"card": preload("res://Images/food_card.png"),
 		"sprite": preload("res://Images/cooked_meat.png"),
 		"card_type": "food",
@@ -289,13 +296,21 @@ static var card_database = {
 		"value": 1,
 		"food_value": 2,
 	},
-	"bread": { 
+	"bread": {
 		"card": preload("res://Images/food_card.png"),
 		"sprite": preload("res://Images/bread.png"),
 		"card_type": "food",
-		"display_name": "Cooked Meat",
+		"display_name": "Bread",
 		"value": 1,
 		"food_value": 2,
+	},
+	"berry": {
+		"card": preload("res://Images/food_card.png"),
+		"sprite": preload("res://Images/berry.png"),
+		"card_type": "food",
+		"display_name": "Berry",
+		"value": 1,
+		"food_value": 1,
 	},
 	"house": {
 		"card": preload("res://Images/building_card.png"),

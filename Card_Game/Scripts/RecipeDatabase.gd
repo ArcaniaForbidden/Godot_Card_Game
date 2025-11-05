@@ -2,6 +2,18 @@ extends Node
 class_name RecipeDatabase
 
 static var recipes = {
+	"Harvest Berry Bush": {
+		"inputs": [
+			{"subtype": "peasant", "consume": false},
+			{"subtype": "berry_bush", "consume": true}
+		],
+		"outputs": [
+			{"subtype": "berry"},
+			{"subtype": "berry"},
+			{"subtype": "berry"},
+		],
+		"work_time": 15.0
+	},
 	"Chop Tree": {
 		"inputs": [
 			{"subtype": "peasant", "consume": false},
@@ -65,10 +77,11 @@ static var recipes = {
 		"loot_table": [
 			{"weight": 5, "outputs": [{"subtype": "aquifer"}]},
 			{"weight": 5, "outputs": [{"subtype": "forest"}]},
-			{"weight": 20, "outputs": [{"subtype": "soil"}]},
-			{"weight": 20, "outputs": [{"subtype": "plant_fiber"}]},
-			{"weight": 20, "outputs": [{"subtype": "tree"}]},
-			{"weight": 20, "outputs": [{"subtype": "rock"}]},
+			{"weight": 20, "outputs": [{"subtype": "berry_bush"}]},
+			{"weight": 15, "outputs": [{"subtype": "soil"}]},
+			{"weight": 15, "outputs": [{"subtype": "plant_fiber"}]},
+			{"weight": 25, "outputs": [{"subtype": "tree"}]},
+			{"weight": 25, "outputs": [{"subtype": "rock"}]},
 			{"weight": 4, "outputs": [{"subtype": "cow"}]},
 			{"weight": 3, "outputs": [{"subtype": "horse"}]},
 			{"weight": 2, "outputs": [{"subtype": "rabbit"}]},
@@ -82,7 +95,8 @@ static var recipes = {
 			{"subtype": "peasant", "consume": false} # unit on top
 		],
 		"loot_table": [
-			{"weight": 100, "outputs": [{"subtype": "water"}]},
+			{"weight": 90, "outputs": [{"subtype": "water"}]},
+			#{"weight": 10, "outputs": [{"subtype": "fish"}]},
 		],
 		"work_time": 30.0
 	},
