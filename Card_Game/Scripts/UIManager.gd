@@ -38,77 +38,76 @@ func open_card_ui(card: Node) -> void:
 	if not is_instance_valid(card):
 		print("Card is invalid!")
 		return
-	# Show panels
+	# --- Show panels ---
 	card_zoom_panel.show()
 	stats_panel.show()
 	card_zoom.show()
 	card_zoom_label.show()
-	# Set textures
+	# --- Set textures ---
 	card_zoom.texture = card.card_image.texture
 	card_zoom_label.text = card.display_name
 	# --- Handle sprite vs animated ---
 	if card.sprite_animated and card.sprite_animated.visible and card.sprite_animated.sprite_frames:
-		# Use animated sprite
 		sprite_zoom.hide()
 		animated_sprite_zoom.show()
 		animated_sprite_zoom.sprite_frames = card.sprite_animated.sprite_frames
 		if animated_sprite_zoom.sprite_frames.has_animation("idle"):
 			animated_sprite_zoom.play("idle")
 	else:
-		# Use static sprite
 		animated_sprite_zoom.hide()
 		sprite_zoom.show()
 		if card.sprite_image and card.sprite_image.texture:
 			sprite_zoom.texture = card.sprite_image.texture
-	# Clear previous stats
+	# --- Clear previous stats ---
 	for child in stats_vbox_container.get_children():
 		child.queue_free()
-	# Type label
+	# --- Card type ---
 	var type_label = Label.new()
 	type_label.text = "Type: %s" % card.card_type.capitalize()
 	type_label.label_settings = stat_label_settings
 	stats_vbox_container.add_child(type_label)
-	var stat_properties = {
-		"Health": "%d/%d" % [card.health, card.max_health],
+	# --- Dynamic stats display ---
+	var stats_to_check = {
+		"Health": card.max_health,
 		"Attack": card.attack,
 		"Armor": card.armor,
-		"Attack Speed": card.attack_speed
+		"Attack Speed": card.attack_speed,
+		"Hunger": card.max_hunger,
 	}
-	# Display stats
-	for stat_name in stat_properties.keys():
-		var stat_value = stat_properties[stat_name]
-		if stat_name == "Health":
-			# Always show health
-			if card.max_health > 0:
-				var label = Label.new()
-				label.text = "%s: %s" % [stat_name, str(stat_value)]
-				label.label_settings = stat_label_settings
-				stats_vbox_container.add_child(label)
-		elif stat_value != null and stat_value != 0:
-			# Only show non-zero stats
+	for stat_name in stats_to_check.keys():
+		var stat_val = stats_to_check[stat_name]
+		var display_val = ""
+		var show_stat := false
+		match stat_name:
+			"Health":
+				show_stat = card.max_health > 0
+				display_val = "%d/%d" % [card.health, card.max_health]
+			"Hunger":
+				show_stat = card.max_hunger > 0
+				display_val = "%d/%d" % [card.hunger, card.max_hunger]
+			_:
+				show_stat = stat_val != null and stat_val != 0
+				display_val = str(stat_val)
+		if show_stat:
 			var label = Label.new()
-			label.text = "%s: %s" % [stat_name, str(stat_value)]
+			label.text = "%s: %s" % [stat_name, display_val]
 			label.label_settings = stat_label_settings
 			stats_vbox_container.add_child(label)
+	# --- Card value ---
 	if card.value != null:
 		var value_label = Label.new()
 		value_label.text = "Value: %d" % card.value
 		value_label.label_settings = stat_label_settings
 		stats_vbox_container.add_child(value_label)
-	# Show equipment stat modifiers if this card is equipment
+	# --- Equipment modifiers ---
 	if card.card_type == "equipment" and card.stats:
-		if card.stats.has("add"):
-			for key in card.stats["add"].keys():
-				var label = Label.new()
-				label.text = "%s: %s" % [key.capitalize(), str(card.stats["add"][key])]
-				label.label_settings = stat_label_settings
-				stats_vbox_container.add_child(label)
-		if card.stats.has("mul"):
-			for key in card.stats["mul"].keys():
-				var label = Label.new()
-				label.text = "%s: %s" % [key.capitalize(), str(card.stats["mul"][key])]
-				label.label_settings = stat_label_settings
-				stats_vbox_container.add_child(label)
+		for modifier_type in ["add", "mul"]:
+			if card.stats.has(modifier_type):
+				for key in card.stats[modifier_type].keys():
+					var label = Label.new()
+					label.text = "%s: %s" % [key.capitalize(), str(card.stats[modifier_type][key])]
+					label.label_settings = stat_label_settings
+					stats_vbox_container.add_child(label)
 
 func toggle_pause_menu() -> void:
 	if pause_menu_panel.visible:

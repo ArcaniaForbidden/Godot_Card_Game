@@ -2,6 +2,7 @@ extends Control
 
 @onready var fill = $Fill
 @onready var label = $HealthLabel
+@onready var background: Sprite2D = $Background
 @onready var icon: Sprite2D = $HealthIcon
 var icon_tween: Tween = null
 
@@ -18,15 +19,15 @@ func update_health(current: int, max_health: int) -> void:
 	if ratio > 0.5:
 		# From yellow (0.5) to green (1.0)
 		var t = (ratio - 0.5) / 0.5
-		color = Color(1.0 - t, 1.0, 0.0)
+		color = Color(0.1 * t, 1.0 - 0.1 * t, 0.0)
 	else:
 		# From red (0.0) to yellow (0.5)
 		var t = ratio / 0.5
 		color = Color(1.0, t, 0.0)
 	fill.modulate = color
-	animate_icon()
+	animate_health_icon()
 
-func animate_icon():
+func animate_health_icon():
 	if not icon:
 		return
 	if icon_tween and icon_tween.is_valid():
@@ -37,3 +38,14 @@ func animate_icon():
 	icon_tween.tween_property(icon, "rotation_degrees", 10, 0.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	icon_tween.tween_property(icon, "rotation_degrees", -10, 0.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	icon_tween.tween_property(icon, "rotation_degrees", 0, 0.05).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+func set_background_sprite(card_type: String) -> void:
+	match card_type:
+		"unit":
+			background.texture = preload("res://Images/unit_health_bar.png")
+		"building":
+			background.texture = preload("res://Images/building_health_bar.png")
+		"enemy":
+			background.texture = preload("res://Images/enemy_health_bar.png")
+		_:
+			background.texture = preload("res://Images/unit_health_bar.png")

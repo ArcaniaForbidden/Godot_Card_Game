@@ -78,6 +78,7 @@ func _input(event):
 func spawn_initial_cards() -> void:
 	spawn_card("peasant", Vector2(0, 0))
 	spawn_card("peasant", Vector2(0, 0))
+	spawn_card("bread", Vector2(0, 0))
 	#spawn_card("quarry", Vector2(400,400))
 	#spawn_card("iron_mine", Vector2(400,500))
 	#spawn_card("copper_mine", Vector2(400,600))
@@ -211,7 +212,7 @@ func handle_mouse_release() -> void:
 		if card_being_dragged.animation_manager:
 			card_being_dragged.animation_manager.play_idle()
 			finish_drag_player()
-	debug_print_stacks()
+	#debug_print_stacks()
 
 func handle_dragging() -> void:
 	if dragged_substack.size() == 0:

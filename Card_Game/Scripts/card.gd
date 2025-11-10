@@ -20,7 +20,7 @@ var health: int = 0
 var max_health: int = 0
 var attack: int = 0
 var armor: int = 0
-var attack_speed: float = 1.0          # default attacks per second
+var attack_speed: float = 0.0          # default attacks per second
 var idle_timer: float = 0.0
 var min_jump_time: float = 1.5
 var max_jump_time: float = 2.5
@@ -33,9 +33,15 @@ var attached_slot: InventorySlot = null
 var loot_table: Array = []
 var damage_flash_tween: Tween = null
 var new_building: bool = true
-var food_value_required: int = 0
-var food_value: int = 0
 var health_bar: Control = null
+var hunger_bar: Control = null
+var max_hunger: int = 0
+var hunger: int = 0
+var hunger_timer: float = 0.0
+var hunger_interval: float = 10.0
+var starving: bool = false
+var starvation_timer: float = 0.0
+var starvation_interval: float = 5.0
 
 # --- UI references ---
 @onready var animation_manager: AnimationManager = AnimationManager.new()
@@ -52,6 +58,7 @@ var health_bar: Control = null
 @onready var area: Area2D = get_node_or_null("Area2D")
 @onready var foil_overlay: Sprite2D = get_node_or_null("FoilOverlay")
 @onready var health_bar_scene: PackedScene = preload("res://Scenes/HealthBar.tscn")
+@onready var hunger_bar_scene: PackedScene = preload("res://Scenes/HungerBar.tscn")
 
 func _ready() -> void:
 	area.connect("input_event", Callable(self, "_on_area_input_event"))
@@ -65,8 +72,34 @@ func _process(delta: float) -> void:
 			var screen_pos = global_position - camera.global_position + get_viewport().size * 0.5
 			var norm_pos = (screen_pos / Vector2(get_viewport().size)) * 4.0
 			foil_overlay.material.set_shader_parameter("screen_pos", norm_pos)
+	if max_hunger > 0:
+		if TimeManager.is_night:
+			return
+		hunger_timer += delta * GameSpeedManager.current_speed
+		if hunger_timer >= hunger_interval:
+			hunger_timer = 0.0
+			_on_hunger_tick()
+	if starving:
+		if TimeManager.is_night:
+			return
+		starvation_timer += delta * GameSpeedManager.current_speed
+		if starvation_timer >= starvation_interval:
+			starvation_timer = 0.0
+			print("%s is starving!" % name)
+			take_damage(1)
+			update_hunger_bar()
 
 # --- Helpers ---
+func _on_hunger_tick() -> void:
+	if hunger > 0:
+		hunger -= 1
+		if hunger == 0:
+			starving = true
+			starvation_timer = 0.0  # start counting until next damage
+	else:
+		starving = true  # already 0
+	update_hunger_bar()
+
 func apply_foil_effect(rarity: String) -> void:
 	if not foil_overlay:
 		return
@@ -164,6 +197,10 @@ func update_health_bar() -> void:
 	if health_bar:
 		health_bar.update_health(health, max_health)
 
+func update_hunger_bar() -> void:
+	if hunger_bar:
+		hunger_bar.update_hunger(hunger, max_hunger)
+
 # --- Setup function ---
 func setup(subtype_name: String) -> void:
 	subtype = subtype_name
@@ -238,23 +275,31 @@ func setup(subtype_name: String) -> void:
 		health_bar = health_bar_scene.instantiate()
 		add_child(health_bar)
 		health_bar.position = Vector2(-47, 70)
+		health_bar.set_background_sprite(card_type)
 		update_health_bar()
 	loot_table = data.get("loot_table", [])
-	attack = int(stats.get("attack", 0))
-	armor = int(stats.get("armor", 0))
-	attack_speed = float(stats.get("attack_speed", 0))
+	if stats.has("attack"):
+		attack = int(stats["attack"])
+	if stats.has("armor"):
+		armor = int(stats["armor"])
+	if stats.has("attack_speed"):
+		attack_speed = int(stats["attack_speed"])
+	if stats.has("hunger"):
+		max_hunger = int(stats["hunger"])
+		hunger = max_hunger
+		hunger_timer = 0.0
+		hunger_bar = hunger_bar_scene.instantiate()
+		add_child(hunger_bar)
+		hunger_bar.position = Vector2(-47, 88)
+		update_hunger_bar()
 	min_jump_time = data.get("min_jump_time", 1.5)
 	max_jump_time = data.get("max_jump_time", 2.5)
 	jump_distance = data.get("jump_distance", 150.0)
-	if subtype == "peasant":
+	if card_type == "unit" and subtype == "peasant":
 		var inventory_scene = preload("res://Scenes/UnitInventory.tscn")
 		var inventory_instance = inventory_scene.instantiate()
 		add_child(inventory_instance)
 		inventory_instance.position = Vector2(0, 60)
-	if data.has("food_required"):
-		food_value_required = int(data["food_required"])
-	if data.has("food_value"):
-		food_value = int(data["food_value"])
 	# --- Enemy Weapon Setup (multiple weapons) ---
 	if card_type == "enemy" and data.has("weapons"):
 		for weapon_entry in data["weapons"]:

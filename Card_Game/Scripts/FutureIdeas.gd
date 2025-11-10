@@ -3,7 +3,7 @@
 # ==============================
 
 # Add inventory system to each villager/unit ✅ (Added PeasantInventory 9/20/25)
-# Add health bar
+# Add health bar ✅ (11/10/25)
 # Add hunger system
 # Add save/load system
 # Add taming system
