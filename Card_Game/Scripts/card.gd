@@ -35,6 +35,7 @@ var damage_flash_tween: Tween = null
 var new_building: bool = true
 var food_value_required: int = 0
 var food_value: int = 0
+var health_bar: Control = null
 
 # --- UI references ---
 @onready var animation_manager: AnimationManager = AnimationManager.new()
@@ -50,6 +51,7 @@ var food_value: int = 0
 @onready var value_label: Label = get_node_or_null("ValueLabel")
 @onready var area: Area2D = get_node_or_null("Area2D")
 @onready var foil_overlay: Sprite2D = get_node_or_null("FoilOverlay")
+@onready var health_bar_scene: PackedScene = preload("res://Scenes/HealthBar.tscn")
 
 func _ready() -> void:
 	area.connect("input_event", Callable(self, "_on_area_input_event"))
@@ -65,13 +67,6 @@ func _process(delta: float) -> void:
 			foil_overlay.material.set_shader_parameter("screen_pos", norm_pos)
 
 # --- Helpers ---
-func set_health(value: int) -> void:
-	health = clamp(value, 0, max_health)
-	if health_label:
-		health_label.text = "%d" % [health]
-	if health_icon:
-		health_icon.visible = true
-
 func apply_foil_effect(rarity: String) -> void:
 	if not foil_overlay:
 		return
@@ -130,6 +125,7 @@ func take_damage(amount: int):
 		print("%s died!" % name)
 		emit_signal("died", self)
 		queue_free()
+	update_health_bar()
 
 func heal(amount: int) -> void:
 	if health >= max_health:
@@ -149,6 +145,7 @@ func heal(amount: int) -> void:
 		heal_number_instance.global_position = global_position + Vector2(0, -70)
 		heal_number_instance.z_index = 1000
 		heal_number_instance.show_number(healing, Color(0.3, 1.0, 0.3)) # only show actual healing
+	update_health_bar()
 
 func flash_damage_effect():
 	if not is_inside_tree():
@@ -162,6 +159,10 @@ func flash_damage_effect():
 	# Create new tween
 	damage_flash_tween = create_tween()
 	damage_flash_tween.tween_property(self, "modulate", original_modulate, 0.75).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+func update_health_bar() -> void:
+	if health_bar:
+		health_bar.update_health(health, max_health)
 
 # --- Setup function ---
 func setup(subtype_name: String) -> void:
@@ -233,15 +234,11 @@ func setup(subtype_name: String) -> void:
 	stats = data.get("stats", {}).duplicate(true)
 	if stats.has("health") and stats["health"] > 0:
 		max_health = int(stats["health"])
-		set_health(max_health)
-	else:
-		max_health = 0
-		health = 0
-		if health_icon:
-			health_icon.visible = false
-		if health_label:
-			health_label.text = ""
-			health_label.visible = false
+		health = max_health
+		health_bar = health_bar_scene.instantiate()
+		add_child(health_bar)
+		health_bar.position = Vector2(-47, 70)
+		update_health_bar()
 	loot_table = data.get("loot_table", [])
 	attack = int(stats.get("attack", 0))
 	armor = int(stats.get("armor", 0))
@@ -253,7 +250,7 @@ func setup(subtype_name: String) -> void:
 		var inventory_scene = preload("res://Scenes/UnitInventory.tscn")
 		var inventory_instance = inventory_scene.instantiate()
 		add_child(inventory_instance)
-		inventory_instance.position = Vector2(0, 80)
+		inventory_instance.position = Vector2(0, 60)
 	if data.has("food_required"):
 		food_value_required = int(data["food_required"])
 	if data.has("food_value"):

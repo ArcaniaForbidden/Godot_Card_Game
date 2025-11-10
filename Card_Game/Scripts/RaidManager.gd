@@ -156,4 +156,4 @@ func repair_buildings():
 					building_card.heal(full_repair)
 					repaired_buildings = true
 	if repaired_buildings == true and SoundManager:
-		SoundManager.play("repair_building", -4.0)
+		SoundManager.play("repair_building", -8.0)

@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=3 uid="uid://hg85td26jj1v"]
+
+[ext_resource type="LabelSettings" uid="uid://b2udwgke5epkp" path="res://Themes/label_settings.tres" id="1_1f0m8"]
+[ext_resource type="Script" uid="uid://d22moghtrt1x" path="res://Scripts/HealthBar.gd" id="1_2s5sm"]
+[ext_resource type="Texture2D" uid="uid://dm6uq4h74q5cq" path="res://Images/health_bar.png" id="1_25q3q"]
+[ext_resource type="Texture2D" uid="uid://codod5tgigybh" path="res://Images/heart_icon.png" id="4_n0673"]
+
+[node name="HealthBar" type="Control"]
+layout_mode = 3
+offset_left = -47.0
+offset_top = -8.0
+offset_right = 47.0
+offset_bottom = 8.0
+script = ExtResource("1_2s5sm")
+
+[node name="Background" type="Sprite2D" parent="."]
+position = Vector2(47, 8)
+texture = ExtResource("1_25q3q")
+
+[node name="Fill" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 94.0
+offset_bottom = 16.0
+
+[node name="HealthIcon" type="Sprite2D" parent="."]
+position = Vector2(-1, 5)
+texture = ExtResource("4_n0673")
+
+[node name="HealthLabel" type="Label" parent="."]
+layout_mode = 0
+offset_right = 94.0
+offset_bottom = 16.0
+label_settings = ExtResource("1_1f0m8")
+horizontal_alignment = 1
+vertical_alignment = 1
