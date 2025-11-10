@@ -32,6 +32,8 @@ func animate_icon():
 	if icon_tween and icon_tween.is_valid():
 		icon_tween.kill()
 	icon_tween = get_tree().create_tween()
-	icon_tween.tween_property(icon, "rotation_degrees", 15, 0.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	icon_tween.tween_property(icon, "rotation_degrees", -15, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	icon_tween.tween_property(icon, "rotation_degrees", 0, 0.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	icon_tween.tween_property(icon, "rotation_degrees", 10, 0.05).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	icon_tween.tween_property(icon, "rotation_degrees", -10, 0.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	icon_tween.tween_property(icon, "rotation_degrees", 10, 0.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	icon_tween.tween_property(icon, "rotation_degrees", -10, 0.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	icon_tween.tween_property(icon, "rotation_degrees", 0, 0.05).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
