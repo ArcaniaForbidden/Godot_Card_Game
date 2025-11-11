@@ -21,6 +21,7 @@ var sounds = {
 	"ui_hover": preload("res://Sounds/ui_hover.wav"),
 	"new_day": preload("res://Sounds/new_day.wav"),
 	"raid_start": preload("res://Sounds/raid_start.wav"),
+	"eat": preload("res://Sounds/eat.wav"),
 }
 
 func play(sound_name: String, base_volume_db: float = 0.0, position = null) -> void:

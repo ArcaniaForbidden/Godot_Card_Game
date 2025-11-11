@@ -434,8 +434,8 @@ func merge_overlapping_stacks(card: Node2D) -> bool:
 			# reduce food card value
 			dragged_bottom_card.food_value = max(0, dragged_bottom_card.food_value - feed_amount)
 			# play sound
-			#if SoundManager:
-				#SoundManager.play("eat", 0.0, target_top_card.position)
+			if SoundManager:
+				SoundManager.play("eat", 0.0, target_top_card.position)
 			print("%s ate %s (+%d hunger)" % [target_top_card.display_name, dragged_bottom_card.display_name, feed_amount])
 			# if food is depleted, remove it and clean up its stack
 			if dragged_bottom_card.food_value <= 0:
