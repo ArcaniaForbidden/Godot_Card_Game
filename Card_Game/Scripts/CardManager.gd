@@ -79,13 +79,15 @@ func spawn_initial_cards() -> void:
 	spawn_card("peasant", Vector2(0, 0))
 	spawn_card("peasant", Vector2(0, 0))
 	spawn_card("bread", Vector2(0, 0))
-	spawn_card("wheat", Vector2(0, 0))
-	spawn_card("wheat", Vector2(0, 0))
-	spawn_card("wheat", Vector2(0, 0))
-	spawn_card("wheat", Vector2(0, 0))
-	spawn_card("wheat", Vector2(0, 0))
-	spawn_card("wheat", Vector2(0, 0))
-	spawn_card("wheat", Vector2(0, 0))
+	spawn_card("bread", Vector2(10, 0))
+	spawn_card("bread", Vector2(20, 0))
+	spawn_card("wheat", Vector2(30, 0))
+	spawn_card("wheat", Vector2(40, 0))
+	spawn_card("wheat", Vector2(50, 0))
+	spawn_card("wheat", Vector2(60, 0))
+	spawn_card("wheat", Vector2(70, 0))
+	spawn_card("wheat", Vector2(80, 0))
+	spawn_card("wheat", Vector2(90, 0))
 	#spawn_card("quarry", Vector2(400,400))
 	#spawn_card("iron_mine", Vector2(400,500))
 	#spawn_card("copper_mine", Vector2(400,600))
@@ -315,7 +317,6 @@ func finish_drag_generic(cards: Array, is_simulated: bool, play_sound: bool = tr
 				old_stack.erase(c)
 				if old_stack.is_empty():
 					all_stacks.erase(old_stack)
-	if is_simulated:
 		all_stacks.append(cards)
 	var bottom_card = cards[0]
 	if not is_instance_valid(bottom_card):
@@ -427,7 +428,6 @@ func merge_overlapping_stacks(card: Node2D) -> bool:
 	# --- Feeding mechanic: drop food onto a unit ---
 	if dragged_bottom_card.card_type == "food" and target_top_card.card_type == "unit":
 		# Only proceed if the target actually has hunger (max_hunger > 0)
-		print(dragged_bottom_card.card_type, target_top_card.card_type)
 		if target_top_card.max_hunger > 0 and target_top_card.hunger < target_top_card.max_hunger:
 			var hunger_needed = target_top_card.max_hunger - target_top_card.hunger
 			var available_food = int(dragged_bottom_card.food_value)
@@ -442,21 +442,42 @@ func merge_overlapping_stacks(card: Node2D) -> bool:
 			dragged_bottom_card.food_value = max(0, dragged_bottom_card.food_value - feed_amount)
 			# play sound
 			if SoundManager:
-				SoundManager.play("eat", 0.0, target_top_card.position)
+				SoundManager.play("eat", 0.0, target_top_card.global_position)
 			print("%s ate %s (+%d hunger)" % [target_top_card.display_name, dragged_bottom_card.display_name, feed_amount])
-			# if food is depleted, remove it and clean up its stack
 			if dragged_bottom_card.food_value <= 0:
-				# find its current stack and remove it
 				var food_stack = find_stack(dragged_bottom_card)
-				if food_stack and food_stack.has(dragged_bottom_card):
+				if food_stack:
 					food_stack.erase(dragged_bottom_card)
-					if food_stack.size() == 0:
+					if is_instance_valid(dragged_bottom_card):
+						dragged_bottom_card.queue_free()
+					if food_stack.size() > 0:
+						finish_drag_generic(food_stack, false, false)
+					else:
 						all_stacks.erase(food_stack)
-				if is_instance_valid(dragged_bottom_card):
-					dragged_bottom_card.queue_free()
 			return true
 	# --- Taming mechanic: Drop wheat onto neutral animal card
-	
+	if dragged_bottom_card.subtype == "wheat" and target_top_card.card_type == "neutral" and target_top_card.tame_chance != null:
+		var animal_card = target_top_card
+		var chance = animal_card.tame_chance
+		if randi() % 100 < int(chance * 100):
+			animal_card.card_type = "unit"
+			animal_card.card_image.texture = preload("res://Images/unit_card.png")
+			if animal_card.sprite_image:
+				animal_card.sprite_image.flip_h = true
+			if animal_card.sprite_animated:
+				animal_card.sprite_animated.flip_h = true
+		var food_stack = find_stack(dragged_bottom_card)
+		if food_stack:
+			food_stack.erase(dragged_bottom_card)
+			if is_instance_valid(dragged_bottom_card):
+				dragged_bottom_card.queue_free()
+			if food_stack.size() > 0:
+				finish_drag_generic(food_stack, false, false)
+			else:
+				all_stacks.erase(food_stack)
+		if SoundManager:
+			SoundManager.play("eat", 0.0, target_top_card.global_position)
+		return true
 	# --- Validate stack types ---
 	var dragged_type = dragged_bottom_card.card_type
 	var target_type = target_top_card.card_type

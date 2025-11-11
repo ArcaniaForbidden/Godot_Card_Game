@@ -43,6 +43,7 @@ var starving: bool = false
 var starvation_timer: float = 0.0
 var starvation_interval: float = 5.0
 var food_value = null
+var tame_chance = 0.25
 
 # --- UI references ---
 @onready var animation_manager: AnimationManager = AnimationManager.new()
@@ -309,6 +310,8 @@ func setup(subtype_name: String) -> void:
 		var inventory_instance = inventory_scene.instantiate()
 		add_child(inventory_instance)
 		inventory_instance.position = Vector2(0, 60)
+	if card_type == "neutral" and data.has("tame_chance"):
+		tame_chance = float(data.get("tame_chance", null))
 	# --- Enemy Weapon Setup (multiple weapons) ---
 	if card_type == "enemy" and data.has("weapons"):
 		for weapon_entry in data["weapons"]:
