@@ -134,7 +134,7 @@ func modify_stats(owner: Card, equipment: Card, apply: bool = true) -> void:
 					owner.max_health += value
 					if owner.health > owner.max_health:
 						owner.health = owner.max_health
-					owner.set_health(owner.health) 
+					owner.update_health_bar()
 				"attack":
 					owner.attack += value
 				"armor":
