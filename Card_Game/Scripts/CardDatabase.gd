@@ -560,24 +560,37 @@ static var card_database = {
 		"animated": true,
 		"card_type": "unit",
 		"display_name": "Peasant",
-		"stats": {"health": 10, "attack": 0, "armor": 0, "attack_speed": 0.0, "attack_range": 0, "hunger": 5},
+		"stats": {
+			"health": 10,
+			"attack": 0,
+			"armor": 0,
+			"attack_speed": 0.0,
+			"attack_range": 0,
+			"hunger": 5},
 	},
 	"baby_peasant": {
 		"card": preload("res://Images/unit_card.png"),
 		"sprite": preload("res://Images/baby_peasant.png"),
 		"card_type": "unit",
 		"display_name": "Baby Peasant",
-		"stats": {"health": 3, "hunger": 5},
+		"stats": {
+			"health": 3,
+			"hunger": 5},
 	},
 	"wolf": {
 		"card": preload("res://Images/enemy_card.png"),
 		"sprite": preload("res://Images/wolf.png"),
 		"card_type": "enemy",
 		"display_name": "Wolf",
-		"stats": {"health": 5, "attack": 0, "armor": 0, "attack_speed": 0.0, "attack_range": 0},
-		"min_jump_time": 1.5,
-		"max_jump_time": 2.5,
-		"jump_distance": 300.0,
+		"stats": {
+			"health": 5,
+			"attack": 0,
+			"armor": 0,
+			"attack_speed": 0.0,
+			"attack_range": 0,
+			"min_jump_time": 1.5,
+			"max_jump_time": 2.5,
+			"jump_distance": 300.0},
 		"raid_value": 1,
 		"raid_group_range": Vector2(3, 6),
 		"weapons": [
@@ -591,7 +604,10 @@ static var card_database = {
 				"slot": "weapon",
 				"weapon_type": "melee",
 				"melee_type": "slash",
-				"weapon_stats": {"add": {"attack": 1, "attack_range": 150, "attack_speed": 0.75}},
+				"weapon_stats": {"add": {
+					"attack": 1,
+					"attack_range": 150,
+					"attack_speed": 0.75}},
 				"display_name": "Wolf Claw"
 			},
 			{
@@ -604,7 +620,10 @@ static var card_database = {
 				"slot": "weapon",
 				"weapon_type": "melee",
 				"melee_type": "slash",
-				"weapon_stats": {"add": {"attack": 1, "attack_range": 150, "attack_speed": 0.75}},
+				"weapon_stats": {"add": {
+					"attack": 1,
+					"attack_range": 150,
+					"attack_speed": 0.75}},
 				"display_name": "Wolf Claw"
 			}
 		],
@@ -618,10 +637,12 @@ static var card_database = {
 		"sprite": preload("res://Images/horse.png"),
 		"card_type": "neutral",
 		"display_name": "Horse",
-		"stats": {"health": 5},
-		"min_jump_time": 2.0,
-		"max_jump_time": 3.0,
-		"jump_distance": 400.0,
+		"stats": {
+			"health": 5,
+			"min_jump_time": 2.0,
+			"max_jump_time": 3.0,
+			"jump_distance": 400.0,},
+		"tame_chance": 0.25,
 		"loot_table": [
 			{ "subtype": "leather", "chance": 0.9 },
 			{ "subtype": "leather", "chance": 0.5 },
@@ -633,10 +654,12 @@ static var card_database = {
 		"sprite": preload("res://Images/cow.png"),
 		"card_type": "neutral",
 		"display_name": "Cow",
-		"stats": {"health": 4},
-		"min_jump_time": 2.0,
-		"max_jump_time": 3.0,
-		"jump_distance": 200.0,
+		"stats": {
+			"health": 4,
+			"min_jump_time": 2.0,
+			"max_jump_time": 3.0,
+			"jump_distance": 200.0,},
+		"tame_chance": 0.25,
 		"loot_table": [
 			{ "subtype": "leather", "chance": 0.9 },
 			{ "subtype": "leather", "chance": 0.5 },
@@ -649,10 +672,12 @@ static var card_database = {
 		"sprite": preload("res://Images/rabbit.png"),
 		"card_type": "neutral",
 		"display_name": "Rabbit",
-		"stats": {"health": 3},
-		"min_jump_time": 1.5,
-		"max_jump_time": 2.5,
-		"jump_distance": 300.0,
+		"stats": {
+			"health": 3,
+			"min_jump_time": 1.5,
+			"max_jump_time": 2.5,
+			"jump_distance": 300.0,},
+		"tame_chance": 0.25,
 		"loot_table": [
 			{ "subtype": "leather", "chance": 0.5 },
 			{ "subtype": "raw_meat", "chance": 0.5 },
@@ -663,10 +688,12 @@ static var card_database = {
 		"sprite": preload("res://Images/chicken.png"),
 		"card_type": "neutral",
 		"display_name": "Chicken",
-		"stats": {"health": 2},
-		"min_jump_time": 2.0,
-		"max_jump_time": 3.0,
-		"jump_distance": 250.0,
+		"stats": {
+			"health": 2,
+			"min_jump_time": 2.0,
+			"max_jump_time": 3.0,
+			"jump_distance": 250.0,},
+		"tame_chance": 0.25,
 		"loot_table": [
 			{ "subtype": "raw_meat", "chance": 0.5 },
 			{ "subtype": "raw_meat", "chance": 0.1 },

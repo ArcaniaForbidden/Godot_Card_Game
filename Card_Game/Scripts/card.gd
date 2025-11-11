@@ -298,9 +298,12 @@ func setup(subtype_name: String) -> void:
 		add_child(hunger_bar)
 		hunger_bar.position = Vector2(-47, 88)
 		update_hunger_bar()
-	min_jump_time = data.get("min_jump_time", 1.5)
-	max_jump_time = data.get("max_jump_time", 2.5)
-	jump_distance = data.get("jump_distance", 150.0)
+	if stats.has("min_jump_time"):
+		min_jump_time = int(stats["min_jump_time"])
+	if stats.has("max_jump_time"):
+		max_jump_time = int(stats["max_jump_time"])
+	if stats.has("jump_distance"):
+		jump_distance = int(stats["jump_distance"])
 	if card_type == "unit" and subtype == "peasant":
 		var inventory_scene = preload("res://Scenes/UnitInventory.tscn")
 		var inventory_instance = inventory_scene.instantiate()

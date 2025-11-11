@@ -79,6 +79,13 @@ func spawn_initial_cards() -> void:
 	spawn_card("peasant", Vector2(0, 0))
 	spawn_card("peasant", Vector2(0, 0))
 	spawn_card("bread", Vector2(0, 0))
+	spawn_card("wheat", Vector2(0, 0))
+	spawn_card("wheat", Vector2(0, 0))
+	spawn_card("wheat", Vector2(0, 0))
+	spawn_card("wheat", Vector2(0, 0))
+	spawn_card("wheat", Vector2(0, 0))
+	spawn_card("wheat", Vector2(0, 0))
+	spawn_card("wheat", Vector2(0, 0))
 	#spawn_card("quarry", Vector2(400,400))
 	#spawn_card("iron_mine", Vector2(400,500))
 	#spawn_card("copper_mine", Vector2(400,600))
@@ -95,13 +102,13 @@ func spawn_initial_cards() -> void:
 	#spawn_card("lumber_camp", Vector2(400,500))
 	spawn_card("house", Vector2(400,500))
 	#spawn_card("smeltery", Vector2(400,500))
+	spawn_card("horse", Vector2(400, 300))
 	#spawn_card("horse", Vector2(400, 300))
-	#spawn_card("horse", Vector2(400, 300))
+	spawn_card("chicken", Vector2(400, 300))
 	#spawn_card("chicken", Vector2(400, 300))
-	#spawn_card("chicken", Vector2(400, 300))
+	spawn_card("cow", Vector2(400, 300))
 	#spawn_card("cow", Vector2(400, 300))
-	#spawn_card("cow", Vector2(400, 300))
-	#spawn_card("rabbit", Vector2(400, 300))
+	spawn_card("rabbit", Vector2(400, 300))
 	#spawn_card("rabbit", Vector2(400, 300))
 	spawn_card("tree", Vector2(500, 300))
 	spawn_card("rock", Vector2(600, 300))
@@ -448,6 +455,8 @@ func merge_overlapping_stacks(card: Node2D) -> bool:
 				if is_instance_valid(dragged_bottom_card):
 					dragged_bottom_card.queue_free()
 			return true
+	# --- Taming mechanic: Drop wheat onto neutral animal card
+	
 	# --- Validate stack types ---
 	var dragged_type = dragged_bottom_card.card_type
 	var target_type = target_top_card.card_type
