@@ -4,12 +4,12 @@
 
 # Add inventory system to each villager/unit ✅ (Added PeasantInventory 9/20/25)
 # Add health bar ✅ (11/10/25)
-# Add hunger system
+# Add hunger system 
 # Add save/load system
 # Add taming system
 # Add healing from peasant on house ✅ (11/4/25)
 # Add repair buildings mechanic ✅ (11/4/25)
-# Add berries as an early game food
+# Add berries as an early game food ✅ (11/4/25)
 # Add recipe book system
 
 #var enemy_go_attack: bool = false

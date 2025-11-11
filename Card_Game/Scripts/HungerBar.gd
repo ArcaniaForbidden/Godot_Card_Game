@@ -19,6 +19,7 @@ func update_hunger(hunger: int, max_hunger: int) -> void:
 	fill.modulate = FILL_COLOR
 	label.text = "%d / %d" % [hunger, max_hunger]
 	animate_hunger_icon()
+	UIManager.refresh_card_ui()
 
 func animate_hunger_icon():
 	if not icon:

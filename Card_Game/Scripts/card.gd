@@ -38,10 +38,11 @@ var hunger_bar: Control = null
 var max_hunger: int = 0
 var hunger: int = 0
 var hunger_timer: float = 0.0
-var hunger_interval: float = 10.0
+var hunger_interval: float = 4.0
 var starving: bool = false
 var starvation_timer: float = 0.0
 var starvation_interval: float = 5.0
+var food_value = null
 
 # --- UI references ---
 @onready var animation_manager: AnimationManager = AnimationManager.new()
@@ -250,6 +251,11 @@ func setup(subtype_name: String) -> void:
 		value = int(data["value"])
 	else:
 		value = null
+	# --- Set food value from card data ---
+	if card_type == "food" and data.has("food_value"):
+		food_value = int(data["food_value"])
+	else:
+		food_value = null
 	# --- Show/hide value label and icon ---
 	if card_type == "card_pack":
 		if value_icon:

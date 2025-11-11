@@ -417,6 +417,37 @@ func merge_overlapping_stacks(card: Node2D) -> bool:
 	# --- Skip if top card is being dragged ---
 	if target_bottom_card.is_being_dragged:
 		return false
+	# --- Feeding mechanic: drop food onto a unit ---
+	if dragged_bottom_card.card_type == "food" and target_top_card.card_type == "unit":
+		# Only proceed if the target actually has hunger (max_hunger > 0)
+		print(dragged_bottom_card.card_type, target_top_card.card_type)
+		if target_top_card.max_hunger > 0 and target_top_card.hunger < target_top_card.max_hunger:
+			var hunger_needed = target_top_card.max_hunger - target_top_card.hunger
+			var available_food = int(dragged_bottom_card.food_value)
+			var feed_amount = min(hunger_needed, available_food)
+			# nothing to do
+			if feed_amount <= 0:
+				return false
+			# apply feed
+			target_top_card.hunger = clamp(target_top_card.hunger + feed_amount, 0, target_top_card.max_hunger)
+			target_top_card.update_hunger_bar()
+			# reduce food card value
+			dragged_bottom_card.food_value = max(0, dragged_bottom_card.food_value - feed_amount)
+			# play sound
+			#if SoundManager:
+				#SoundManager.play("eat", 0.0, target_top_card.position)
+			print("%s ate %s (+%d hunger)" % [target_top_card.display_name, dragged_bottom_card.display_name, feed_amount])
+			# if food is depleted, remove it and clean up its stack
+			if dragged_bottom_card.food_value <= 0:
+				# find its current stack and remove it
+				var food_stack = find_stack(dragged_bottom_card)
+				if food_stack and food_stack.has(dragged_bottom_card):
+					food_stack.erase(dragged_bottom_card)
+					if food_stack.size() == 0:
+						all_stacks.erase(food_stack)
+				if is_instance_valid(dragged_bottom_card):
+					dragged_bottom_card.queue_free()
+			return true
 	# --- Validate stack types ---
 	var dragged_type = dragged_bottom_card.card_type
 	var target_type = target_top_card.card_type

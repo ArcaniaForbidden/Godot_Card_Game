@@ -38,6 +38,7 @@ func open_card_ui(card: Node) -> void:
 	if not is_instance_valid(card):
 		print("Card is invalid!")
 		return
+	current_card = card
 	# --- Show panels ---
 	card_zoom_panel.show()
 	stats_panel.show()
@@ -93,6 +94,12 @@ func open_card_ui(card: Node) -> void:
 			label.text = "%s: %s" % [stat_name, display_val]
 			label.label_settings = stat_label_settings
 			stats_vbox_container.add_child(label)
+	# --- Food Value ---
+	if card.food_value != null:
+		var food_label = Label.new()
+		food_label.text = "Food Value: %d" % card.food_value
+		food_label.label_settings = stat_label_settings
+		stats_vbox_container.add_child(food_label)
 	# --- Card value ---
 	if card.value != null:
 		var value_label = Label.new()
@@ -108,6 +115,11 @@ func open_card_ui(card: Node) -> void:
 					label.text = "%s: %s" % [key.capitalize(), str(card.stats[modifier_type][key])]
 					label.label_settings = stat_label_settings
 					stats_vbox_container.add_child(label)
+
+func refresh_card_ui() -> void:
+	# Only refresh if a card is currently open and valid
+	if current_card != null and is_instance_valid(current_card):
+		open_card_ui(current_card)
 
 func toggle_pause_menu() -> void:
 	if pause_menu_panel.visible:

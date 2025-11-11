@@ -96,6 +96,7 @@ func equip_card(card: Card) -> bool:
 		visible = false
 	)
 	card_manager.card_tweens[card] = tween
+	UIManager.refresh_card_ui()
 	return true
 
 func unequip_card():
@@ -118,6 +119,7 @@ func unequip_card():
 		attached_card.is_equipped = false
 		attached_card = null
 		visible = true
+		UIManager.refresh_card_ui()
 
 func modify_stats(owner: Card, equipment: Card, apply: bool = true) -> void:
 	if not equipment.stats:

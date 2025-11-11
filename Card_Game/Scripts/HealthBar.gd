@@ -26,6 +26,7 @@ func update_health(current: int, max_health: int) -> void:
 		color = Color(1.0, t, 0.0)
 	fill.modulate = color
 	animate_health_icon()
+	UIManager.refresh_card_ui()
 
 func animate_health_icon():
 	if not icon:
