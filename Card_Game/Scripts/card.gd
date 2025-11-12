@@ -82,14 +82,18 @@ func _process(delta: float) -> void:
 			hunger_timer = 0.0
 			_on_hunger_tick()
 	if starving:
-		if TimeManager.is_night:
-			return
-		starvation_timer += delta * GameSpeedManager.current_speed
-		if starvation_timer >= starvation_interval:
+		if hunger > 0:
+			starving = false
 			starvation_timer = 0.0
-			print("%s is starving!" % name)
-			take_damage(1)
-			update_hunger_bar()
+		else:
+			if TimeManager.is_night:
+				return
+			starvation_timer += delta * GameSpeedManager.current_speed
+			if starvation_timer >= starvation_interval:
+				starvation_timer = 0.0
+				print("%s is starving!" % name)
+				take_damage(1)
+				update_hunger_bar()
 
 # --- Helpers ---
 func _on_hunger_tick() -> void:
@@ -97,9 +101,9 @@ func _on_hunger_tick() -> void:
 		hunger -= 1
 		if hunger == 0:
 			starving = true
-			starvation_timer = 0.0  # start counting until next damage
+			starvation_timer = 0.0
 	else:
-		starving = true  # already 0
+		starving = true
 	update_hunger_bar()
 
 func apply_foil_effect(rarity: String) -> void:
@@ -137,14 +141,11 @@ func take_damage(amount: int):
 	if is_dead:
 		return
 	flash_damage_effect()
-	# Subtract health and clamp
 	health = clamp(health - amount, 0, max_health)
 	if SoundManager:
 		SoundManager.play("damage", -16.0, global_position)
-	# Update the label like set_health
 	if health_label:
 		health_label.text = "%d" % [health]
-	# Make sure icon is visible
 	if health_icon:
 		health_icon.visible = true
 	if is_inside_tree():
@@ -155,12 +156,21 @@ func take_damage(amount: int):
 		damage_number_instance.z_index = 1000
 		damage_number_instance.show_number(amount, Color(1, 0.2, 0.2))
 	print("%s took %d damage, remaining HP: %d" % [name, amount, health])
+	# --- Death check ---
 	if health <= 0:
 		is_dead = true
-		print("%s died!" % name)
+		if health_bar:
+			if health_bar.icon_tween and health_bar.icon_tween.is_valid():
+				health_bar.icon_tween.kill()
+		if hunger_bar:
+			if hunger_bar.icon_tween and hunger_bar.icon_tween.is_valid():
+				hunger_bar.icon_tween.kill()
 		emit_signal("died", self)
 		queue_free()
-	update_health_bar()
+		return
+	# --- Only update if alive ---
+	if health_bar:
+		health_bar.update_health(health, max_health)
 
 func heal(amount: int) -> void:
 	if health >= max_health:

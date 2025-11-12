@@ -73,6 +73,11 @@ func _input(event):
 			handle_mouse_press()
 		else:
 			handle_mouse_release()
+	#if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
+		#var clicked_card = raycast_check_for_card()
+		#if clicked_card and clicked_card is Card:
+			#print("Kill on:", clicked_card.subtype)
+			#clicked_card.take_damage(10)
 
 # ==============================
 #  CARD SPAWNING
@@ -901,14 +906,14 @@ func _on_card_died(card: Card) -> void:
 	if not CardDatabase.has(card.subtype):
 		return
 	var loot := roll_loot(card.loot_table)
-	if loot.size() == 0:
-		return
 	var spawn_pos := card.global_position
 	for drop_subtype in loot:
 		var offset := Vector2(randf_range(-10, 10), randf_range(-10, 10))
 		var spawned_card = spawn_card(drop_subtype, spawn_pos + offset)
 		spawned_card.is_being_simulated_dragged = true
 		finish_drag_simulated([spawned_card])
+	# Kill any running tweens before freeing
+	kill_card_tween(card)
 	# Remove the dead enemy card from its stack
 	var stack = find_stack(card)
 	if stack and stack.has(card):

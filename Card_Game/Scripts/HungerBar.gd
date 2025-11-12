@@ -9,6 +9,8 @@ const FILL_COLOR: Color = Color8(199, 131, 55)  # #c78337
 var icon_tween: Tween = null
 
 func update_hunger(hunger: int, max_hunger: int) -> void:
+	if not is_inside_tree() or not visible:
+		return
 	if max_hunger <= 0:
 		visible = false
 		return
@@ -22,7 +24,7 @@ func update_hunger(hunger: int, max_hunger: int) -> void:
 	UIManager.refresh_card_ui()
 
 func animate_hunger_icon():
-	if not icon:
+	if not icon or not is_instance_valid(icon):
 		return
 	if icon_tween and icon_tween.is_valid():
 		icon_tween.kill()

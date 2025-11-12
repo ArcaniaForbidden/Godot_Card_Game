@@ -29,7 +29,7 @@ func update_health(current: int, max_health: int) -> void:
 	UIManager.refresh_card_ui()
 
 func animate_health_icon():
-	if not icon:
+	if not icon or not is_instance_valid(icon):
 		return
 	if icon_tween and icon_tween.is_valid():
 		icon_tween.kill()
