@@ -74,10 +74,10 @@ func _process(delta):
 				melee_attack(target)
 			time_since_attack = 0.0
 
-func get_nearest_enemy_in_range(origin: Vector2, range: float) -> Node2D:
+func get_nearest_enemy_in_range(origin: Vector2, search_range: float) -> Node2D:
 	var card_manager = get_tree().root.get_node("Main/CardManager")
 	var nearest_target: Card = null
-	var nearest_dist = range
+	var nearest_dist = search_range
 	if not owner_card:
 		return null
 	for stack in card_manager.all_stacks:
@@ -89,7 +89,7 @@ func get_nearest_enemy_in_range(origin: Vector2, range: float) -> Node2D:
 		if not can_damage(owner_card, card):
 			continue
 		var dist = origin.distance_to(card.global_position)
-		if dist > range:
+		if dist > search_range:
 			continue
 		if nearest_target == null or dist < nearest_dist or (is_equal_approx(dist, nearest_dist) and card.name < nearest_target.name):
 			nearest_dist = dist

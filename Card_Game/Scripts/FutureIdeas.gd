@@ -3,14 +3,14 @@
 # ==============================
 
 # Add inventory system to each villager/unit ✅ (Added PeasantInventory 9/20/25)
-# Add health bar ✅ (11/10/25)
-# Add hunger system ✅ (11/10/25)
-# Add unit cards starving AI
-# Add save/load system
-# Add taming system
 # Add healing from peasant on house ✅ (11/4/25)
 # Add repair buildings mechanic ✅ (11/4/25)
 # Add berries as an early game food ✅ (11/4/25)
+# Add health bar ✅ (11/10/25)
+# Add hunger system ✅ (11/10/25)
+# Add taming system ✅ (11/11/25)
+# Add unit cards starving AI
+# Add save/load system
 # Add recipe book system
 # Rewrite push_apart_cards() to be efficient
 

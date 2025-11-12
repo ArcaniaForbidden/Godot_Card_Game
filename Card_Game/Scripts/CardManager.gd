@@ -25,9 +25,11 @@ var last_click_time := 0.0
 var last_clicked_card: Card = null
 var all_stacks: Array = []
 var card_scene = preload("res://Scenes/Card.tscn")
+var card_highlight_scene = preload("res://Scenes/CardHighlight.tscn")
 var CardDatabase = preload("res://Scripts/CardDatabase.gd").card_database
 var crafting_manager: Node = null
 var map_manager: Node = null
+var active_highlights: Array = []
 var cached_rects: Dictionary = {}  # card -> Rect2
 var card_tweens: Dictionary = {}   # card -> SceneTreeTween
 var allowed_stack_types := {
@@ -276,6 +278,23 @@ func start_drag(card: Card) -> void:
 	# Add dragged_substack as a new stack in all_stacks
 	all_stacks.append(dragged_substack)
 	close_stack_inventories(dragged_substack)
+	# Create drag highlight for valid stacks
+	for s in all_stacks:
+		if s == dragged_substack:
+			continue
+		if s.size() == 0:
+			continue
+		var top_card = s[-1]
+		if not is_instance_valid(top_card):
+			continue
+		if allowed_stack_types.has(dragged_substack[0].card_type):
+			var dragged_type = dragged_substack[0].card_type
+			if top_card.card_type in allowed_stack_types[dragged_type]:
+				var highlight = card_highlight_scene.instantiate() as AnimatedSprite2D
+				top_card.add_child(highlight)
+				highlight.position = Vector2.ZERO
+				highlight.play()
+				active_highlights.append(highlight)
 	# Play pickup sound
 	if SoundManager:
 		SoundManager.play("card_pickup", 0.0, dragged_substack[0].position)
@@ -363,6 +382,7 @@ func finish_drag_player() -> void:
 	finish_drag_generic(dragged_substack, false, true)
 	card_being_dragged = null
 	dragged_substack.clear()
+	clear_active_highlights()
 
 func finish_drag_simulated(cards_to_place: Array) -> void:
 	finish_drag_generic(cards_to_place, true, false)
@@ -842,6 +862,39 @@ func open_card_pack(card_pack: Card, num_cards := 5) -> void:
 	if is_instance_valid(card_pack):
 		card_pack.queue_free()
 
+func highlight_valid_stacks_for_drag(dragged_card: Card) -> void:
+	for stack in all_stacks:
+		if stack == find_stack(dragged_card):
+			continue  # skip the dragged stack
+		if stack.size() == 0:
+			continue
+		var top_card = stack[-1]
+		if not is_instance_valid(top_card):
+			continue
+		var highlight = top_card.get_node_or_null("Highlight")
+		if highlight:
+			highlight.visible = can_drag_onto_stack(dragged_card, stack)
+
+func can_drag_onto_stack(dragged_card: Card, stack: Array) -> bool:
+	if stack.size() == 0:
+		return false
+	var top_card = stack[-1]
+	if not is_instance_valid(top_card):
+		return false
+	var dragged_type = dragged_card.card_type
+	var target_type = top_card.card_type
+	if not allowed_stack_types.has(dragged_type):
+		return false
+	if not target_type in allowed_stack_types[dragged_type]:
+		return false
+	return true
+
+func clear_active_highlights() -> void:
+	for h in active_highlights:
+		if is_instance_valid(h):
+			h.queue_free()
+	active_highlights.clear()
+
 func _on_card_died(card: Card) -> void:
 	if not is_instance_valid(card):
 		return
@@ -933,6 +986,7 @@ func handle_enemy_movement(delta: float) -> void:
 		target_pos.x = clamp(target_pos.x, map_rect.position.x, map_rect.position.x + map_rect.size.x)
 		target_pos.y = clamp(target_pos.y, map_rect.position.y, map_rect.position.y + map_rect.size.y)
 		var move_duration = 0.25
-		var tween = get_tree().create_tween()
-		tween.tween_property(enemy, "global_position", target_pos, move_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-		enemy.idle_timer = randf_range(enemy.min_jump_time, enemy.max_jump_time)
+		if is_instance_valid(enemy):
+			var tween = get_tree().create_tween()
+			tween.tween_property(enemy, "global_position", target_pos, move_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			enemy.idle_timer = randf_range(enemy.min_jump_time, enemy.max_jump_time)
