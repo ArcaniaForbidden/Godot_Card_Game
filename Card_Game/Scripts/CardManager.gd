@@ -912,14 +912,21 @@ func _on_card_died(card: Card) -> void:
 		var spawned_card = spawn_card(drop_subtype, spawn_pos + offset)
 		spawned_card.is_being_simulated_dragged = true
 		finish_drag_simulated([spawned_card])
-	# Kill any running tweens before freeing
 	kill_card_tween(card)
-	# Remove the dead enemy card from its stack
+	# --- Remove from its stack ---
 	var stack = find_stack(card)
 	if stack and stack.has(card):
 		stack.erase(card)
 		if stack.is_empty():
 			all_stacks.erase(stack)
+	# --- Remove from dragged substack if player is holding it ---
+	if dragged_substack.has(card):
+		dragged_substack.erase(card)
+		if card_being_dragged == card:
+			card_being_dragged = dragged_substack[0] if dragged_substack.size() > 0 else null
+		if dragged_substack.size() == 0:
+			card_being_dragged = null
+			clear_active_highlights()
 	card.queue_free()
 
 func roll_loot(loot_table: Array) -> Array:

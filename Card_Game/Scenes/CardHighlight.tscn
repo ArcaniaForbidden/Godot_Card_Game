@@ -83,4 +83,4 @@ animations = [{
 [node name="CardHighlight" type="AnimatedSprite2D"]
 sprite_frames = SubResource("SpriteFrames_88wn4")
 animation = &"idle"
-frame_progress = 0.0996093
+frame_progress = 0.892906
