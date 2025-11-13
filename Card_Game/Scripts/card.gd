@@ -20,7 +20,7 @@ var health: int = 0
 var max_health: int = 0
 var attack: int = 0
 var armor: int = 0
-var attack_speed: float = 0.0          # default attacks per second
+var attack_speed: float = 0.0
 var idle_timer: float = 0.0
 var min_jump_time: float = 1.5
 var max_jump_time: float = 2.5
@@ -334,7 +334,7 @@ func setup(subtype_name: String) -> void:
 		var inventory_scene = preload("res://Scenes/UnitInventory.tscn")
 		var inventory_instance = inventory_scene.instantiate()
 		add_child(inventory_instance)
-		inventory_instance.position = Vector2(0, 60)
+		inventory_instance.position = Vector2(0, -60)
 	if card_type == "neutral" and data.has("tame_chance"):
 		tame_chance = float(data.get("tame_chance", null))
 	# --- Enemy Weapon Setup (multiple weapons) ---

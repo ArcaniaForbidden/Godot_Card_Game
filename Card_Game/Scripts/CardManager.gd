@@ -18,6 +18,7 @@ const PACK_UNLOCK_CHAIN = {
 
 # --- Member variables ---
 var card_being_dragged: Node2D = null
+var dragging_card := false
 var drag_released_for_pause := false
 var dragged_substack: Array = []
 var drag_offset: Vector2 = Vector2.ZERO
@@ -36,11 +37,11 @@ var card_tweens: Dictionary = {}   # card -> SceneTreeTween
 var allowed_stack_types := {
 	"currency": ["currency"],
 	"unit": ["unit", "resource", "material", "building", "food", "location"],      # units can stack with other units and equipment
-	"equipment": ["unit", "equipment"],                                    # equipment only stacks on equipment or units
+	"equipment": ["unit", "equipment"],                                            # equipment only stacks on equipment or units
 	"resource": ["unit", "resource", "material", "building", "food"],
 	"material": ["unit", "resource", "material", "building", "food"],
 	"food": ["unit", "resource", "material", "building", "food"],
-	"enemy": [],                                                           # enemies cannot stack
+	"enemy": [],                                                                   # enemies cannot stack
 	"neutral": [],
 	"building": [],
 	"location": [],
@@ -66,19 +67,28 @@ func _process(delta: float) -> void:
 	update_cached_rects()
 	handle_enemy_movement(delta * GameSpeedManager.current_speed)
 
-func _input(event):
-	if UIManager.pause_menu_panel.visible:
-		return
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
-		if event.pressed:
-			handle_mouse_press()
-		else:
-			handle_mouse_release()
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			if event.pressed:
+				if is_mouse_over_button():
+					dragging_card = false  # never start drag
+					return
+				handle_mouse_press()
+				dragging_card = true
+			else:  # mouse released
+				if dragging_card:
+					handle_mouse_release()
+				dragging_card = false
 	#if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
 		#var clicked_card = raycast_check_for_card()
 		#if clicked_card and clicked_card is Card:
 			#print("Kill on:", clicked_card.subtype)
 			#clicked_card.take_damage(10)
+
+func is_mouse_over_button() -> bool:
+	var hovered = get_viewport().gui_get_hovered_control()
+	return hovered != null and hovered is TextureButton
 
 # ==============================
 #  CARD SPAWNING
@@ -222,7 +232,8 @@ func handle_mouse_press() -> void:
 		last_clicked_card = clicked_card
 		last_click_time = current_time
 	# If not double-click, start dragging normally
-	start_drag(clicked_card)
+	if clicked_card is Card:
+		start_drag(clicked_card)
 
 func handle_mouse_release() -> void:
 	if card_being_dragged:

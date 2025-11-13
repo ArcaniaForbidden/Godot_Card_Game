@@ -10,7 +10,7 @@
 # Add hunger system ✅ (11/10/25)
 # Add taming system ✅ (11/11/25)
 # Add highlight for valid targets for dragged stack ✅ (11/11/25)
-# Add shadows
+# Add shadows again ✅ (11/13/25)
 # Add unit cards starving AI
 # Add save/load system
 # Add recipe book system
@@ -40,9 +40,9 @@
 # Add rarity/tiers for items (can be obtained through gatcha or buying from merchants/traders or quests/dungeons)
 # Cards should have travel time in this case. (Possibly rotate the cards to during this to be perpendicular to path.
 # Cards should have a visible dashed line for their path as well as dashed outline for their final destination.
-# Could add class system 
-	# level up system 
-	# magic system.
+# Could add class system
+	# level up system
+	# magic system
 # Gods/Goddesses are related to each gacha banner, need to get favors with them to unlock their gacha banner.
 # Eventually add different attack types currently only "melee" add ranged/magic later on.
 # Multicard structures (Big Card Buildings). Rituals for statues.
