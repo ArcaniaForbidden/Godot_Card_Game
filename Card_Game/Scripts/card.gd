@@ -59,6 +59,7 @@ var tame_chance = 0.25
 @onready var value_label: Label = get_node_or_null("ValueLabel")
 @onready var area: Area2D = get_node_or_null("Area2D")
 @onready var foil_overlay: Sprite2D = get_node_or_null("FoilOverlay")
+@onready var shadow_sprite: Sprite2D = null
 @onready var health_bar_scene: PackedScene = preload("res://Scenes/HealthBar.tscn")
 @onready var hunger_bar_scene: PackedScene = preload("res://Scenes/HungerBar.tscn")
 
@@ -165,6 +166,8 @@ func take_damage(amount: int):
 		if hunger_bar:
 			if hunger_bar.icon_tween and hunger_bar.icon_tween.is_valid():
 				hunger_bar.icon_tween.kill()
+		if shadow_sprite and is_instance_valid(shadow_sprite):
+			shadow_sprite.queue_free()
 		emit_signal("died", self)
 		queue_free()
 		return
@@ -213,6 +216,17 @@ func update_hunger_bar() -> void:
 	if hunger_bar:
 		hunger_bar.update_hunger(hunger, max_hunger)
 
+func create_shadow() -> void:
+	if shadow_sprite:
+		return
+	shadow_sprite = Sprite2D.new()
+	shadow_sprite.texture = preload("res://Images/card_shadow.png")
+	shadow_sprite.position = Vector2(0, 10)
+	shadow_sprite.scale = Vector2(0.95, 0.95)
+	shadow_sprite.z_index = 0
+	add_child(shadow_sprite)
+	move_child(shadow_sprite, 0)
+
 # --- Setup function ---
 func setup(subtype_name: String) -> void:
 	subtype = subtype_name
@@ -224,6 +238,7 @@ func setup(subtype_name: String) -> void:
 	print("Setup card '%s': card_type=%s, slot=%s" % [subtype, card_type, data.get("slot","")])
 	# Set textures
 	apply_foil_effect(data.get("rarity", ""))
+	create_shadow()
 	var is_animated = data.get("animated", false)
 	if card_type == "card_pack":
 		if card_pack_label1:

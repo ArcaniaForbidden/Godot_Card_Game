@@ -9,9 +9,12 @@
 # Add health bar ✅ (11/10/25)
 # Add hunger system ✅ (11/10/25)
 # Add taming system ✅ (11/11/25)
+# Add highlight for valid targets for dragged stack ✅ (11/11/25)
+# Add shadows
 # Add unit cards starving AI
 # Add save/load system
 # Add recipe book system
+# Add custom resolution drop down menu
 # Rewrite push_apart_cards() to be efficient
 
 #var enemy_go_attack: bool = false

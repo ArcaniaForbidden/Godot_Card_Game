@@ -1,86 +1,8 @@
-[gd_scene load_steps=13 format=3 uid="uid://brvhq6foqjd2c"]
+[gd_scene load_steps=2 format=3 uid="uid://brvhq6foqjd2c"]
 
-[ext_resource type="Texture2D" uid="uid://cwcrylo7vx0nx" path="res://SpriteSheets/drag_highlight_spritesheet.png" id="1_d1352"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_65s4x"]
-atlas = ExtResource("1_d1352")
-region = Rect2(0, 0, 106, 148)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_gnykg"]
-atlas = ExtResource("1_d1352")
-region = Rect2(106, 0, 106, 148)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_2kekf"]
-atlas = ExtResource("1_d1352")
-region = Rect2(212, 0, 106, 148)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_yrl8h"]
-atlas = ExtResource("1_d1352")
-region = Rect2(318, 0, 106, 148)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_7035d"]
-atlas = ExtResource("1_d1352")
-region = Rect2(424, 0, 106, 148)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_4irhl"]
-atlas = ExtResource("1_d1352")
-region = Rect2(530, 0, 106, 148)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_sf5nm"]
-atlas = ExtResource("1_d1352")
-region = Rect2(636, 0, 106, 148)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_lrcu4"]
-atlas = ExtResource("1_d1352")
-region = Rect2(742, 0, 106, 148)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_da2na"]
-atlas = ExtResource("1_d1352")
-region = Rect2(848, 0, 106, 148)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_yqbut"]
-atlas = ExtResource("1_d1352")
-region = Rect2(954, 0, 106, 148)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_88wn4"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_65s4x")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_gnykg")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_2kekf")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_yrl8h")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_7035d")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_4irhl")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_sf5nm")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_lrcu4")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_da2na")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_yqbut")
-}],
-"loop": true,
-"name": &"idle",
-"speed": 18.0
-}]
+[ext_resource type="SpriteFrames" uid="uid://dkbjgmoswquiv" path="res://Animations/CardHighlight.tres" id="1_d1352"]
 
 [node name="CardHighlight" type="AnimatedSprite2D"]
-sprite_frames = SubResource("SpriteFrames_88wn4")
+sprite_frames = ExtResource("1_d1352")
 animation = &"idle"
 frame_progress = 0.892906

@@ -3,10 +3,11 @@ class_name CardManager
 
 # --- Constants ---
 const COLLISION_MASK_CARD := 1
-const STACK_Y_OFFSET := 30.0            # Vertical spacing between cards in a stack
-const DRAG_Z_INDEX := 1000              # Z-index while dragging
-const OVERLAP_THRESHOLD := 0.01         # Percent overlap for merging stacks
-const STACK_TWEEN_DURATION := 0.2       # Tween duration for stack visuals
+const STACK_Y_OFFSET := 30.0                  # Vertical spacing between cards in a stack
+const SHADOW_DRAG_OFFSET := Vector2(0, 20)
+const DRAG_Z_INDEX := 1000                    # Z-index while dragging
+const OVERLAP_THRESHOLD := 0.01               # Percent overlap for merging stacks
+const STACK_TWEEN_DURATION := 0.2             # Tween duration for stack visuals
 const PUSH_STRENGTH := 1000
 const PUSH_ITERATIONS := 1
 const DOUBLE_CLICK_TIME := 0.3
@@ -260,6 +261,8 @@ func handle_dragging() -> void:
 			map_manager.map_rect.position.y + map_manager.map_rect.size.y)
 		# Smoothly move toward target
 		card.position = card.position.lerp(target_pos, 0.1)
+		if card.shadow_sprite and is_instance_valid(card.shadow_sprite):
+			card.shadow_sprite.position = card.shadow_sprite.position.lerp(SHADOW_DRAG_OFFSET, 0.1)
 
 func start_drag(card: Card) -> void:
 	if card.is_equipped and card.attached_slot:
@@ -333,6 +336,10 @@ func finish_drag_generic(cards: Array, is_simulated: bool, play_sound: bool = tr
 		else:
 			c.is_being_dragged = false
 		kill_card_tween(c)
+		if c.shadow_sprite and is_instance_valid(c.shadow_sprite):
+			var tween = get_tree().create_tween()
+			tween.tween_property(c.shadow_sprite, "position", Vector2(0, 10), STACK_TWEEN_DURATION)\
+			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	# Make sure stack membership is clean before merging
 	if is_simulated:
 		for c in cards:
@@ -367,7 +374,7 @@ func finish_drag_generic(cards: Array, is_simulated: bool, play_sound: bool = tr
 				card.global_position = target_pos
 				card.scale = Vector2(1, 1)
 				card.z_index = i + 1
-				continue 
+				continue
 			kill_card_tween(card)
 			var tween = get_tree().create_tween()
 			tween.tween_property(card, "position", target_pos, STACK_TWEEN_DURATION)\
