@@ -63,7 +63,6 @@ func _process(delta: float) -> void:
 	else:
 		drag_released_for_pause = false
 	handle_dragging()
-	push_apart_cards()
 	update_cached_rects()
 	handle_enemy_movement(delta * GameSpeedManager.current_speed)
 
@@ -106,12 +105,12 @@ func spawn_initial_cards() -> void:
 	spawn_card("wheat", Vector2(70, 0))
 	spawn_card("wheat", Vector2(80, 0))
 	spawn_card("wheat", Vector2(90, 0))
-	#spawn_card("quarry", Vector2(400,400))
-	#spawn_card("iron_mine", Vector2(400,500))
-	#spawn_card("copper_mine", Vector2(400,600))
-	#spawn_card("gold_mine", Vector2(400,700))
+	spawn_card("quarry", Vector2(400,400))
+	spawn_card("iron_mine", Vector2(400,500))
+	spawn_card("copper_mine", Vector2(400,600))
+	spawn_card("gold_mine", Vector2(400,700))
 	spawn_card("wooden_spear", Vector2(400,600))
-	#spawn_card("bow", Vector2(400,700))
+	spawn_card("bow", Vector2(400,700))
 	spawn_card("iron_spear", Vector2(400,800))
 	spawn_card("iron_sword", Vector2(400,800))
 	spawn_card("iron_greatsword", Vector2(400,800))
@@ -119,41 +118,41 @@ func spawn_initial_cards() -> void:
 	spawn_card("leather_chestplate", Vector2(400,900))
 	spawn_card("leather_leggings", Vector2(400,900))
 	spawn_card("leather_boots", Vector2(400,900))
-	#spawn_card("lumber_camp", Vector2(400,500))
+	spawn_card("lumber_camp", Vector2(400,500))
 	spawn_card("house", Vector2(400,500))
-	#spawn_card("smeltery", Vector2(400,500))
+	spawn_card("smeltery", Vector2(400,500))
 	spawn_card("horse", Vector2(400, 300))
-	#spawn_card("horse", Vector2(400, 300))
+	spawn_card("horse", Vector2(400, 300))
 	spawn_card("chicken", Vector2(400, 300))
-	#spawn_card("chicken", Vector2(400, 300))
+	spawn_card("chicken", Vector2(400, 300))
 	spawn_card("cow", Vector2(400, 300))
-	#spawn_card("cow", Vector2(400, 300))
+	spawn_card("cow", Vector2(400, 300))
 	spawn_card("rabbit", Vector2(400, 300))
-	#spawn_card("rabbit", Vector2(400, 300))
+	spawn_card("rabbit", Vector2(400, 300))
 	spawn_card("tree", Vector2(500, 300))
 	spawn_card("rock", Vector2(600, 300))
-	#spawn_card("wood", Vector2(700, 300))
-	#spawn_card("wood", Vector2(700, 300))
-	#spawn_card("stone", Vector2(800, 300))
-	#spawn_card("stone", Vector2(800, 300))
-	#spawn_card("brick", Vector2(800, 300))
-	#spawn_card("plank", Vector2(800, 300))
-	#spawn_card("water", Vector2(800, 300))
-	#spawn_card("gold_coin", Vector2(900, 300))
-	#spawn_card("gold_coin", Vector2(900, 300))
-	#spawn_card("gold_coin", Vector2(900, 300))
-	#spawn_card("gold_coin", Vector2(900, 300))
-	#spawn_card("gold_coin", Vector2(900, 300))
-	#spawn_card("iron_deposit", Vector2(800, 300))
-	#spawn_card("copper_deposit", Vector2(800, 300))
-	#spawn_card("gold_deposit", Vector2(800, 300))
-	spawn_card("wolf", Vector2(800, 600))
+	spawn_card("wood", Vector2(700, 300))
+	spawn_card("wood", Vector2(700, 300))
+	spawn_card("stone", Vector2(800, 300))
+	spawn_card("stone", Vector2(800, 300))
+	spawn_card("brick", Vector2(800, 300))
+	spawn_card("plank", Vector2(800, 300))
+	spawn_card("water", Vector2(800, 300))
+	spawn_card("gold_coin", Vector2(900, 300))
+	spawn_card("gold_coin", Vector2(900, 300))
+	spawn_card("gold_coin", Vector2(900, 300))
+	spawn_card("gold_coin", Vector2(900, 300))
+	spawn_card("gold_coin", Vector2(900, 300))
+	spawn_card("iron_deposit", Vector2(800, 300))
+	spawn_card("copper_deposit", Vector2(800, 300))
+	spawn_card("gold_deposit", Vector2(800, 300))
+	#spawn_card("wolf", Vector2(800, 600))
 	#spawn_card("wolf", Vector2(900, 600))
 	#spawn_card("wolf", Vector2(1800, 600))
-	#spawn_card("forest", Vector2(0, 100))
+	spawn_card("forest", Vector2(0, 100))
 	spawn_card("plains", Vector2(0, 200))
-	#spawn_card("mountain", Vector2(0, 300))
-	#spawn_card("cave", Vector2(0, 400))
+	spawn_card("mountain", Vector2(0, 300))
+	spawn_card("cave", Vector2(0, 400))
 
 func spawn_card(subtype: String, position: Vector2) -> Card:
 	var card: Card = card_scene.instantiate() as Card
@@ -562,126 +561,6 @@ func stack_has_simulated_dragged(stack: Array) -> bool:
 	return false
 
 # ==============================
-#  CARD MOVEMENT UPDATES
-# ==============================
-func push_apart_cards() -> void:
-	if all_stacks.size() < 2:
-		return
-	# --- Precompute stack bounds, centers, and stack center positions ---
-	var stack_bounds := []
-	var stack_card_centers := []
-	var stack_center_x := []
-	var card_rects := {}  # cache rects for this frame
-	for stack in all_stacks:
-		if stack.is_empty() or not is_instance_valid(stack[0]) \
-			or stack.has(card_being_dragged) or stack[0].card_type == "enemy" or stack[0].card_type == "building"\
-			or stack[0] is InventorySlot  or stack[0] is SellSlot or stack[0] is PackSlot\
-			or stack_has_simulated_dragged(stack)\
-			or stack.any(func(c): return c.is_equipped if is_instance_valid(c) else false):
-			stack_bounds.append(null)
-			stack_card_centers.append(null)
-			stack_center_x.append(INF)  # sentinel
-			continue
-		var bounds = get_stack_bounds(stack)
-		stack_bounds.append(bounds)
-		var centers := []
-		for card in stack:
-			if is_instance_valid(card):
-				var rect: Rect2
-				if card_rects.has(card):
-					rect = card_rects[card]
-				else:
-					rect = get_card_global_rect(card)
-					card_rects[card] = rect
-				centers.append(rect.position + rect.size / 2)
-			else:
-				centers.append(Vector2.ZERO)
-		stack_card_centers.append(centers)
-		stack_center_x.append(bounds.position.x + bounds.size.x * 0.5)  # center x
-	# --- Compare each stack pair ---
-	for i in range(all_stacks.size()):
-		var stack_a = all_stacks[i]
-		var bounds_a = stack_bounds[i]
-		var centers_a = stack_card_centers[i]
-		if not bounds_a:
-			continue
-		for j in range(i + 1, all_stacks.size()):
-			var stack_b = all_stacks[j]
-			var bounds_b = stack_bounds[j]
-			var centers_b = stack_card_centers[j]
-			if not bounds_b:
-				continue
-			if stack_b[0].card_type == "enemy":
-				continue
-			# --- Quick center-to-center prefilter ---
-			var center_dist = abs(stack_center_x[i] - stack_center_x[j])
-			if center_dist > 100:  # tweak margin to cover possible overlap
-				continue
-			var push_vector := Vector2.ZERO
-			var overlap_found := false
-			# --- Detailed per-card check ---
-			for a_index in range(stack_a.size()):
-				var card_a = stack_a[a_index]
-				if not is_instance_valid(card_a):
-					continue
-				var rect_a = card_rects[card_a]
-				var center_a = centers_a[a_index]
-				for b_index in range(stack_b.size()):
-					var card_b = stack_b[b_index]
-					if not is_instance_valid(card_b):
-						continue
-					var rect_b = card_rects[card_b]
-					var center_b = centers_b[b_index]
-					if rect_a.intersects(rect_b):
-						overlap_found = true
-						var intersection = rect_a.intersection(rect_b)
-						var dir = center_a - center_b
-						if dir == Vector2.ZERO:
-							dir = Vector2.RIGHT
-						push_vector += dir.normalized() * clamp((intersection.size.x * intersection.size.y) / (rect_a.size.x * rect_a.size.y), 0.1, 1.0)
-			if overlap_found:
-				push_vector = push_vector.limit_length(PUSH_STRENGTH)
-				var delta = get_process_delta_time()
-				var push_amount = push_vector * PUSH_STRENGTH * delta
-				for c in stack_a:
-					if is_instance_valid(c) and not c.is_being_dragged:
-						c.position += push_amount
-				for c in stack_b:
-					if is_instance_valid(c) and not c.is_being_dragged:
-						c.position -= push_amount
-
-func update_cached_rects() -> void:
-	cached_rects.clear()
-	var cleaned_stacks: Array = []
-	for stack in all_stacks:
-		var valid_cards = []
-		for card in stack:
-			if is_instance_valid(card):
-				valid_cards.append(card)
-				# calculate and store global rect only once
-				cached_rects[card] = calculate_card_global_rect(card)
-		if valid_cards.size() > 0:
-			cleaned_stacks.append(valid_cards)
-	all_stacks = cleaned_stacks
-
-func get_stack_bounds(stack: Array) -> Rect2:
-	if stack.is_empty():
-		return Rect2()
-	var min_x = INF
-	var min_y = INF
-	var max_x = -INF
-	var max_y = -INF
-	for c in stack:
-		if not is_instance_valid(c):
-			continue 
-		var rect = get_card_global_rect(c)
-		min_x = min(min_x, rect.position.x)
-		min_y = min(min_y, rect.position.y)
-		max_x = max(max_x, rect.position.x + rect.size.x)
-		max_y = max(max_y, rect.position.y + rect.size.y)
-	return Rect2(Vector2(min_x, min_y), Vector2(max_x - min_x, max_y - min_y))
-
-# ==============================
 #  HELPERS
 # ==============================
 func find_stack(card: Node2D) -> Array:
@@ -796,6 +675,20 @@ func calculate_card_global_rect(card: Node2D) -> Rect2:
 		rect = aabb
 	cached_rects[card] = rect
 	return rect
+
+func update_cached_rects() -> void:
+	cached_rects.clear()
+	var cleaned_stacks: Array = []
+	for stack in all_stacks:
+		var valid_cards = []
+		for card in stack:
+			if is_instance_valid(card):
+				valid_cards.append(card)
+				# calculate and store global rect only once
+				cached_rects[card] = calculate_card_global_rect(card)
+		if valid_cards.size() > 0:
+			cleaned_stacks.append(valid_cards)
+	all_stacks = cleaned_stacks
 
 func kill_card_tween(card: Node2D) -> void:
 	if card_tweens.has(card):

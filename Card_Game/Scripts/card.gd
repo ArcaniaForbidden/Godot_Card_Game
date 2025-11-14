@@ -1,14 +1,15 @@
 extends Node2D
 class_name Card
 
-signal hovered
-signal hovered_off
+signal card_entered(other_card: Card)
+signal card_exited(other_card: Card)
 signal ui_zoom_update(card: Card)
 signal died(card: Card)
 
 var target_position: Vector2
 var is_being_dragged: bool = false
 var is_being_simulated_dragged: bool = false
+var dirty: bool = false
 var card_type: String = ""
 var subtype: String = ""
 var display_name: String = ""
@@ -64,7 +65,8 @@ var tame_chance = 0.25
 @onready var hunger_bar_scene: PackedScene = preload("res://Scenes/HungerBar.tscn")
 
 func _ready() -> void:
-	area.connect("input_event", Callable(self, "_on_area_input_event"))
+	if area:
+		area.connect("input_event", Callable(self, "_on_area_input_event"))
 	if sprite_animated:
 		animation_manager.setup(self, sprite_animated)
 
